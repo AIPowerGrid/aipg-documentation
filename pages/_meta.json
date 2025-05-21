@@ -1,0 +1,21 @@
+{
+  "index": "Introduction",
+  "tokenomics": "Tokenomics",
+  "arc20_token_network": "ARC20 Token Network",
+  "about": {
+    "title": "About",
+    "type": "page"
+  },
+  "contact": {
+    "title": "Discord ↗",
+    "type": "page",
+    "href": "https://discord.gg/W9D8j6HCtC",
+    "newWindow": true
+  },
+  "github": {
+    "title": "GitHub ↗",
+    "type": "page",
+    "href": "https://github.com/aipowergrid",
+    "newWindow": true
+  }
+}
