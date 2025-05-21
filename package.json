@@ -9,14 +9,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/aipg-foundation/aipg-docs.git"
+    "url": "git+https://github.com/AIPowerGrid/aipg-documentation.git"
   },
   "author": "Zachary Price",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/aipg-foundation/aipg-docs/issues"
+    "url": "https://github.com/AIPowerGrid/aipg-documentation/issues"
   },
-  "homepage": "https://github.com/aipg-foundation/aipg-docs#readme",
+  "homepage": "https://github.com/AIPowerGrid/aipg-documentation#readme",
   "dependencies": {
     "next": "^13.0.6",
     "nextra": "latest",
