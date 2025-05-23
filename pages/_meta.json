@@ -2,11 +2,7 @@
   "index": "Introduction",
   "tokenomics": "Tokenomics",
   "arc20_token_network": "ARC20 Token Network",
-  "ai_workers": {
-    "title": "AI Workers",
-    "type": "separator"
-  },
-  "Simple_Text_Worker": "Simple Text Worker",
+  "ai-workers": "AI Workers",
   "about": {
     "title": "About",
     "type": "page"
