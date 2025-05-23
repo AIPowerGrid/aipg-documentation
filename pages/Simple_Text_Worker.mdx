@@ -1,0 +1,314 @@
+# 🤖 Simple Text Worker Guide
+
+This guide will walk you through setting up and running a Simple Text Worker for the AI Power Grid. The Simple Text Worker allows you to contribute your GPU resources to the grid for text generation tasks and earn AIPG in return.
+
+## 📋 Prerequisites
+
+Before you begin, make sure you have the following:
+
+- A Linux-based operating system (Ubuntu, PopOS, or similar distributions)
+- Python 3 or higher installed
+- Docker installed and configured
+- A GPU with enough VRAM to run your chosen model
+- An AIPG API key (obtainable from [dashboard.aipowergrid.io](https://dashboard.aipowergrid.io))
+
+> **Note on Windows Compatibility**: While this guide focuses on Linux, the Simple Text Worker may also run on Windows systems. However, this has not yet been officially confirmed by community or team members. If you're running Windows, you might be able to use Docker Desktop for Windows or WSL2 (Windows Subsystem for Linux) with similar results.
+
+## 🐳 Step 1: Install Docker
+
+If you don't have Docker installed yet, follow these steps to install it on your Linux system.
+
+### Installing Docker on Ubuntu/PopOS
+
+The Docker installation package available in the official Ubuntu repository may not be the latest version. To ensure you get the latest version, install Docker from the official Docker repository:
+
+1. Update your existing package list:
+```bash
+sudo apt update
+```
+
+2. Install prerequisite packages:
+```bash
+sudo apt install apt-transport-https ca-certificates curl software-properties-common
+```
+
+3. Add the GPG key for the official Docker repository:
+```bash
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+```
+
+4. Add the Docker repository to APT sources:
+```bash
+sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable"
+```
+
+5. Update the package database with Docker packages:
+```bash
+sudo apt update
+```
+
+6. Verify you're installing from the Docker repo:
+```bash
+apt-cache policy docker-ce
+```
+
+7. Install Docker:
+```bash
+sudo apt install docker-ce
+```
+
+8. Check that Docker is running:
+```bash
+sudo systemctl status docker
+```
+
+### 🔑 Configure Docker to Run Without Sudo (Required)
+
+It's essential to be able to run Docker commands without sudo for the Simple Text Worker to function properly:
+
+1. Add your username to the docker group:
+```bash
+sudo usermod -aG docker ${USER}
+```
+
+2. Apply the new group membership (either log out and back in, or use):
+```bash
+su - ${USER}
+```
+
+3. Verify your user was added to the docker group:
+```bash
+groups
+```
+
+4. Test Docker is working properly without sudo:
+```bash
+docker run hello-world
+```
+
+5. Make sure you can run `docker ps` without sudo:
+```bash
+docker ps
+```
+
+## 🛠️ Step 2: Set Up the Simple Text Worker
+
+Now that Docker is installed and working, let's set up the Simple Text Worker:
+
+1. Clone the repository:
+```bash
+git clone https://github.com/AIPowerGrid/simple-text-worker
+```
+
+2. Navigate to the repository directory:
+```bash
+cd simple-text-worker
+```
+
+3. Install the required Python dependencies:
+```bash
+pip install -r requirements.txt
+```
+This will ensure you have all the necessary Python packages, including GPUtil and other dependencies.
+
+4. Install additional dependencies that may be needed:
+```bash
+pip install huggingface_hub[hf_xet] GPUtil
+```
+
+5. Create a configuration file by copying the template:
+```bash
+cp bridgeData_template.yaml bridgeData.yaml
+```
+
+## ⚙️ Step 3: Configure the Worker
+
+Edit the `bridgeData.yaml` file to configure your worker:
+
+```bash
+nano bridgeData.yaml
+```
+
+Here are the key configuration options:
+
+### 🧠 Model Selection
+```yaml
+model_name: "stabilityai/stable-code-3b"
+```
+You can set this to any model available on HuggingFace that you want to run.
+
+### 🖥️ UI Settings
+```yaml
+terminal_ui_enabled: false  # Setting this to true is not recommended at the moment
+```
+
+### 🌐 Grid API Connection
+```yaml
+horde_url: "https://api.aipowergrid.io/"
+api_key: ""  # Insert your API key from dashboard.aipowergrid.io
+```
+
+### ⚡ Performance Settings
+```yaml
+max_threads: 1  # Number of concurrent tasks
+queue_size: 0   # Keep recommended for initial setup
+gpu_count: 1    # Number of GPUs to use
+```
+
+### 🏷️ Worker Identity
+```yaml
+scribe_name: ""  # Your AIPG address (recommended format)
+```
+For the `scribe_name`, use your AIPG address for simplicity. Advanced users can use formats like `AIPG_ADDR.NAME` or `AIPG_ADDR_NAME` once comfortable with the system.
+
+### 🔌 Local API Connection
+```yaml
+kai_url: "http://localhost:2242"  # Default is fine, no need to change
+```
+
+### 🔄 Text Generation Parameters
+```yaml
+max_length: 1500          # Maximum tokens to generate
+max_context_length: 32000  # Maximum tokens from the prompt
+```
+
+### 💻 Hardware Compatibility
+```yaml
+old_nvidia_compute: true  # Set to false if you have a card newer than the 2080 Ti
+```
+
+## 🚀 Step 4: Launch the Worker
+
+After configuring your worker, you can start it with:
+
+```bash
+python3 start_worker.py
+```
+Or depending on your Python configuration:
+```bash
+python start_worker.py
+```
+
+### 🔄 Launch Process
+
+1. The system will first launch Aphrodite-engine, which is the workhorse component.
+2. The model will be downloaded from HuggingFace (this can take some time depending on your internet connection).
+3. Once the model is downloaded, Aphrodite will attempt to load it into your GPU.
+4. If successful, you'll see logs indicating a connection can be made to the KAI URL specified in your configuration.
+5. At this point, you can press Enter to switch to launching the grid worker itself.
+6. The grid worker will connect to the AIPG network and start accepting jobs.
+
+## 🔄 Step 5: Running the Worker in the Background (Recommended)
+
+For long-term operation, it's recommended to run the worker in the background using tmux, which allows you to detach from the session while keeping it running:
+
+### 📦 Installing tmux
+If you don't have tmux installed:
+```bash
+sudo apt install tmux
+```
+
+### 🖥️ Using tmux to Run Your Worker
+1. Start a new tmux session:
+```bash
+tmux
+```
+
+2. Launch the worker as normal:
+```bash
+python3 start_worker.py
+```
+
+3. Once the worker is running, detach from the tmux session by pressing:
+```
+Ctrl+b followed by d
+```
+This will keep the worker running in the background even after you close your terminal.
+
+### 📋 Managing tmux Sessions
+- To list all active tmux sessions:
+```bash
+tmux ls
+```
+
+- To reattach to your session:
+```bash
+tmux attach-session
+```
+
+- If you have multiple sessions, attach to a specific one:
+```bash
+tmux attach-session -t <session-number>
+```
+Replace `<session-number>` with the session ID (e.g., 0, 1, 2) shown in the `tmux ls` output.
+
+This method makes it easy to check on your worker's status when needed while keeping it running continuously in the background.
+
+## 📊 Step 6: Monitoring Your Worker
+
+You can monitor your worker's status and performance at [dashboard.aipowergrid.io](https://dashboard.aipowergrid.io).
+
+## 🛑 Shutting Down the Worker
+
+The shutdown process involves two steps:
+
+1. Press Ctrl+C to stop the grid worker (this does not stop Aphrodite-engine).
+2. To completely shut down, including Aphrodite-engine:
+   ```bash
+   docker ps  # Find the container ID for Aphrodite
+   docker kill <container_id>  # Kill the Aphrodite container
+   ```
+
+If you're running in a tmux session, first reattach to the session:
+```bash
+tmux attach-session
+```
+Then follow the shutdown steps above.
+
+This two-step shutdown process is designed to prevent long loading times when restarting with changed settings, as loading the model into GPU memory can be time-consuming.
+
+## 🔍 Troubleshooting
+
+### Common Issues and Solutions
+
+#### 🔒 HTTPS Download Warning
+If you see a warning about downloading models with HTTPS and needing to install `huggingface_hub[hf_xet]`:
+```bash
+pip install huggingface_hub[hf_xet]
+```
+
+#### 📦 Missing GPUtil
+If the application crashes when launching the bridge worker due to missing GPUtil:
+```bash
+pip install GPUtil
+```
+
+#### 📚 Other Python Dependencies
+You might need to install additional Python packages if you encounter errors:
+```bash
+pip install -r requirements.txt
+```
+
+#### 🧠 GPU Memory Issues
+If Aphrodite crashes after downloading the model, you might not have enough VRAM. Try:
+- Using a smaller model
+- Reducing `max_context_length`
+- Making sure no other applications are using your GPU
+
+#### 🐳 Docker Permission Issues
+If you see "permission denied" when running Docker commands, make sure you've properly set up Docker to run without sudo and have logged out and back in to apply the group changes.
+
+## 💬 Support
+
+For help and support with any issues not covered in this guide, please join the [AIPG Discord](https://discord.gg/W9D8j6HCtC) where the community and development team can assist you.
+
+## 🔮 Next Steps
+
+Once your worker is running smoothly, you can consider:
+- Running multiple workers with different models
+- Optimizing your configuration for better performance
+- Contributing to the development of the Simple Text Worker
+
+## 🎉 Conclusion
+
+Thank you for contributing to the AI Power Grid network! Your participation helps build a decentralized AI infrastructure that benefits everyone. 
