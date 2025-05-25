@@ -1,0 +1,22 @@
+import { useEffect } from 'react'
+import { useRouter } from 'next/router'
+
+export default function WhitepaperRedirect() {
+  const router = useRouter()
+  
+  useEffect(() => {
+    router.push('/whitepaper')
+  }, [router])
+  
+  return (
+    <div>
+      <p>Redirecting to whitepaper...</p>
+    </div>
+  )
+}
+
+export const meta = {
+  title: 'AI Power Grid Whitepaper',
+  type: 'page',
+  display: 'hidden'
+} 

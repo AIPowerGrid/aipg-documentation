@@ -3,6 +3,10 @@
   "tokenomics": "Tokenomics",
   "arc20_token_network": "ARC20 Token Network",
   "whitepaper": "Whitepaper",
+  "ai-power-grid-whitepaper": {
+    "title": "AI Power Grid Whitepaper",
+    "display": "hidden"
+  },
   "ai-workers": "AI Workers",
   "about": {
     "title": "About",
