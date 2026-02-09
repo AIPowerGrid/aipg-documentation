@@ -32,55 +32,20 @@ const config: DocsThemeConfig = {
   // Custom navbar items linking back to main site
   navbar: {
     extraContent: (
-      <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'center', marginLeft: '1rem' }}>
-        <a
-          href="https://aipowergrid.io"
-          target="_blank"
-          rel="noopener noreferrer"
-          style={{ color: 'hsl(240, 5%, 64.9%)', fontSize: '0.875rem', fontWeight: 500 }}
-          onMouseOver={(e) => e.currentTarget.style.color = 'hsl(0, 0%, 98%)'}
-          onMouseOut={(e) => e.currentTarget.style.color = 'hsl(240, 5%, 64.9%)'}
-        >
+      <div className="nav-extra-links">
+        <a href="https://aipowergrid.io" target="_blank" rel="noopener noreferrer">
           Home
         </a>
-        <a
-          href="https://aipowergrid.io/about"
-          target="_blank"
-          rel="noopener noreferrer"
-          style={{ color: 'hsl(240, 5%, 64.9%)', fontSize: '0.875rem', fontWeight: 500 }}
-          onMouseOver={(e) => e.currentTarget.style.color = 'hsl(0, 0%, 98%)'}
-          onMouseOut={(e) => e.currentTarget.style.color = 'hsl(240, 5%, 64.9%)'}
-        >
+        <a href="https://aipowergrid.io/about" target="_blank" rel="noopener noreferrer">
           About
         </a>
-        <a
-          href="https://aipg.art"
-          target="_blank"
-          rel="noopener noreferrer"
-          style={{ color: 'hsl(240, 5%, 64.9%)', fontSize: '0.875rem', fontWeight: 500 }}
-          onMouseOver={(e) => e.currentTarget.style.color = 'hsl(0, 0%, 98%)'}
-          onMouseOut={(e) => e.currentTarget.style.color = 'hsl(240, 5%, 64.9%)'}
-        >
+        <a href="https://aipg.art" target="_blank" rel="noopener noreferrer" className="hide-mobile">
           Art
         </a>
-        <a
-          href="https://aipg.chat"
-          target="_blank"
-          rel="noopener noreferrer"
-          style={{ color: 'hsl(240, 5%, 64.9%)', fontSize: '0.875rem', fontWeight: 500 }}
-          onMouseOver={(e) => e.currentTarget.style.color = 'hsl(0, 0%, 98%)'}
-          onMouseOut={(e) => e.currentTarget.style.color = 'hsl(240, 5%, 64.9%)'}
-        >
+        <a href="https://aipg.chat" target="_blank" rel="noopener noreferrer" className="hide-mobile">
           Chat
         </a>
-        <a
-          href="https://explorer.aipowergrid.io"
-          target="_blank"
-          rel="noopener noreferrer"
-          style={{ color: 'hsl(240, 5%, 64.9%)', fontSize: '0.875rem', fontWeight: 500 }}
-          onMouseOver={(e) => e.currentTarget.style.color = 'hsl(0, 0%, 98%)'}
-          onMouseOut={(e) => e.currentTarget.style.color = 'hsl(240, 5%, 64.9%)'}
-        >
+        <a href="https://explorer.aipowergrid.io" target="_blank" rel="noopener noreferrer">
           Explorer
         </a>
       </div>

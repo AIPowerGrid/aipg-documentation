@@ -217,9 +217,37 @@ button {
   color: hsl(0, 0%, 98%);
 }
 
+/* Custom navbar links */
+.nav-extra-links {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+  margin-left: 1rem;
+}
+
+.nav-extra-links a {
+  color: hsl(240, 5%, 64.9%);
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.nav-extra-links a:hover {
+  color: hsl(0, 0%, 98%);
+}
+
 /* Mobile menu */
 @media (max-width: 768px) {
   .nextra-nav-container {
     padding: 0.75rem 1rem;
+  }
+
+  .hide-mobile {
+    display: none !important;
+  }
+
+  .nav-extra-links {
+    gap: 1rem;
+    margin-left: 0.5rem;
   }
 }
