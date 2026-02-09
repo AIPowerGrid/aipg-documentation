@@ -1,0 +1,195 @@
+# Generate AI
+
+Create images, chat with LLMs, and generate media using The Grid's decentralized AI network.
+
+---
+
+## Den (電) - Your Credits
+
+Den is the platform currency for AI generation.
+
+- **New users** get Den when signing up
+- **Workers** accrue more Den for contributing GPU power
+- **Spend Den** to generate images, text, and media
+
+We're currently giving generous amounts of Den so you can explore freely.
+
+---
+
+## Generate Images
+
+### aipg.art
+
+[aipg.art](https://aipg.art) is the AI art gallery powered by The Grid.
+
+**What you can do:**
+- Generate images with Flux, SDXL, Stable Diffusion, and more
+- Browse community creations
+- Use pre-built workflows or customize parameters
+- Download your generations
+
+**How to use:**
+1. Go to [aipg.art](https://aipg.art)
+2. Sign up or log in
+3. Enter your prompt
+4. Choose a model and settings
+5. Generate
+
+**Available Models:**
+
+| Model | Best For | VRAM on Worker |
+|-------|----------|----------------|
+| **Flux** | Highest quality, photorealism | 12GB+ |
+| **SDXL** | High-res, detailed images | 8GB+ |
+| **SD 1.5** | Fast generations, wide LoRA support | 6GB+ |
+
+**Parameters you can adjust:**
+- Steps (quality vs speed)
+- CFG scale (prompt adherence)
+- Sampler and scheduler
+- Dimensions
+- Seed (for reproducibility)
+
+### NFTs (Coming Soon)
+
+Mint your generations as on-chain NFTs with **full reproducibility**.
+
+Unlike typical NFT JPEGs with IPFS links that can rot, Grid NFTs store all generation parameters on the blockchain:
+- Model hash
+- Prompt and negative prompt
+- Seed, steps, CFG, sampler
+- Workflow recipe
+
+Anyone with the model can regenerate the exact image from chain data alone. Future-proof, verifiable, truly ownable AI art.
+
+---
+
+## Chat with AI
+
+### aipg.chat
+
+[aipg.chat](https://aipg.chat) is an OpenWebUI-powered chat interface running on The Grid.
+
+**What you get:**
+- Chat with open-source LLMs (Llama, Mistral, Qwen, etc.)
+- No corporate API middleman
+- Decentralized inference via Grid workers
+- Conversation history
+
+**How to use:**
+1. Go to [aipg.chat](https://aipg.chat)
+2. Sign up or log in
+3. Select a model
+4. Start chatting
+
+The responses come from real GPUs running real models—no API wrappers, no OpenAI under the hood.
+
+---
+
+## Use the API
+
+For programmatic access, use The Grid API directly.
+
+### Get Your API Key
+
+1. Go to [dashboard.aipowergrid.io](https://dashboard.aipowergrid.io)
+   - Or register at [api.aipowergrid.io/register](https://api.aipowergrid.io/register)
+2. Create an account
+3. Generate an API key
+4. Check your usage at [api.aipowergrid.io](https://api.aipowergrid.io)
+
+### SDK
+
+Use the official SDK for easier integration:
+
+**Repository:** [github.com/AIPowerGrid/grid-sdk](https://github.com/AIPowerGrid/grid-sdk)
+
+```javascript
+import { GridClient } from '@aipowergrid/sdk';
+
+const grid = new GridClient({ apiKey: 'your-api-key' });
+
+// Generate an image
+const result = await grid.generate({
+  prompt: 'a robot painting a sunset',
+  model: 'flux-schnell',
+  width: 1024,
+  height: 1024
+});
+
+console.log(result.imageUrl);
+```
+
+---
+
+## Discord Bots
+
+The Grid powers several Discord bots you can add to your server:
+
+### Image Bot
+Generate images directly in Discord.
+
+**Repository:** [github.com/AIPowerGrid/grid-discord-image-bot](https://github.com/AIPowerGrid/grid-discord-image-bot)
+
+### News Bot
+AI-powered news summaries and updates.
+
+**Repository:** [github.com/AIPowerGrid/grid-discord-news-bot](https://github.com/AIPowerGrid/grid-discord-news-bot)
+
+### Aigarth Chatbot
+Chat with an AI personality in Discord.
+
+**Repository:** [github.com/AIPowerGrid/aigarth-chatbot](https://github.com/AIPowerGrid/aigarth-chatbot)
+
+---
+
+## What Models Are Available?
+
+The Grid's ModelVault tracks all registered models. Current categories:
+
+### Image Generation
+- Flux.1 (Schnell, Dev)
+- SDXL and variants
+- Stable Diffusion 1.5
+- Inpainting models
+- ControlNet (Canny, Depth, Pose)
+
+### Text Generation
+- Llama (various sizes)
+- Mistral
+- Qwen
+- Other Ollama-compatible models
+
+### Coming Soon
+- Video generation
+- Audio/music generation
+
+Models are continuously being added. The ModelVault on Base mainnet ensures only verified models are available.
+
+---
+
+## Tips
+
+**For better images:**
+- Be specific in prompts
+- Use negative prompts to exclude unwanted elements
+- Higher steps = more detail (but slower)
+- Same seed + same settings = same image
+
+**For faster generations:**
+- Use Flux Schnell for quick iterations
+- Lower step counts for drafts
+- Generate at smaller sizes, upscale after
+
+**For chat:**
+- Larger models give better responses but may be slower
+- Be clear and specific in your questions
+- The model only knows what it was trained on (no real-time info)
+
+---
+
+## Questions?
+
+- **Discord:** [discord.gg/W9D8j6HCtC](https://discord.gg/W9D8j6HCtC)
+- **API issues:** Check [api.aipowergrid.io](https://api.aipowergrid.io)
+- **Feature requests:** Open an issue on GitHub
