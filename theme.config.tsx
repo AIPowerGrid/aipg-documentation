@@ -2,66 +2,173 @@ import React from 'react'
 import { DocsThemeConfig } from 'nextra-theme-docs'
 
 const config: DocsThemeConfig = {
-  logo: <span>AI Power Grid</span>,
+  logo: (
+    <span style={{
+      fontWeight: 700,
+      fontSize: '1.25rem',
+      letterSpacing: '-0.02em'
+    }}>
+      AI Power Grid
+    </span>
+  ),
+
   project: {
-    link: 'https://github.com/AIPowerGrid/aipg-documentation',
+    link: 'https://github.com/AIPowerGrid',
   },
+
   chat: {
     link: 'https://discord.gg/W9D8j6HCtC',
   },
-  docsRepositoryBase: 'https://github.com/AIPowerGrid/aipg-documentation',
 
-  // Main SEO Titles and Open Graph Tags
+  docsRepositoryBase: 'https://github.com/AIPowerGrid/aipg-documentation/tree/main',
+
+  // Force dark mode
+  darkMode: false,
+  nextThemes: {
+    defaultTheme: 'dark',
+    forcedTheme: 'dark',
+  },
+
+  // Custom navbar items linking back to main site
+  navbar: {
+    extraContent: (
+      <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'center', marginLeft: '1rem' }}>
+        <a
+          href="https://aipowergrid.io"
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{ color: 'hsl(240, 5%, 64.9%)', fontSize: '0.875rem', fontWeight: 500 }}
+          onMouseOver={(e) => e.currentTarget.style.color = 'hsl(0, 0%, 98%)'}
+          onMouseOut={(e) => e.currentTarget.style.color = 'hsl(240, 5%, 64.9%)'}
+        >
+          Home
+        </a>
+        <a
+          href="https://aipowergrid.io/about"
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{ color: 'hsl(240, 5%, 64.9%)', fontSize: '0.875rem', fontWeight: 500 }}
+          onMouseOver={(e) => e.currentTarget.style.color = 'hsl(0, 0%, 98%)'}
+          onMouseOut={(e) => e.currentTarget.style.color = 'hsl(240, 5%, 64.9%)'}
+        >
+          About
+        </a>
+        <a
+          href="https://aipg.art"
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{ color: 'hsl(240, 5%, 64.9%)', fontSize: '0.875rem', fontWeight: 500 }}
+          onMouseOver={(e) => e.currentTarget.style.color = 'hsl(0, 0%, 98%)'}
+          onMouseOut={(e) => e.currentTarget.style.color = 'hsl(240, 5%, 64.9%)'}
+        >
+          Art
+        </a>
+        <a
+          href="https://aipg.chat"
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{ color: 'hsl(240, 5%, 64.9%)', fontSize: '0.875rem', fontWeight: 500 }}
+          onMouseOver={(e) => e.currentTarget.style.color = 'hsl(0, 0%, 98%)'}
+          onMouseOut={(e) => e.currentTarget.style.color = 'hsl(240, 5%, 64.9%)'}
+        >
+          Chat
+        </a>
+        <a
+          href="https://explorer.aipowergrid.io"
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{ color: 'hsl(240, 5%, 64.9%)', fontSize: '0.875rem', fontWeight: 500 }}
+          onMouseOver={(e) => e.currentTarget.style.color = 'hsl(0, 0%, 98%)'}
+          onMouseOut={(e) => e.currentTarget.style.color = 'hsl(240, 5%, 64.9%)'}
+        >
+          Explorer
+        </a>
+      </div>
+    ),
+  },
+
+  // Main SEO
   useNextSeoProps() {
     return {
-      titleTemplate: 'AI Power Grid Docs - %s',
-      title: 'Democratizing Open Source Generative AI',
-      description: 'Revolutionizing the AI landscape with open access to blockchain-validated and incentivized generative AI models, fostering adoption, innovation, creativity, and community-driven growth.',
+      titleTemplate: '%s – AI Power Grid',
+      title: 'AI Power Grid Docs',
+      description: 'Documentation for The Grid - decentralized AI inference on Base. Generate images, chat with LLMs, run workers, and build on open-source AI infrastructure.',
       openGraph: {
         type: 'website',
-        url: 'https://aipowergrid.io/',
-        title: 'AI Power Grid - Democratizing Open Source Generative AI',
-        description: 'Revolutionizing the AI landscape with open access to blockchain-validated and incentivized generative AI models, fostering adoption, innovation, creativity, and community-driven growth.',
+        url: 'https://docs.aipowergrid.io/',
+        title: 'AI Power Grid Documentation',
+        description: 'Documentation for The Grid - decentralized AI inference on Base.',
         images: [
           {
             url: 'https://aipowergrid.io/Banner-Backgrounds/aipg%20Wallpaper%20V3%20(57).png',
             width: 1200,
             height: 630,
-            alt: 'AI Power Grid Open Graph Image'
+            alt: 'AI Power Grid'
           }
         ]
       },
       twitter: {
         cardType: 'summary_large_image',
-        site: 'aipowergrid.io',
+        site: '@AIPowerGrid',
         handle: '@AIPowerGrid'
       }
     }
   },
 
-  // Custom Head Tags (for favicon and viewport settings)
   head: (
     <>
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-      <meta property="og:title" content="AI Power Grid - Democratizing Open Source Generative AI" />
-      <meta property="og:description" content="Revolutionizing the AI landscape with open access to blockchain-validated and incentivized generative AI models, fostering adoption, innovation, creativity, and community-driven growth." />
-      <meta property="og:url" content="https://aipowergrid.io" />
-      <meta property="og:image" content="https://aipowergrid.io/Banner-Backgrounds/aipg%20Wallpaper%20V3%20(57).png" />
-      
-      <meta name="twitter:card" content="summary_large_image" />
-      <meta name="twitter:title" content="AI Power Grid - Democratizing Open Source Generative AI" />
-      <meta name="twitter:description" content="Revolutionizing the AI landscape with open access to blockchain-validated and incentivized generative AI models, fostering adoption, innovation, creativity, and community-driven growth." />
-      <meta name="twitter:image" content="https://aipowergrid.io/Banner-Backgrounds/aipg%20Wallpaper%20V3%20(57).png" />
-      <meta property="twitter:domain" content="aipowergrid.io" />
-      <meta property="twitter:url" content="https://aipowergrid.io" />
-      
+      <meta name="theme-color" content="#0a0a0b" />
       <link rel="icon" href="/favicon.ico" />
+      <link rel="preconnect" href="https://fonts.googleapis.com" />
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
     </>
   ),
 
   footer: {
-    text: 'AI Power Grid Documentation - Democratizing Open Source Generative AI',
+    text: (
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', width: '100%' }}>
+        <div style={{ display: 'flex', gap: '1.5rem', justifyContent: 'center', flexWrap: 'wrap' }}>
+          <a href="https://aipowergrid.io" target="_blank" rel="noopener noreferrer" style={{ color: 'hsl(240, 5%, 64.9%)' }}>Home</a>
+          <a href="https://aipg.art" target="_blank" rel="noopener noreferrer" style={{ color: 'hsl(240, 5%, 64.9%)' }}>Art</a>
+          <a href="https://aipg.chat" target="_blank" rel="noopener noreferrer" style={{ color: 'hsl(240, 5%, 64.9%)' }}>Chat</a>
+          <a href="https://discord.gg/W9D8j6HCtC" target="_blank" rel="noopener noreferrer" style={{ color: 'hsl(240, 5%, 64.9%)' }}>Discord</a>
+          <a href="https://github.com/AIPowerGrid" target="_blank" rel="noopener noreferrer" style={{ color: 'hsl(240, 5%, 64.9%)' }}>GitHub</a>
+          <a href="https://twitter.com/aipowergrid" target="_blank" rel="noopener noreferrer" style={{ color: 'hsl(240, 5%, 64.9%)' }}>Twitter</a>
+        </div>
+        <div style={{ textAlign: 'center', color: 'hsl(240, 5%, 50%)' }}>
+          {new Date().getFullYear()} © AI Power Grid. Built on Base.
+        </div>
+      </div>
+    ),
   },
+
+  sidebar: {
+    defaultMenuCollapseLevel: 1,
+    toggleButton: true,
+  },
+
+  toc: {
+    backToTop: true,
+  },
+
+  editLink: {
+    text: 'Edit this page on GitHub →',
+  },
+
+  feedback: {
+    content: 'Questions? Join Discord →',
+    labels: 'feedback',
+  },
+
+  navigation: {
+    prev: true,
+    next: true,
+  },
+
+  gitTimestamp: ({ timestamp }) => (
+    <span>Last updated: {timestamp.toLocaleDateString()}</span>
+  ),
 }
 
 export default config
