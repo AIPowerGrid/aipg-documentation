@@ -149,7 +149,7 @@ const config: DocsThemeConfig = {
   },
 
   toc: {
-    backToTop: true,
+    float: true,
   },
 
   editLink: {
