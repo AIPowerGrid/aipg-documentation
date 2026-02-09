@@ -1,0 +1,277 @@
+# Media Worker
+
+Generate images, video, and audio on The Grid. Earn AIPG for powering AI art and media creation.
+
+---
+
+## What It Does
+
+The Media Worker connects your GPU to The Grid for media generation:
+
+- **Images** - Flux, SDXL, Stable Diffusion
+- **Video** - AI video generation (coming soon: expanded support)
+- **Audio** - Sound and music generation (coming soon)
+
+When users generate at aipg.art or via API, your worker creates the media and you earn AIPG.
+
+---
+
+## Requirements
+
+### Hardware
+
+| Component | Minimum | Recommended |
+|-----------|---------|-------------|
+| **GPU** | NVIDIA 6 GB VRAM | NVIDIA 12 GB+ VRAM |
+| **System RAM** | 8 GB | 16 GB+ |
+| **Storage** | 50 GB free | 100 GB+ SSD |
+
+### VRAM by Model
+
+| Model | VRAM | Quality |
+|-------|------|---------|
+| **SD 1.5** | 6 GB | Good, fast, huge LoRA ecosystem |
+| **SDXL** | 8 GB | High quality, 1024px native |
+| **Flux Schnell** | 12 GB | Fast, excellent quality |
+| **Flux Dev** | 12 GB | Best quality, slower |
+| **Video models** | 16-32 GB | 5-14 second clips |
+
+### Software
+
+- Docker Desktop
+- Node.js 18+
+- Grid API key
+
+---
+
+## Setup
+
+### 1. Get an API Key
+
+1. Go to [dashboard.aipowergrid.io](https://dashboard.aipowergrid.io)
+2. Create an account
+3. Generate an API key
+
+### 2. Clone the Repository
+
+```bash
+git clone https://github.com/AIPowerGrid/grid-media-worker
+cd grid-media-worker
+```
+
+### 3. Configure
+
+```bash
+cp .env.example .env
+```
+
+Edit `.env` and add your API key:
+
+```bash
+GRID_API_KEY=your-api-key-here
+```
+
+### 4. Start
+
+```bash
+./start.sh
+```
+
+**First run takes 45-60 minutes** - downloads models, builds Docker containers.
+
+Subsequent launches: under 2 minutes.
+
+### 5. Select Models
+
+Once running, open the web UI or desktop app:
+- Choose which models to host based on your VRAM
+- Click "Start Hosting"
+
+Your worker is now live on The Grid.
+
+---
+
+## Supported Models
+
+### Image Generation
+
+| Model | VRAM | Speed | Quality | Notes |
+|-------|------|-------|---------|-------|
+| **SD 1.5** | 6 GB | Fast | Good | Huge LoRA/checkpoint ecosystem |
+| **SDXL** | 8 GB | Medium | Great | 1024px native, good details |
+| **Flux Schnell** | 12 GB | Fast | Excellent | Best speed/quality ratio |
+| **Flux Dev** | 12 GB | Slow | Best | Highest quality output |
+
+### ControlNet & Extras
+
+- **ControlNet** - Canny, Depth, Pose, etc.
+- **LoRA** - Style and character adapters
+- **Inpainting** - Edit regions of images
+- **Upscaling** - 4x resolution enhancement
+
+### Video (Expanding)
+
+| Model | VRAM | Output |
+|-------|------|--------|
+| Video models | 16-32 GB | 5-14 second clips |
+
+### Audio (Coming Soon)
+
+Music and sound generation support planned.
+
+---
+
+## Earning Rewards
+
+### How It Works
+
+1. Your worker connects to The Grid
+2. User requests an image at aipg.art or API
+3. The Grid routes the job to your worker
+4. Your GPU generates the image
+5. You earn AIPG for the completed job
+
+### Reward Factors
+
+- **Image size** - Larger images = more compute = more reward
+- **Steps** - More steps = more compute
+- **Model complexity** - Flux vs SD 1.5
+- **Speed** - Faster completions = more jobs/hour
+- **Uptime** - Consistent availability
+- **Competition** - Fewer workers = more jobs for you
+
+### What Earns Most
+
+1. **Flux models** - High demand, good rewards
+2. **SDXL** - Popular, solid earnings
+3. **Video** - Higher compute = higher rewards
+4. **Batch jobs** - Multiple images per request
+
+### Bonded Workers
+
+Optionally bond AIPG for priority:
+
+- Higher priority job routing
+- Required for some premium jobs (future)
+- Bonding is NOT required to start earning
+
+---
+
+## Configuration
+
+### Environment Variables
+
+```bash
+# .env file
+GRID_API_KEY=your-api-key
+MODELS=flux-schnell,sdxl    # Comma-separated
+MAX_CONCURRENT_JOBS=1        # Based on VRAM
+```
+
+### Docker Resources
+
+Make sure Docker has enough resources:
+- **Memory**: 8 GB minimum, 16 GB recommended
+- **CPU**: 4+ cores
+- **Disk**: 50 GB+ for models
+
+### Multiple GPUs
+
+Run separate worker instances per GPU:
+
+```bash
+# GPU 0
+CUDA_VISIBLE_DEVICES=0 ./start.sh
+
+# GPU 1 (different terminal)
+CUDA_VISIBLE_DEVICES=1 ./start.sh
+```
+
+---
+
+## Best Practices
+
+### Maximize Earnings
+
+- **Host Flux** - Highest demand right now
+- **Stay online 24/7** - More uptime = more jobs
+- **Fast GPU** - RTX 4090 crushes jobs quickly
+- **Good internet** - Fast uploads for results
+- **Multiple models** - More variety = more job types
+
+### Stability
+
+- **Monitor VRAM** - Don't overcommit
+- **Check Docker logs** - `docker logs <container>`
+- **Update regularly** - Pull latest worker version
+- **Restart weekly** - Keeps things fresh
+
+### Hardware Tips
+
+| GPU | VRAM | What to Run |
+|-----|------|-------------|
+| RTX 3060 | 12 GB | Flux Schnell, SDXL |
+| RTX 3080 | 10 GB | SDXL, SD 1.5 |
+| RTX 3090 | 24 GB | Everything including video |
+| RTX 4080 | 16 GB | Flux, SDXL, some video |
+| RTX 4090 | 24 GB | Everything, fast |
+
+**Cloud options:** Runpod, Vast.ai work great for this.
+
+---
+
+## Troubleshooting
+
+**Docker won't start:**
+- Make sure Docker Desktop is running
+- Check Docker has enough memory allocated
+- Try `docker system prune` to free space
+
+**Out of VRAM:**
+- Host fewer models simultaneously
+- Choose smaller models (SD 1.5 vs Flux)
+- Close other GPU applications
+- Restart the worker
+
+**Build fails:**
+- Check Node.js version (18+)
+- Delete `node_modules` and reinstall
+- Check Docker disk space
+
+**No jobs coming in:**
+- Normal during low-traffic periods
+- Verify worker shows online in dashboard
+- Make sure you're hosting popular models (Flux, SDXL)
+
+**Slow generation:**
+- Check GPU utilization (should be high during jobs)
+- Ensure no other processes using GPU
+- Consider faster GPU
+
+**Network errors:**
+- Check internet connection
+- Verify API key is correct
+- Check firewall isn't blocking
+
+---
+
+## Model Registration
+
+All models on The Grid are registered in the **ModelVault** contract on Base mainnet. This ensures:
+
+- Only verified models can be hosted
+- Model metadata (VRAM, capabilities) is on-chain
+- Workers can't serve unauthorized models
+
+You don't need to worry about this—the worker handles it automatically.
+
+---
+
+## Links
+
+| Resource | URL |
+|----------|-----|
+| **Repository** | [github.com/AIPowerGrid/grid-media-worker](https://github.com/AIPowerGrid/grid-media-worker) |
+| **Get API Key** | [dashboard.aipowergrid.io](https://dashboard.aipowergrid.io) |
+| **Generate Images** | [aipg.art](https://aipg.art) |
+| **Discord** | [discord.gg/W9D8j6HCtC](https://discord.gg/W9D8j6HCtC) |
