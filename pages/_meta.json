@@ -1,13 +1,24 @@
 {
   "index": "Introduction",
+  "grid-overview": "The Grid",
+  "generate": "Generate AI",
+  "workers": "Run a Worker",
+  "staking": "Staking",
+  "arc20_token_network": "Token Factory",
+  "developers": "For Developers",
+  "---": {
+    "type": "separator"
+  },
   "tokenomics": "Tokenomics",
-  "arc20_token_network": "ARC20 Token Network",
   "whitepaper": "Whitepaper",
   "ai-power-grid-whitepaper": {
     "title": "AI Power Grid Whitepaper",
     "display": "hidden"
   },
-  "ai-workers": "AI Workers",
+  "ai-workers": {
+    "title": "AI Workers (Legacy)",
+    "display": "hidden"
+  },
   "about": {
     "title": "About",
     "type": "page"

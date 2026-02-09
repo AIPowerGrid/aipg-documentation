@@ -1,0 +1,295 @@
+# For Developers
+
+Build on The Grid. Access decentralized AI inference, launch tokens, and integrate with the AIPG ecosystem.
+
+---
+
+## Quick Start
+
+1. **Get an API key** at [dashboard.aipowergrid.io](https://dashboard.aipowergrid.io)
+2. **Install the SDK** or call the API directly
+3. **Generate AI** in your app
+
+```javascript
+import { GridClient } from '@aipowergrid/sdk';
+
+const grid = new GridClient({ apiKey: 'your-api-key' });
+
+const image = await grid.generate({
+  prompt: 'a cyberpunk city at night',
+  model: 'flux-schnell'
+});
+
+console.log(image.url);
+```
+
+---
+
+## SDK
+
+The official Grid SDK for JavaScript/TypeScript.
+
+**Repository:** [github.com/AIPowerGrid/grid-sdk](https://github.com/AIPowerGrid/grid-sdk)
+
+### Installation
+
+```bash
+npm install @aipowergrid/sdk
+```
+
+### Image Generation
+
+```javascript
+import { GridClient } from '@aipowergrid/sdk';
+
+const grid = new GridClient({ apiKey: process.env.GRID_API_KEY });
+
+// Basic generation
+const result = await grid.generate({
+  prompt: 'a robot painting a sunset',
+  model: 'flux-schnell',
+  width: 1024,
+  height: 1024
+});
+
+// With more options
+const result = await grid.generate({
+  prompt: 'detailed portrait of a wizard',
+  negativePrompt: 'blurry, low quality',
+  model: 'sdxl',
+  width: 1024,
+  height: 1024,
+  steps: 30,
+  cfg: 7.5,
+  sampler: 'euler',
+  seed: 12345  // For reproducibility
+});
+```
+
+### Text Generation
+
+```javascript
+const response = await grid.chat({
+  model: 'llama3',
+  messages: [
+    { role: 'user', content: 'Explain quantum computing simply' }
+  ]
+});
+
+console.log(response.content);
+```
+
+---
+
+## API
+
+Direct REST API access for any language.
+
+### Endpoints
+
+| Endpoint | Purpose |
+|----------|---------|
+| **api.aipowergrid.io** | Main API |
+| **dashboard.aipowergrid.io** | Get API keys, view stats |
+
+### Authentication
+
+```bash
+curl -H "Authorization: Bearer YOUR_API_KEY" \
+  https://api.aipowergrid.io/v1/generate
+```
+
+### Image Generation
+
+```bash
+curl -X POST https://api.aipowergrid.io/v1/generate \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "prompt": "a dragon flying over mountains",
+    "model": "flux-schnell",
+    "width": 1024,
+    "height": 1024
+  }'
+```
+
+### Check Status
+
+```bash
+curl https://api.aipowergrid.io/v1/status \
+  -H "Authorization: Bearer YOUR_API_KEY"
+```
+
+---
+
+## Discord Bots
+
+Pre-built bots powered by The Grid that you can run or fork.
+
+### Image Bot
+
+Generate images in Discord with slash commands.
+
+**Repository:** [github.com/AIPowerGrid/grid-discord-image-bot](https://github.com/AIPowerGrid/grid-discord-image-bot)
+
+```
+/generate a sunset over the ocean
+```
+
+### News Bot
+
+AI-powered news aggregation and summaries.
+
+**Repository:** [github.com/AIPowerGrid/grid-discord-news-bot](https://github.com/AIPowerGrid/grid-discord-news-bot)
+
+### Aigarth Chatbot
+
+Conversational AI bot with personality.
+
+**Repository:** [github.com/AIPowerGrid/aigarth-chatbot](https://github.com/AIPowerGrid/aigarth-chatbot)
+
+---
+
+## Token Factory
+
+Launch your own AI-powered token with built-in access to The Grid.
+
+**[Read the full Token Factory documentation →](/arc20_token_network)**
+
+### What You Get
+
+- Deploy an ERC-20 on Base
+- Your token = compute credits for AI generation
+- Revenue share from usage
+- Access to all Grid models and workers
+
+### Use Cases
+
+- **AI art platform** with its own token economy
+- **AI agents** with on-chain treasuries
+- **Subscription tokens** for AI tool access
+- **Game economies** with AI asset generation
+
+The Token Factory is an incubator—you get your own crypto project AND access to the largest decentralized inference network.
+
+---
+
+## Smart Contracts
+
+All contracts are deployed on **Base Mainnet** (Chain ID: 8453).
+
+### Core Contracts
+
+| Contract | Address | Purpose |
+|----------|---------|---------|
+| **AIPG Token** | `0xa1c0deCaFE3E9Bf06A5F29B7015CD373a9854608` | ERC-20 token (150M fixed supply) |
+| **StakingVault** | `0x3ED14A6D5A48614D77f313389611410d38fd8277` | Stake AIPG, earn rewards |
+| **Grid Proxy** | `0x79F39f2a0eA476f53994812e6a8f3C8CFe08c609` | Main entry point for Grid modules |
+
+### Grid Modules
+
+The Grid uses a modular architecture. All modules are accessed through the Grid Proxy address.
+
+| Module | Address | Purpose |
+|--------|---------|---------|
+| **ModelVault** | `0xf2A3bA5C4b56E85e022c5079B645120CE7B6d199` | AI model registry |
+| **RecipeVault** | `0x58Dc9939FA30C6DE76776eCF24517721D53A9eA0` | Workflow storage |
+| **JobAnchor** | `0x1aee3a3e4F2C05814d86cF2426Cf20Ed5c1bfa32` | On-chain job verification |
+| **WorkerRegistry** | `0x0a3075b1787070210483d3e4845fE58d41c28438` | Worker registration |
+| **RoleManager** | `0x59144e0730638f652B9717379c5CA634da7CE926` | Access control |
+
+### Reading Contract Data
+
+```javascript
+import { ethers } from 'ethers';
+
+const provider = new ethers.JsonRpcProvider('https://mainnet.base.org');
+
+// Get AIPG token info
+const aipg = new ethers.Contract(
+  '0xa1c0deCaFE3E9Bf06A5F29B7015CD373a9854608',
+  ['function totalSupply() view returns (uint256)',
+   'function balanceOf(address) view returns (uint256)'],
+  provider
+);
+
+const supply = await aipg.totalSupply();
+console.log('Total Supply:', ethers.formatEther(supply));
+
+// Get staking info
+const staking = new ethers.Contract(
+  '0x3ED14A6D5A48614D77f313389611410d38fd8277',
+  ['function totalSupply() view returns (uint256)',
+   'function rewardRate() view returns (uint256)',
+   'function earned(address) view returns (uint256)'],
+  provider
+);
+
+const totalStaked = await staking.totalSupply();
+console.log('Total Staked:', ethers.formatEther(totalStaked));
+```
+
+### Reading Model Data
+
+```javascript
+// ModelVault - get registered models
+const grid = new ethers.Contract(
+  '0x79F39f2a0eA476f53994812e6a8f3C8CFe08c609',
+  ['function getModel(uint256 modelId) view returns (tuple(bytes32 modelHash, uint8 modelType, string fileName, string name, string version, string ipfsCid, string downloadUrl, uint256 sizeBytes, string quantization, string format, uint32 vramMB, string baseModel, bool inpainting, bool img2img, bool controlnet, bool lora, bool isActive, bool isNSFW, uint256 timestamp, address creator))',
+   'function getModelCount() view returns (uint256)'],
+  provider
+);
+
+const modelCount = await grid.getModelCount();
+const model = await grid.getModel(1);
+console.log('Model:', model.name, model.version);
+```
+
+---
+
+## Network Info
+
+| Property | Value |
+|----------|-------|
+| **Network** | Base Mainnet |
+| **Chain ID** | 8453 |
+| **RPC** | `https://mainnet.base.org` |
+| **Explorer** | [basescan.org](https://basescan.org) |
+| **Currency** | ETH (for gas) |
+
+### Add Base to Wallet
+
+```javascript
+await window.ethereum.request({
+  method: 'wallet_addEthereumChain',
+  params: [{
+    chainId: '0x2105',
+    chainName: 'Base',
+    nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
+    rpcUrls: ['https://mainnet.base.org'],
+    blockExplorerUrls: ['https://basescan.org']
+  }]
+});
+```
+
+---
+
+## GitHub Repositories
+
+| Repo | Purpose |
+|------|---------|
+| [grid-sdk](https://github.com/AIPowerGrid/grid-sdk) | JavaScript/TypeScript SDK |
+| [grid-media-worker](https://github.com/AIPowerGrid/grid-media-worker) | Image/video worker |
+| [grid-inference-worker](https://github.com/AIPowerGrid/grid-inference-worker) | Text/LLM worker |
+| [grid-rewards-sentry](https://github.com/AIPowerGrid/grid-rewards-sentry) | Reward tracking |
+| [grid-discord-image-bot](https://github.com/AIPowerGrid/grid-discord-image-bot) | Discord image bot |
+| [grid-discord-news-bot](https://github.com/AIPowerGrid/grid-discord-news-bot) | Discord news bot |
+| [aigarth-chatbot](https://github.com/AIPowerGrid/aigarth-chatbot) | Discord chatbot |
+
+---
+
+## Support
+
+- **Discord:** [discord.gg/W9D8j6HCtC](https://discord.gg/W9D8j6HCtC)
+- **GitHub Issues:** Open issues on the relevant repo
+- **API Status:** [api.aipowergrid.io](https://api.aipowergrid.io)

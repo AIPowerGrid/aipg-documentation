@@ -1,0 +1,239 @@
+# Run a Worker
+
+Contribute your GPU to The Grid and earn AIPG for processing AI generation requests.
+
+---
+
+## Two Types of Workers
+
+| Worker | What It Does | Models | Repository |
+|--------|--------------|--------|------------|
+| **Inference Worker** | Text generation, LLM chat | Ollama models (Llama, Mistral, etc.) | [grid-inference-worker](https://github.com/AIPowerGrid/grid-inference-worker) |
+| **Media Worker** | Image, video, audio generation | Flux, SDXL, SD 1.5, video models | [grid-media-worker](https://github.com/AIPowerGrid/grid-media-worker) |
+
+Choose based on your hardware and what you want to host.
+
+---
+
+## VRAM Guide
+
+Your GPU's VRAM determines which models you can run:
+
+| VRAM | Rating | What You Can Run |
+|------|--------|------------------|
+| **6-8 GB** | Entry | SD 1.5, small LLMs |
+| **12 GB** | Good | SDXL, Flux Schnell, medium LLMs |
+| **24 GB** | Great | Flux Dev, larger LLMs, some video |
+| **32-48 GB** | Excellent | Multiple models, video generation |
+| **48-80+ GB** | Stellar | Everything, large LLMs, multi-model |
+
+**Note:** Large LLMs (70B+ parameters) can require 100+ GB VRAM. Most consumer hardware is better suited for the Media Worker (image generation) or smaller inference models.
+
+---
+
+## Media Worker
+
+Generate images, video, and audio (coming soon) for The Grid.
+
+### Requirements
+
+**Hardware:**
+- NVIDIA GPU with 6GB+ VRAM
+- 50GB+ free disk space
+- 8GB+ system RAM
+
+**Software:**
+- Docker Desktop
+- Node.js 18+
+- Grid API key
+
+### Setup
+
+1. **Get an API key**
+   - Go to [dashboard.aipowergrid.io](https://dashboard.aipowergrid.io)
+   - Create an account and generate a key
+
+2. **Clone the repo**
+   ```bash
+   git clone https://github.com/AIPowerGrid/grid-media-worker
+   cd grid-media-worker
+   ```
+
+3. **Configure**
+   - Copy `.env.example` to `.env`
+   - Add your API key
+
+4. **Start**
+   ```bash
+   ./start.sh
+   ```
+   First build takes 45-60 minutes (downloads models, builds containers).
+   Subsequent launches: under 2 minutes.
+
+5. **Select models**
+   - Open the web UI or desktop app
+   - Choose which models to host based on your VRAM
+   - Click "Start Hosting"
+
+### Supported Models
+
+| Model | VRAM | Type |
+|-------|------|------|
+| Stable Diffusion 1.5 | 6 GB | Image |
+| SDXL | 8 GB | Image |
+| Flux Schnell | 12 GB | Image |
+| Flux Dev | 12 GB | Image |
+| Video models | 16-32 GB | Video (5-14 sec clips) |
+
+Models are registered in the ModelVault contract on Base mainnet—only verified models can be hosted.
+
+---
+
+## Inference Worker
+
+Run LLMs for text generation and chat.
+
+### Requirements
+
+**Hardware:**
+- GPU with sufficient VRAM for your chosen models
+- Or CPU-only for smaller models (slower)
+
+**Software:**
+- Python 3.9+
+- Ollama (auto-installed via setup)
+- Grid API key
+
+### Setup
+
+1. **Get an API key**
+   - Go to [dashboard.aipowergrid.io](https://dashboard.aipowergrid.io)
+
+2. **Install**
+   ```bash
+   pip install grid-inference-worker
+   ```
+
+3. **Run setup wizard**
+   ```bash
+   grid-inference-worker setup
+   ```
+   Opens at `http://localhost:7861`
+
+4. **Configure**
+   - Select your Ollama model
+   - Enter your Grid API key
+   - Start the worker
+
+### Supported Models
+
+Any Ollama-compatible model:
+- Llama 2, Llama 3
+- Mistral, Mixtral
+- Qwen
+- Code Llama
+- And many more
+
+Future backends planned: vLLM, SGLang, LMDeploy.
+
+---
+
+## Earning Rewards
+
+Workers earn AIPG for completed jobs.
+
+### How It Works
+
+1. You start your worker and it connects to The Grid
+2. Users submit generation requests
+3. The Grid routes jobs to available workers
+4. Your worker completes the job
+5. You earn AIPG rewards
+
+### Reward Factors
+
+Rewards depend on:
+- **How many workers are online** - Less competition = more jobs for you
+- **How much work you do** - More completions = more rewards
+- **Job complexity** - Larger images, longer videos = higher rewards
+- **Uptime** - Consistent availability gets more jobs
+
+Rewards are tracked by [grid-rewards-sentry](https://github.com/AIPowerGrid/grid-rewards-sentry).
+
+### Bonded Workers
+
+You can optionally **bond AIPG** to become a trusted worker.
+
+**Benefits:**
+- Higher priority for job assignments
+- Signal commitment to the network
+- Required for some premium job types (future)
+
+**How to bond:**
+- Stake AIPG in the WorkerRegistry contract
+- Bonding is NOT required to start earning
+- You can unbond and withdraw anytime (if not slashed)
+
+**Slashing:**
+Workers who misbehave (return bad results, go offline mid-job) can have their bond slashed by admins.
+
+---
+
+## Best Practices
+
+### Maximize Earnings
+
+- **Host popular models** - Flux and SDXL get the most requests
+- **Stay online** - Consistent uptime = consistent work
+- **Fast hardware** - Quicker completions = more jobs/hour
+- **Good internet** - Fast uploads for results
+
+### Keep It Stable
+
+- **Monitor your worker** - Check logs for errors
+- **Don't overcommit VRAM** - Leave headroom for stability
+- **Update regularly** - Pull latest worker versions
+- **Restart if needed** - Workers can be stopped/started anytime
+
+### Hardware Tips
+
+- **Consumer GPUs work fine** - RTX 3080, 3090, 4080, 4090 all great
+- **Multi-GPU setups** - Run separate workers per GPU
+- **Cloud GPUs** - Runpod, Vast.ai, etc. work too
+- **Cooling matters** - 24/7 operation needs good thermals
+
+---
+
+## Troubleshooting
+
+**Worker won't connect:**
+- Check your API key is valid
+- Verify internet connectivity
+- Check firewall isn't blocking
+
+**Out of VRAM:**
+- Host fewer/smaller models
+- Close other GPU applications
+- Check for memory leaks, restart worker
+
+**No jobs coming in:**
+- Normal during low-traffic periods
+- Check that you're hosting in-demand models
+- Verify worker is showing as online in dashboard
+
+**Docker issues (Media Worker):**
+- Make sure Docker Desktop is running
+- Check Docker has enough resources allocated
+- Try `docker system prune` to free space
+
+---
+
+## Links
+
+| Resource | URL |
+|----------|-----|
+| Media Worker | [github.com/AIPowerGrid/grid-media-worker](https://github.com/AIPowerGrid/grid-media-worker) |
+| Inference Worker | [github.com/AIPowerGrid/grid-inference-worker](https://github.com/AIPowerGrid/grid-inference-worker) |
+| Get API Key | [dashboard.aipowergrid.io](https://dashboard.aipowergrid.io) |
+| Rewards Sentry | [github.com/AIPowerGrid/grid-rewards-sentry](https://github.com/AIPowerGrid/grid-rewards-sentry) |
+| Discord | [discord.gg/W9D8j6HCtC](https://discord.gg/W9D8j6HCtC) |

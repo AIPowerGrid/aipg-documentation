@@ -1,21 +1,419 @@
-# ARC20: Redefining Decentralized AI Development 
+# Token Factory: Launch AI-Powered Tokens on Base
 
-In the coming months we will be transforming blockchain and AI integration with our token standard ARC20, a game changing step forward towards our vision of democratizing #GenAI. ARC20 will be the backbone of an open, decentralized ecosystem where groundbreaking AI applications will be built by developers that share our vision.
+Deploy tokens that are **backed by real AI compute** from day one. Your token isn't just a ticker—it's a key to the AIPG network.
 
-## Why ARC20?
+---
 
-ARC20 tokens will serve as the foundation for any app, website, or front-ends that harness our powerful AI text and image generation network. This framework empowers developers to create cutting edge and AI driven products while directly benefiting from the robust token economy that we are currently building.
+## The Problem
 
-## Developer Incentives
+Launching a token today means:
+- Deploying a generic ERC-20 with no utility
+- Building your own infrastructure from scratch
+- Convincing users your token does something
+- No connection to real services or compute
 
-Similar to how our emissions model will incentivize AI workers running our generative network, ARC20 tokens will reward developers with tokenized ownership of their apps. This alignment of economic incentives fuels innovation, ensuring developers benefit directly from the value they create.
+Most tokens ship with a promise and a roadmap. Yours ships with **working AI infrastructure**.
 
-## Open DEX Framework
+---
 
-The ARC20 standard also enables a truly open decentralized exchange ecosystem, where each token trades independently, representing the intrinsic value of its associated AI-powered project. Developers can seamlessly build and operate DEXs tailored to their needs and AIPG will initially run a DEX where Grid tokens will be traded.
+## What You Get
 
-## The Vision
+When you deploy through AIPG's Token Factory, your token is wired into a production AI network from block one:
 
-By combining blockchain's transparency with AI's transformative power, we're creating an ecosystem where developers, AI workers, and end-users collaborate in a mutually beneficial cycle of innovation and reward.
+| Capability | Description |
+|------------|-------------|
+| **Grid Access** | Your users can pay for AI compute with your token |
+| **Model Registry** | Access 50+ registered AI models (Flux, SDXL, LLMs) |
+| **Recipe Library** | Thousands of ComfyUI workflows ready to use |
+| **Worker Network** | Decentralized GPU workers fulfill jobs |
+| **Job Anchoring** | On-chain Merkle proofs for every generation |
+| **Revenue Share** | Earn AIPG when your token is used for compute |
 
-This will be more than just a token standard—it's going to be foundation for a new era of decentralized, AI-powered applications.
+Your token becomes a **compute credit** for real AI services.
+
+---
+
+## How It Works
+
+### 1. Deploy Your Token
+
+Choose a template and configure:
+
+```
+Token Name:       MyAIToken
+Symbol:           MAIT
+Supply:           100,000,000
+Compute Ratio:    1 MAIT = 0.1 AIPG worth of compute
+Revenue Split:    80% to your treasury, 20% to AIPG network
+```
+
+The factory deploys your token with built-in hooks to the AIPG Grid.
+
+### 2. Users Spend Your Token
+
+When someone uses your token for AI generation:
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│  User pays 10 MAIT for image generation                     │
+├─────────────────────────────────────────────────────────────┤
+│  → MAIT is burned or sent to your treasury (configurable)   │
+│  → Grid receives job request with payment proof             │
+│  → Worker generates image using registered model            │
+│  → Result anchored on-chain with Merkle proof               │
+│  → User receives deterministic, verifiable output           │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### 3. Revenue Flows Back
+
+Every job creates value:
+
+- **Your Treasury**: Receives the MAIT spent (or burn reduces supply)
+- **GPU Workers**: Earn AIPG for compute work
+- **AIPG Network**: Protocol fee sustains infrastructure
+- **Your Holders**: Token has real utility = real demand
+
+---
+
+## Token Templates
+
+### Compute Credit Token
+
+For projects that want a dedicated AI compute currency.
+
+- Users buy your token to access AI features
+- Token is burned on use (deflationary)
+- Price discovery based on compute demand
+- Example: An AI art platform with its own economy
+
+### Access Token
+
+For projects that want subscription-style access.
+
+- Holding X tokens unlocks AI features
+- No burning—just holding requirement
+- Tiered access based on balance
+- Example: AI tool suite with membership tiers
+
+### Hybrid Token
+
+For projects that want staking + compute.
+
+- Stake tokens to earn compute credits
+- Unstaked tokens can pay for compute directly
+- Dual utility: passive yield + active use
+- Example: AI agent that rewards long-term holders
+
+### Agent Token
+
+For autonomous AI agents with on-chain treasuries.
+
+- Agent controls its own wallet
+- Earns revenue from services
+- Spends on compute to fulfill tasks
+- Example: Trading bot, content generator, research agent
+
+---
+
+## Integration Architecture
+
+Your token plugs into AIPG's existing production contracts:
+
+```
+┌────────────────────────────────────────────────────────────────────┐
+│                        YOUR TOKEN                                  │
+│  (ERC-20 deployed via Token Factory)                               │
+└─────────────────────────────┬──────────────────────────────────────┘
+                              │
+                              ▼
+┌────────────────────────────────────────────────────────────────────┐
+│                     PAYMENT ROUTER                                 │
+│  Converts your token → compute credits                             │
+│  Handles burns, treasury splits, revenue share                     │
+└─────────────────────────────┬──────────────────────────────────────┘
+                              │
+                              ▼
+┌────────────────────────────────────────────────────────────────────┐
+│                    AIPG GRID (Diamond Proxy)                       │
+│  0x79F39f2a0eA476f53994812e6a8f3C8CFe08c609                        │
+├────────────────────────────────────────────────────────────────────┤
+│                                                                    │
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐  ┌────────────┐ │
+│  │ ModelVault  │  │ RecipeVault │  │  JobAnchor  │  │  Worker    │ │
+│  │             │  │             │  │             │  │  Registry  │ │
+│  │ 50+ models  │  │ Workflows   │  │ Merkle      │  │            │ │
+│  │ registered  │  │ stored      │  │ proofs      │  │ GPU nodes  │ │
+│  └─────────────┘  └─────────────┘  └─────────────┘  └────────────┘ │
+│                                                                    │
+└────────────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌────────────────────────────────────────────────────────────────────┐
+│                      GPU WORKER NETWORK                            │
+│  Decentralized nodes running Flux, SDXL, LLMs                      │
+│  Bonded with AIPG stake, slashable for misbehavior                 │
+└────────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## Technical Details
+
+### Token Contract
+
+Factory-deployed tokens include:
+
+```solidity
+interface IFactoryToken {
+    // Standard ERC-20
+    function transfer(address to, uint256 amount) external returns (bool);
+    function approve(address spender, uint256 amount) external returns (bool);
+
+    // Compute integration
+    function computeBalance(address user) external view returns (uint256);
+    function spendForCompute(uint256 amount, bytes32 jobId) external;
+
+    // Revenue tracking
+    function totalComputeSpent() external view returns (uint256);
+    function totalRevenue() external view returns (uint256);
+
+    // Factory metadata
+    function computeRatio() external view returns (uint256);
+    function revenueRecipient() external view returns (address);
+}
+```
+
+### Payment Flow
+
+When a user spends your token for AI compute:
+
+1. **Authorization**: User approves PaymentRouter for their tokens
+2. **Job Submission**: User calls `submitJob(modelId, recipeId, params, paymentToken, amount)`
+3. **Payment Processing**: Router converts token amount to compute units
+4. **Token Handling**: Based on config—burned, sent to treasury, or split
+5. **Job Execution**: Grid assigns job to bonded worker
+6. **Completion**: Worker submits result, anchored via Merkle root
+7. **Settlement**: Worker earns AIPG, your treasury earns revenue share
+
+### Supported Models
+
+Your token holders get access to all registered models:
+
+| Category | Examples | Use Case |
+|----------|----------|----------|
+| **Image Gen** | Flux.1, SDXL, SD 1.5 | Text-to-image, img2img |
+| **ControlNet** | Canny, Depth, Pose | Guided generation |
+| **LoRA** | Style adapters, character models | Fine-tuned outputs |
+| **Inpainting** | Flux Inpaint, SDXL Inpaint | Edit regions |
+| **Upscale** | 4x-UltraSharp, ESRGAN | Resolution enhancement |
+| **LLM** | Llama, Mistral, Qwen | Text generation, chat |
+
+Models are registered in `ModelVault` with full metadata: VRAM requirements, supported features, constraints.
+
+### Workflows
+
+Recipes stored in `RecipeVault` define complete ComfyUI pipelines:
+
+- Multi-model compositions
+- ControlNet + LoRA stacking
+- Post-processing chains
+- Deterministic reproduction via stored parameters
+
+Your users can run any public recipe or create private ones.
+
+---
+
+## Economics
+
+### For Token Creators
+
+| Benefit | Details |
+|---------|---------|
+| **Instant Utility** | Token works from block 1 |
+| **Revenue Stream** | Earn on every compute job |
+| **No Infra Costs** | AIPG network handles compute |
+| **Deflationary Option** | Burn on use if desired |
+| **Network Effects** | More users = more demand |
+
+### For Token Holders
+
+| Benefit | Details |
+|---------|---------|
+| **Real Use Case** | Pay for AI with your bag |
+| **Price Support** | Utility creates buy pressure |
+| **Access to AI** | No API keys, no subscriptions |
+| **Verifiable Output** | On-chain proofs for every job |
+
+### Revenue Split Example
+
+```
+User pays 100 MYTOKEN for a Flux generation:
+
+┌─────────────────────────────────────────┐
+│ 100 MYTOKEN paid                        │
+├─────────────────────────────────────────┤
+│ → 80 MYTOKEN to your treasury           │
+│ → 10 MYTOKEN burned (supply reduction)  │
+│ → 10 MYTOKEN protocol fee (buys AIPG)   │
+├─────────────────────────────────────────┤
+│ Meanwhile:                              │
+│ → GPU worker earns 0.5 AIPG for job     │
+│ → Job anchored on-chain forever         │
+│ → User gets deterministic image         │
+└─────────────────────────────────────────┘
+```
+
+---
+
+## Deployment Flow
+
+### Step 1: Configure
+
+```bash
+# Via CLI or web interface
+aipg-factory create \
+  --name "MyAIToken" \
+  --symbol "MAIT" \
+  --supply 100000000 \
+  --compute-ratio 0.1 \
+  --burn-percent 10 \
+  --treasury 0xYourAddress \
+  --revenue-split 80
+```
+
+### Step 2: Deploy
+
+Factory deploys:
+- Your ERC-20 token contract
+- Payment routing configuration
+- Revenue split settings
+- Grid access permissions
+
+### Step 3: Integrate
+
+```javascript
+import { AIPGFactory } from '@aipowergrid/sdk';
+
+// Initialize your token
+const myToken = await AIPGFactory.connect(tokenAddress);
+
+// User generates an image
+await myToken.generateImage({
+  model: 'flux-schnell',
+  prompt: 'a robot painting a sunset',
+  paymentAmount: 10, // 10 MYTOKEN
+});
+
+// Check job status
+const job = await myToken.getJob(jobId);
+console.log(job.status, job.imageUrl, job.merkleProof);
+```
+
+### Step 4: Launch
+
+- Distribute tokens to users
+- They can immediately use for AI compute
+- Revenue flows to your treasury
+- Monitor usage via Grid events
+
+---
+
+## Use Cases
+
+### AI Art Platform
+
+Launch a token for your generative art community:
+- Artists pay with your token to create
+- NFT minting with on-chain provenance
+- Deflationary tokenomics via burn-on-mint
+- Revenue funds community grants
+
+### AI Agent Network
+
+Deploy tokens for autonomous agents:
+- Each agent has its own token treasury
+- Agents earn by providing services
+- Spend tokens on compute to fulfill tasks
+- Transparent on-chain economics
+
+### AI Tool Suite
+
+Subscription access to AI tools:
+- Hold tokens for tiered access
+- No per-use fees for holders
+- Staking unlocks premium features
+- Token buybacks from revenue
+
+### Game Economy
+
+In-game currency with AI generation:
+- Generate game assets with tokens
+- Verifiable scarcity via on-chain anchoring
+- Player-owned economy
+- AI NPCs powered by compute spending
+
+---
+
+## Security
+
+### Inherited from AIPG
+
+Your token benefits from AIPG's production infrastructure:
+
+- **Audited Contracts**: Core Grid contracts reviewed
+- **Access Control**: Role-based permissions throughout
+- **Reentrancy Guards**: All state changes protected
+- **Pausable**: Emergency stops on all contracts
+- **Bonded Workers**: GPU nodes stake AIPG, slashable
+
+### Factory-Specific
+
+- **Immutable Config**: Core parameters locked at deploy
+- **Revenue Routing**: Trustless splits via smart contracts
+- **Rate Limits**: Configurable spam protection
+- **Allowlists**: Optional restricted access
+
+---
+
+## Roadmap
+
+| Phase | Status | Features |
+|-------|--------|----------|
+| **Contracts** | In Development | Token factory, payment router |
+| **CLI Tool** | Planned | `aipg-factory` deployment tool |
+| **Web UI** | Planned | No-code token deployment |
+| **SDK** | Planned | JavaScript/Python integration |
+| **Templates** | Planned | Pre-built token configurations |
+
+---
+
+## Get Started
+
+The Token Factory is under active development. To get early access or discuss your project:
+
+- **Discord**: [Join the community](https://discord.gg/W9D8j6HCtC)
+- **GitHub**: [github.com/aipowergrid](https://github.com/aipowergrid)
+- **Twitter**: [@aipowergrid](https://twitter.com/aipowergrid)
+
+---
+
+## FAQ
+
+**Q: Do I need AIPG to launch a token?**
+A: No. You deploy your own token. AIPG is used internally for worker rewards, but your users only interact with your token.
+
+**Q: What chains are supported?**
+A: Base (mainnet) initially. Other L2s may be added based on demand.
+
+**Q: Can I migrate an existing token?**
+A: Yes. We can add compute hooks to existing ERC-20s via wrapper contracts.
+
+**Q: What's the cost to deploy?**
+A: Gas costs on Base (~$1-5) plus a one-time factory fee (TBD, likely small AIPG amount).
+
+**Q: How do workers get paid?**
+A: Workers always receive AIPG. The payment router handles conversion from your token.
+
+**Q: Can I run my own workers?**
+A: Yes. Register your GPUs in WorkerRegistry, bond AIPG, and earn from jobs paid in any factory token.

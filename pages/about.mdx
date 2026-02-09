@@ -1,83 +1,102 @@
-# About This Documentation
+# About AI Power Grid
 
-## Overview
+We're building the infrastructure for decentralized AI.
 
-This documentation serves as the official resource for information about the AI Power Grid project. It provides comprehensive details about the platform, tokenomics, technical implementations, and ecosystem components.
+---
 
-## Documentation System
+## The Mission
 
-### MDX Format
+Make AI accessible to everyone. No corporate gatekeepers. No API rate limits. No surveillance of your prompts. Just open-source models running on community hardware.
 
-These docs are written in MDX format, which combines the simplicity of Markdown with the power of JSX. This allows for:
+The Grid is what happens when you combine:
+- **GPU owners** who want to earn from their hardware
+- **Users** who want AI without the strings attached
+- **Developers** who want to build without platform risk
+- **Blockchain** to coordinate it all trustlessly
 
-- **Rich Content**: Standard Markdown syntax for headings, lists, links, and code blocks
-- **Dynamic Components**: Integration of React components within the documentation
-- **Interactive Elements**: Embedding of interactive elements like code playgrounds and diagrams
+---
 
-MDX enables us to create documentation that is both easy to write and highly functional, making complex technical concepts more accessible through visual and interactive elements.
+## What We've Built
 
-### Local Development
+### The Network
 
-You can run these docs locally on your machine to preview changes before submitting them:
+**The Grid** - A decentralized network of GPU workers running AI models. Text, images, video, and audio generation distributed across community hardware.
 
-1. Clone the repository: `git clone https://github.com/aipowergrid/aipg-documentation.git`
-2. Install dependencies: `pnpm install`
-3. Start the development server: `pnpm run dev`
-4. Access the docs at `http://localhost:3000`
+- **[aipg.art](https://aipg.art)** - AI art generation
+- **[aipg.chat](https://aipg.chat)** - LLM chat interface
+- **[API](https://dashboard.aipowergrid.io)** - Programmatic access
 
-Local development allows you to see how your changes will look in production before submitting them.
+### The Infrastructure
 
-### Continuous Deployment
+**Smart contracts on Base** - Model registry, workflow storage, job verification, worker bonding, staking rewards. All on-chain, all verifiable.
 
-Our documentation follows a continuous deployment model:
+- **ModelVault** - Registry of verified AI models
+- **RecipeVault** - Stored workflows for reproducible generation
+- **JobAnchor** - On-chain proofs for completed work
+- **StakingVault** - Stake AIPG, earn rewards
 
-- **Automatic Updates**: Pull requests merged into the main branch are automatically deployed to production
-- **Preview Deployments**: PRs generate preview links so changes can be reviewed before merging
-- **Version Control**: All documentation changes are tracked through Git, allowing for easy rollbacks and history tracking
+### The Token
 
-This approach ensures that the most up-to-date information is always available to users while maintaining a structured review process.
+**AIPG on Base L2** - 150M fixed supply, no inflation. Used for staking, worker rewards, and bonding.
 
-## Contributing
+---
 
-We welcome contributions from the community to improve these docs. Here's how you can contribute:
+## What We Believe
 
-### Making Changes
+**AI should be a utility, not a product.** Like electricity, it should be infrastructure anyone can tap into.
 
-1. **Fork the Repository**: Create your own copy of the documentation repository
-2. **Create a Branch**: Make a new branch for your changes
-3. **Make Edits**: Update or add content in the MDX files
-4. **Submit a PR**: Create a pull request with a clear description of your changes
+**Open source wins.** Closed models create dependency. Open models create possibility.
 
-### Contribution Guidelines
+**Decentralization matters.** Not as ideology, but as architecture. No single point of failure. No single point of control.
 
-When contributing to the documentation, please follow these guidelines:
+**Builders should own their stack.** If you build on a platform, you're at the platform's mercy. Build on The Grid, own your infrastructure.
 
-- **Be Clear and Concise**: Write in a clear, straightforward manner
-- **Follow Formatting**: Maintain consistent formatting with the rest of the documentation
-- **Add Value**: Ensure your changes add valuable information or improve clarity
-- **Include References**: Provide sources for technical claims where appropriate
-- **Test Locally**: Check that your changes render correctly locally before submitting
+---
 
-### Review Process
+## The Team
 
-All contributions go through a review process:
+AI Power Grid is built by a distributed team of developers, AI researchers, and crypto natives. We ship code, not promises.
 
-1. **Initial Review**: Maintainers will review your PR for accuracy and quality
-2. **Feedback**: You may receive feedback or requests for changes
-3. **Approval and Merge**: Once approved, your changes will be merged into the main branch
-4. **Deployment**: Merged changes are automatically deployed to the production site
+**Find us:**
+- **Discord:** [discord.gg/W9D8j6HCtC](https://discord.gg/W9D8j6HCtC)
+- **GitHub:** [github.com/AIPowerGrid](https://github.com/AIPowerGrid)
+- **Twitter:** [@aipowergrid](https://twitter.com/aipowergrid)
 
-## Documentation Structure
+---
 
-The documentation is organized into the following main sections:
+## Get Involved
 
-- **Introduction**: Overview of the AI Power Grid platform
-- **Tokenomics**: Details about AIPG token economics and emission schedule
-- **ARC20 Token Network**: Information about our token standard for AI applications
-- **Technical Documentation**: Deep dives into the technical implementations
-- **Guides and Tutorials**: Step-by-step instructions for users and developers
+### Use The Grid
+- Generate at [aipg.art](https://aipg.art) or [aipg.chat](https://aipg.chat)
+- Build with the [API](/developers)
 
-Each section is designed to be accessible to users with varying levels of technical expertise, from newcomers to experienced developers.
+### Run a Worker
+- Contribute your GPU and [earn AIPG](/workers)
 
+### Stake
+- [Stake AIPG](/staking) and earn rewards
 
-We're committed to continuously improving these docs to better serve the AI Power Grid community.
+### Build
+- Launch a token with the [Token Factory](/arc20_token_network)
+- Fork our repos and make them better
+- Join Discord and tell us what you're building
+
+---
+
+## Contributing to Docs
+
+These docs are open source. To contribute:
+
+1. Fork [github.com/AIPowerGrid/aipg-documentation](https://github.com/AIPowerGrid/aipg-documentation)
+2. Edit the MDX files
+3. Submit a pull request
+
+Run locally:
+```bash
+git clone https://github.com/aipowergrid/aipg-documentation.git
+cd aipg-documentation
+pnpm install
+pnpm dev
+```
+
+Docs are auto-deployed on merge to main.
