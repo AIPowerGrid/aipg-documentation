@@ -62,7 +62,7 @@ const config: DocsThemeConfig = {
         description: 'Documentation for The Grid - decentralized AI inference on Base.',
         images: [
           {
-            url: 'https://aipowergrid.io/Banner-Backgrounds/aipg%20Wallpaper%20V3%20(57).png',
+            url: 'https://docs.aipowergrid.io/og-image.webp',
             width: 1200,
             height: 630,
             alt: 'AI Power Grid'
@@ -81,6 +81,10 @@ const config: DocsThemeConfig = {
     <>
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       <meta name="theme-color" content="#0a0a0b" />
+      <meta property="og:image" content="https://docs.aipowergrid.io/og-image.webp" />
+      <meta property="og:image:width" content="1200" />
+      <meta property="og:image:height" content="630" />
+      <meta name="twitter:image" content="https://docs.aipowergrid.io/og-image.webp" />
       <link rel="icon" href="/logo.png" />
       <link rel="preconnect" href="https://fonts.googleapis.com" />
       <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
