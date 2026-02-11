@@ -6,11 +6,11 @@ Run large language models on The Grid. Earn AIPG for powering text generation an
 
 ## What It Does
 
-The LLM Worker connects your GPU to The Grid for text inference:
+The LLM Worker connects your hardware to The Grid for text inference:
 
 - **Chat completions** - Power aipg.chat and API requests
 - **Text generation** - Prompts, completions, conversations
-- **Any Ollama model** - Llama, Mistral, Qwen, Code Llama, etc.
+- **Multiple backends** - Ollama, LM Studio, vLLM, KoboldCpp, and more
 
 When users send messages, your worker processes them and you earn AIPG.
 
@@ -22,9 +22,9 @@ When users send messages, your worker processes them and you earn AIPG.
 
 | Component | Minimum | Recommended |
 |-----------|---------|-------------|
-| **GPU VRAM** | 8 GB | 24 GB+ |
-| **System RAM** | 16 GB | 32 GB+ |
-| **Storage** | 50 GB free | 100 GB+ SSD |
+| **GPU VRAM** | 4 GB | 12 GB+ |
+| **System RAM** | 8 GB | 16 GB+ |
+| **Storage** | 20 GB free | 50 GB+ SSD |
 
 **CPU-only:** Possible for smaller models but significantly slower.
 
@@ -32,89 +32,211 @@ When users send messages, your worker processes them and you earn AIPG.
 
 | Model Size | VRAM Needed | Examples |
 |------------|-------------|----------|
-| 7B params | 8 GB | Llama 3 8B, Mistral 7B |
+| 3B params | 4 GB | Llama 3.2 3B, Phi-3 Mini |
+| 7-8B params | 8 GB | Llama 3 8B, Mistral 7B |
 | 13B params | 16 GB | Llama 2 13B |
 | 34B params | 24 GB | Code Llama 34B |
 | 70B params | 48 GB+ | Llama 2 70B |
-| 70B+ params | 80 GB+ | Larger models |
-
-**Note:** Most consumer GPUs max out at 24 GB (RTX 4090). For 70B+ models, you'll need enterprise hardware or cloud GPUs.
 
 ### Software
 
-- Python 3.9+
-- Ollama (auto-installed via setup wizard)
+- Python 3.9+ (if running from source)
+- A backend: Ollama (recommended), LM Studio, vLLM, SGLang, or KoboldCpp
 - Grid API key
 
 ---
 
-## Setup
+## Quick Start
 
 ### 1. Get an API Key
 
-1. Go to [dashboard.aipowergrid.io](https://dashboard.aipowergrid.io)
-2. Create an account
-3. Generate an API key
+Register at [api.aipowergrid.io/register](https://api.aipowergrid.io/register) or [dashboard.aipowergrid.io](https://dashboard.aipowergrid.io)
 
-### 2. Install
+### 2. Install a Backend (Ollama Recommended)
 
 ```bash
-pip install grid-inference-worker
+# Install Ollama
+curl -fsSL https://ollama.com/install.sh | sh
+
+# Pull a model
+ollama pull llama3.2:3b
 ```
 
-### 3. Run Setup Wizard
+That's it for the backend. One command to install, one to download a model.
+
+### 3. Download the Worker
+
+**Option A: Pre-built Binary (Easiest)**
+
+Download for your platform from [GitHub Releases](https://github.com/AIPowerGrid/grid-inference-worker/releases):
+
+| Platform | Instructions |
+|----------|--------------|
+| **Windows** | Download `.exe`, double-click to run |
+| **macOS** | Download `.zip`, unzip, open the app |
+| **Linux** | Download, `chmod +x`, run |
+
+**Option B: From Source**
 
 ```bash
-grid-inference-worker setup
+git clone https://github.com/AIPowerGrid/grid-inference-worker
+cd grid-inference-worker
+pip install -e .
+grid-inference-worker
 ```
 
-This opens a web UI at `http://localhost:7861` where you can:
-- Install/configure Ollama automatically
-- Select which model to run
-- Enter your API key
-- Test the connection
-
-### 4. Start the Worker
+**Option C: Docker**
 
 ```bash
-grid-inference-worker start
+git clone https://github.com/AIPowerGrid/grid-inference-worker
+cd grid-inference-worker
+cp .env.example .env
+# Edit .env with your API key
+docker compose up -d
 ```
 
-Your worker is now connected to The Grid and ready to receive jobs.
+### 4. Configure via Web Wizard
+
+When the worker starts, it opens a web interface at:
+
+```
+http://localhost:7861
+```
+
+Here you can:
+- Enter your Grid API key
+- Select your backend (Ollama, etc.)
+- Choose which model to serve
+- Set a worker name
+- Start hosting
+
+### 5. Start Earning
+
+Once configured, click "Start" and your worker connects to The Grid. Jobs come in automatically.
+
+---
+
+## Configuration Options
+
+### Via Web Wizard (Recommended)
+
+The setup wizard at `http://localhost:7861` handles everything visually.
+
+### Via Command Line
+
+```bash
+grid-inference-worker \
+  --api-key YOUR_API_KEY \
+  --model llama3.2:3b \
+  --backend-url http://localhost:11434 \
+  --worker-name "my-llm-worker"
+```
+
+### Via Environment Variables
+
+```bash
+# Required
+export GRID_API_KEY=your-api-key
+
+# Optional
+export MODEL_NAME=llama3.2:3b
+export BACKEND_TYPE=ollama
+export BACKEND_URL=http://localhost:11434
+export GRID_WORKER_NAME=my-worker
+export GRID_MAX_LENGTH=4096
+```
+
+### Run as System Service
+
+Auto-start on boot:
+
+```bash
+grid-inference-worker --install-service
+```
+
+Works on Windows, macOS, and Linux.
+
+---
+
+## Supported Backends
+
+### Ollama (Recommended)
+
+Easiest setup. Handles model management automatically.
+
+```bash
+# Install
+curl -fsSL https://ollama.com/install.sh | sh
+
+# Pull models
+ollama pull llama3.2:3b
+ollama pull mistral
+ollama pull codellama
+```
+
+### LM Studio
+
+GUI-based. Run a local server and point the worker at it.
+
+### vLLM
+
+High-performance inference. Good for production deployments.
+
+```bash
+pip install vllm
+vllm serve meta-llama/Llama-3-8B --port 8000
+```
+
+### SGLang
+
+Fast inference with RadixAttention.
+
+### KoboldCpp
+
+CPU-optimized, good for older hardware.
 
 ---
 
 ## Supported Models
 
-Any model compatible with Ollama works. Popular choices:
+Any model your backend supports. Popular choices:
 
 ### General Purpose
-| Model | Size | VRAM | Best For |
-|-------|------|------|----------|
-| **Llama 3 8B** | 8B | 8 GB | Fast, general chat |
-| **Llama 3 70B** | 70B | 48 GB | High quality responses |
+
+| Model | Size | VRAM | Notes |
+|-------|------|------|-------|
+| **Llama 3.2 3B** | 3B | 4 GB | Fast, good for most tasks |
+| **Llama 3 8B** | 8B | 8 GB | Great balance |
 | **Mistral 7B** | 7B | 8 GB | Efficient, fast |
-| **Mixtral 8x7B** | 47B | 32 GB | MoE, good quality |
+| **Mixtral 8x7B** | 47B | 32 GB | MoE, high quality |
 
-### Specialized
-| Model | Size | VRAM | Best For |
-|-------|------|------|----------|
-| **Code Llama** | 7-34B | 8-24 GB | Programming |
-| **Qwen** | 7-72B | 8-48 GB | Multilingual |
-| **Phi-3** | 3.8B | 4 GB | Small/fast |
+### Code
 
-### Installing Models
+| Model | Size | VRAM | Notes |
+|-------|------|------|-------|
+| **Code Llama** | 7-34B | 8-24 GB | Programming focused |
+| **DeepSeek Coder** | 6-33B | 8-24 GB | Strong at code |
+
+### Multilingual
+
+| Model | Size | VRAM | Notes |
+|-------|------|------|-------|
+| **Qwen** | 7-72B | 8-48 GB | Good multilingual support |
+
+### Installing Models (Ollama)
 
 ```bash
-# Via Ollama CLI
+# List available models
+ollama list
+
+# Pull a new model
 ollama pull llama3
 ollama pull mistral
-ollama pull codellama
+ollama pull codellama:13b
 
-# Or through the setup wizard UI
+# Remove a model
+ollama rm model-name
 ```
-
-**Future backends:** vLLM, SGLang, LMDeploy (planned).
 
 ---
 
@@ -131,44 +253,17 @@ ollama pull codellama
 ### Reward Factors
 
 - **Tokens generated** - More output = more reward
-- **Model size** - Larger models may earn more per job
 - **Speed** - Faster responses = more jobs/hour
 - **Uptime** - Consistent availability = consistent work
-- **Competition** - Fewer workers online = more jobs for you
+- **Competition** - Fewer workers = more jobs for you
 
 ### Bonded Workers
 
 Optionally bond AIPG for priority:
 
-- Higher priority for job routing
+- Higher priority job routing
 - Signal commitment to the network
 - Bonding is NOT required to earn
-
----
-
-## Configuration
-
-### Environment Variables
-
-```bash
-# .env file
-GRID_API_KEY=your-api-key
-OLLAMA_MODEL=llama3
-OLLAMA_HOST=http://localhost:11434
-```
-
-### Advanced Options
-
-```bash
-# Run with specific model
-grid-inference-worker start --model mistral
-
-# Custom Ollama endpoint
-grid-inference-worker start --ollama-host http://192.168.1.100:11434
-
-# Verbose logging
-grid-inference-worker start --verbose
-```
 
 ---
 
@@ -177,52 +272,81 @@ grid-inference-worker start --verbose
 ### Maximize Earnings
 
 - **Popular models** - Llama 3 and Mistral get the most requests
-- **Stay online** - 24/7 uptime means 24/7 earnings
-- **Fast responses** - Lower latency = more jobs completed
-- **Reliable connection** - Dropped jobs hurt your reputation
+- **Stay online 24/7** - More uptime = more jobs
+- **Fast responses** - Lower latency = more completed jobs
+- **Reliable connection** - Dropped jobs hurt reputation
 
 ### Stability
 
-- **Monitor memory** - LLMs can be memory-hungry
-- **Check logs** - Watch for OOM or errors
+- **Monitor memory** - Watch for OOM errors
+- **Check logs** - Catch issues early
 - **Update regularly** - Pull latest worker version
-- **Restart weekly** - Clears any memory leaks
+- **Restart weekly** - Clears memory leaks
 
 ### Hardware Tips
 
 - **Consumer GPUs work great** - RTX 3080/3090/4080/4090
 - **Cloud works too** - Runpod, Vast.ai, Lambda Labs
-- **CPU is slow** - Only use for testing or tiny models
-- **More VRAM = more options** - 24 GB opens up most models
+- **More VRAM = bigger models** - 24 GB opens most options
+- **NVMe SSD** - Faster model loading
 
 ---
 
 ## Troubleshooting
 
-**Worker won't start:**
-- Check Python version (3.9+)
-- Verify Ollama is running: `ollama list`
-- Check API key is valid
+### Worker won't start
 
-**Ollama errors:**
-- Reinstall: `curl -fsSL https://ollama.com/install.sh | sh`
-- Check model is downloaded: `ollama list`
-- Restart Ollama service
+```bash
+# Check Python version
+python --version  # Need 3.9+
 
-**Out of memory:**
-- Use a smaller model
+# Verify Ollama is running
+ollama list
+
+# Check API key
+echo $GRID_API_KEY
+```
+
+### Ollama errors
+
+```bash
+# Reinstall Ollama
+curl -fsSL https://ollama.com/install.sh | sh
+
+# Restart Ollama service
+systemctl restart ollama  # Linux
+brew services restart ollama  # macOS
+
+# Check model is downloaded
+ollama list
+```
+
+### Out of memory
+
+- Use a smaller model (3B instead of 7B)
 - Close other GPU applications
 - Check for memory leaks, restart worker
+- Try quantized versions (q4_0, q4_K_M)
 
-**No jobs coming in:**
+### No jobs coming in
+
 - Normal during low-traffic periods
 - Verify worker shows online in dashboard
 - Check you're running a popular model
+- Ensure your internet connection is stable
 
-**Slow responses:**
-- Use a smaller/faster model
-- Check GPU utilization
-- Ensure no other processes using GPU
+### Connection issues
+
+```bash
+# Test API connection
+curl https://api.aipowergrid.io/health
+
+# Check firewall
+# Worker needs outbound HTTPS (443)
+
+# Verify API key is valid
+grid-inference-worker --test-connection
+```
 
 ---
 
@@ -231,6 +355,7 @@ grid-inference-worker start --verbose
 | Resource | URL |
 |----------|-----|
 | **Repository** | [github.com/AIPowerGrid/grid-inference-worker](https://github.com/AIPowerGrid/grid-inference-worker) |
-| **Get API Key** | [dashboard.aipowergrid.io](https://dashboard.aipowergrid.io) |
+| **Releases** | [github.com/AIPowerGrid/grid-inference-worker/releases](https://github.com/AIPowerGrid/grid-inference-worker/releases) |
+| **Get API Key** | [api.aipowergrid.io/register](https://api.aipowergrid.io/register) |
 | **Ollama** | [ollama.com](https://ollama.com) |
 | **Discord** | [discord.gg/W9D8j6HCtC](https://discord.gg/W9D8j6HCtC) |
