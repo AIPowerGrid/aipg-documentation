@@ -3,13 +3,10 @@ import { DocsThemeConfig } from 'nextra-theme-docs'
 
 const config: DocsThemeConfig = {
   logo: (
-    <span style={{
-      fontWeight: 700,
-      fontSize: '1.25rem',
-      letterSpacing: '-0.02em'
-    }}>
-      AI Power Grid
-    </span>
+    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+      <img src="/logo.png" alt="AIPG" style={{ height: '28px', width: 'auto' }} />
+      <span style={{ fontWeight: 600, fontSize: '1rem' }}>Docs</span>
+    </div>
   ),
 
   project: {
@@ -84,28 +81,14 @@ const config: DocsThemeConfig = {
     <>
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       <meta name="theme-color" content="#0a0a0b" />
-      <link rel="icon" href="/favicon.ico" />
+      <link rel="icon" href="/logo.png" />
       <link rel="preconnect" href="https://fonts.googleapis.com" />
       <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
     </>
   ),
 
   footer: {
-    text: (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', width: '100%' }}>
-        <div style={{ display: 'flex', gap: '1.5rem', justifyContent: 'center', flexWrap: 'wrap' }}>
-          <a href="https://aipowergrid.io" target="_blank" rel="noopener noreferrer" style={{ color: 'hsl(240, 5%, 64.9%)' }}>Home</a>
-          <a href="https://aipg.art" target="_blank" rel="noopener noreferrer" style={{ color: 'hsl(240, 5%, 64.9%)' }}>Art</a>
-          <a href="https://aipg.chat" target="_blank" rel="noopener noreferrer" style={{ color: 'hsl(240, 5%, 64.9%)' }}>Chat</a>
-          <a href="https://discord.gg/W9D8j6HCtC" target="_blank" rel="noopener noreferrer" style={{ color: 'hsl(240, 5%, 64.9%)' }}>Discord</a>
-          <a href="https://github.com/AIPowerGrid" target="_blank" rel="noopener noreferrer" style={{ color: 'hsl(240, 5%, 64.9%)' }}>GitHub</a>
-          <a href="https://twitter.com/aipowergrid" target="_blank" rel="noopener noreferrer" style={{ color: 'hsl(240, 5%, 64.9%)' }}>Twitter</a>
-        </div>
-        <div style={{ textAlign: 'center', color: 'hsl(240, 5%, 50%)' }}>
-          {new Date().getFullYear()} © AI Power Grid. Built on Base.
-        </div>
-      </div>
-    ),
+    text: `${new Date().getFullYear()} © AI Power Grid`,
   },
 
   sidebar: {
