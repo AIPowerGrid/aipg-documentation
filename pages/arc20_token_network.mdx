@@ -293,21 +293,28 @@ Factory deploys:
 ### Step 3: Integrate
 
 ```javascript
-import { AIPGFactory } from '@aipowergrid/sdk';
+import { ethers } from 'ethers';
 
-// Initialize your token
-const myToken = await AIPGFactory.connect(tokenAddress);
+// Connect to your factory token
+const token = new ethers.Contract(tokenAddress, factoryABI, signer);
 
-// User generates an image
-await myToken.generateImage({
-  model: 'flux-schnell',
-  prompt: 'a robot painting a sunset',
-  paymentAmount: 10, // 10 MYTOKEN
-});
+// User spends token for AI compute
+await token.spendForCompute(
+  ethers.parseEther('10'),  // 10 MYTOKEN
+  jobId                      // bytes32 job identifier
+);
 
-// Check job status
-const job = await myToken.getJob(jobId);
-console.log(job.status, job.imageUrl, job.merkleProof);
+// Check job on-chain
+const job = await grid.getJob(jobId);
+console.log(job.status, job.merkleProof);
+```
+
+For generation via the API, users can also call the Grid Streaming API directly:
+
+```bash
+curl -N https://api.aipowergrid.io/v1/chat/completions \
+  -H "Authorization: Bearer YOUR_KEY" \
+  -d '{"model":"grid/llama3.2:3b","messages":[{"role":"user","content":"Hello"}],"stream":true}'
 ```
 
 ### Step 4: Launch

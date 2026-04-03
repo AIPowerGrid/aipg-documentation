@@ -110,7 +110,21 @@ Here you can:
 - Set a worker name
 - Start hosting
 
-### 5. Start Earning
+### 5. Enable Streaming (Optional)
+
+For real-time token streaming via WebSocket (instead of HTTP polling):
+
+```bash
+# In .env
+GRID_STREAMING=true
+
+# Or via CLI
+grid-inference-worker --streaming
+```
+
+Streaming workers connect via WebSocket and deliver tokens in real time to clients using the `/v1/chat/completions` endpoint. [Learn more →](/streaming-api)
+
+### 6. Start Earning
 
 Once configured, click "Start" and your worker connects to The Grid. Jobs come in automatically.
 
