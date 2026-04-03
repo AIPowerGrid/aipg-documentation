@@ -1,7 +1,8 @@
 {
   "index": "Introduction",
   "grid-overview": "The Grid",
-  "generate": "Generate AI",
+  "generate": "Generate",
+  "streaming-api": "Streaming API",
   "worker-llm": "LLM Worker",
   "worker-media": "Media Worker",
   "staking": "Staking",
