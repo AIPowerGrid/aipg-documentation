@@ -1,4 +1,4 @@
-# Generate AI
+# Generate
 
 Create images, chat with LLMs, and generate media using The Grid's decentralized AI network.
 
@@ -98,26 +98,57 @@ For programmatic access, use The Grid API directly.
 3. Generate an API key
 4. Check your usage at [api.aipowergrid.io](https://api.aipowergrid.io)
 
-### SDK
+### Streaming API (OpenAI Compatible)
 
-Use the official SDK for easier integration:
+The Grid supports OpenAI-compatible streaming. Use any OpenAI SDK:
+
+```python
+from openai import OpenAI
+
+client = OpenAI(
+    base_url="https://api.aipowergrid.io/v1",
+    api_key="your-grid-api-key",
+)
+
+stream = client.chat.completions.create(
+    model="grid/openai/gpt-oss-120bb",
+    messages=[{"role": "user", "content": "Hello!"}],
+    stream=True,
+)
+for chunk in stream:
+    print(chunk.choices[0].delta.content or "", end="", flush=True)
+```
+
+Or with curl:
+
+```bash
+curl -N https://api.aipowergrid.io/v1/chat/completions \
+  -H "Authorization: Bearer YOUR_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"model":"grid/openai/gpt-oss-120bb","messages":[{"role":"user","content":"Hello"}],"stream":true}'
+```
+
+### Grid SDK (Python)
 
 **Repository:** [github.com/AIPowerGrid/grid-sdk](https://github.com/AIPowerGrid/grid-sdk)
 
-```javascript
-import { GridClient } from '@aipowergrid/sdk';
+```bash
+pip install grid-sdk
+```
 
-const grid = new GridClient({ apiKey: 'your-api-key' });
+```python
+from grid_sdk.streaming import StreamingChatClient
 
-// Generate an image
-const result = await grid.generate({
-  prompt: 'a robot painting a sunset',
-  model: 'flux-schnell',
-  width: 1024,
-  height: 1024
-});
+client = StreamingChatClient(
+    base_url="https://api.aipowergrid.io/v1",
+    api_key="your-grid-api-key",
+)
 
-console.log(result.imageUrl);
+for chunk in client.stream_chat(
+    model="grid/openai/gpt-oss-120bb",
+    messages=[{"role": "user", "content": "What is AI Power Grid?"}],
+):
+    print(chunk, end="", flush=True)
 ```
 
 ---
