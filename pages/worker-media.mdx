@@ -1,269 +1,194 @@
-# Media Worker
+# Image Worker
 
-Generate images, video, and audio on The Grid. Earn AIPG for powering AI art and media creation.
+Generate images on The Grid using ComfyUI. Earn AIPG for powering AI art.
 
 ---
 
-## What It Does
+## What You're Running
 
-The Media Worker connects your GPU to The Grid for media generation:
+The **Comfy Bridge** connects your ComfyUI installation to The Grid:
 
-- **Images** - Flux, SDXL, Stable Diffusion
-- **Video** - AI video generation (coming soon: expanded support)
-- **Audio** - Sound and music generation (coming soon)
+1. You run ComfyUI locally with your models
+2. The bridge polls The Grid for jobs
+3. Your GPU renders images
+4. You upload results and earn AIPG
 
-When users generate at aipg.art or via API, your worker creates the media and you earn AIPG.
+Your existing ComfyUI setup works as-is. The bridge just connects it to the network.
 
 ---
 
 ## Requirements
 
-### Hardware
-
 | Component | Minimum | Recommended |
 |-----------|---------|-------------|
-| **GPU** | NVIDIA 6 GB VRAM | NVIDIA 12 GB+ VRAM |
-| **System RAM** | 8 GB | 16 GB+ |
-| **Storage** | 50 GB free | 100 GB+ SSD |
+| **GPU** | NVIDIA 6 GB VRAM | NVIDIA 12 GB+ |
+| **RAM** | 8 GB | 16 GB+ |
+| **Storage** | 50 GB | 100 GB+ SSD |
+| **Software** | Python 3.9+, ComfyUI running | Same |
 
 ### VRAM by Model
 
-| Model | VRAM | Quality |
-|-------|------|---------|
-| **SD 1.5** | 6 GB | Good, fast, huge LoRA ecosystem |
-| **SDXL** | 8 GB | High quality, 1024px native |
-| **Flux Schnell** | 12 GB | Fast, excellent quality |
-| **Flux Dev** | 12 GB | Best quality, slower |
-| **Video models** | 16-32 GB | 5-14 second clips |
-
-### Software
-
-- Docker Desktop
-- Node.js 18+
-- Grid API key
+| Model | VRAM | Notes |
+|-------|------|-------|
+| SD 1.5 | 6 GB | Fast, huge LoRA ecosystem |
+| SDXL | 8 GB | 1024px native, great quality |
+| Flux Schnell | 12 GB | Fast, excellent quality |
+| Flux Dev | 12 GB | Best quality, slower |
 
 ---
 
-## Setup
+## Quick Start
 
-### 1. Get an API Key
+### 1. Get ComfyUI Running
 
-1. Go to [dashboard.aipowergrid.io](https://dashboard.aipowergrid.io)
-2. Create an account
-3. Generate an API key
-
-### 2. Clone the Repository
+If you don't have ComfyUI yet:
 
 ```bash
-git clone https://github.com/AIPowerGrid/grid-media-worker
-cd grid-media-worker
+git clone https://github.com/comfyanonymous/ComfyUI
+cd ComfyUI
+pip install -r requirements.txt
+python main.py
 ```
 
-### 3. Configure
+ComfyUI should be running at `http://127.0.0.1:8000`.
+
+### 2. Get an API Key
+
+Register at [dashboard.aipowergrid.io](https://dashboard.aipowergrid.io)
+
+### 3. Install the Bridge
+
+```bash
+git clone https://github.com/AIPowerGrid/comfy-bridge
+cd comfy-bridge
+pip install -e .
+```
+
+### 4. Configure
 
 ```bash
 cp .env.example .env
 ```
 
-Edit `.env` and add your API key:
+Edit `.env`:
 
-```bash
+```ini
 GRID_API_KEY=your-api-key-here
+COMFYUI_URL=http://127.0.0.1:8000
 ```
 
-### 4. Start
+### 5. Run
 
 ```bash
-./start.sh
+python -m bridge.cli
 ```
 
-**First run takes 45-60 minutes** - downloads models, builds Docker containers.
-
-Subsequent launches: under 2 minutes.
-
-### 5. Select Models
-
-Once running, open the web UI or desktop app:
-- Choose which models to host based on your VRAM
-- Click "Start Hosting"
-
-Your worker is now live on The Grid.
-
----
-
-## Supported Models
-
-### Image Generation
-
-| Model | VRAM | Speed | Quality | Notes |
-|-------|------|-------|---------|-------|
-| **SD 1.5** | 6 GB | Fast | Good | Huge LoRA/checkpoint ecosystem |
-| **SDXL** | 8 GB | Medium | Great | 1024px native, good details |
-| **Flux Schnell** | 12 GB | Fast | Excellent | Best speed/quality ratio |
-| **Flux Dev** | 12 GB | Slow | Best | Highest quality output |
-
-### ControlNet & Extras
-
-- **ControlNet** - Canny, Depth, Pose, etc.
-- **LoRA** - Style and character adapters
-- **Inpainting** - Edit regions of images
-- **Upscaling** - 4x resolution enhancement
-
-### Video (Expanding)
-
-| Model | VRAM | Output |
-|-------|------|--------|
-| Video models | 16-32 GB | 5-14 second clips |
-
-### Audio (Coming Soon)
-
-Music and sound generation support planned.
-
----
-
-## Earning Rewards
-
-### How It Works
-
-1. Your worker connects to The Grid
-2. User requests an image at aipg.art or API
-3. The Grid routes the job to your worker
-4. Your GPU generates the image
-5. You earn AIPG for the completed job
-
-### Reward Factors
-
-- **Image size** - Larger images = more compute = more reward
-- **Steps** - More steps = more compute
-- **Model complexity** - Flux vs SD 1.5
-- **Speed** - Faster completions = more jobs/hour
-- **Uptime** - Consistent availability
-- **Competition** - Fewer workers = more jobs for you
-
-### What Earns Most
-
-1. **Flux models** - High demand, good rewards
-2. **SDXL** - Popular, solid earnings
-3. **Video** - Higher compute = higher rewards
-4. **Batch jobs** - Multiple images per request
-
-### Bonded Workers
-
-Optionally bond AIPG for priority:
-
-- Higher priority job routing
-- Required for some premium jobs (future)
-- Bonding is NOT required to start earning
+The bridge connects to The Grid and starts accepting jobs.
 
 ---
 
 ## Configuration
 
-### Environment Variables
+All settings go in `.env`:
 
-```bash
-# .env file
-GRID_API_KEY=your-api-key
-MODELS=flux-schnell,sdxl    # Comma-separated
-MAX_CONCURRENT_JOBS=1        # Based on VRAM
-```
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `GRID_API_KEY` | *(required)* | Your API key |
+| `COMFYUI_URL` | `http://127.0.0.1:8000` | Your ComfyUI address |
+| `GRID_WORKER_NAME` | `ComfyWorker` | Name shown on the network |
+| `GRID_MODEL` | *(auto-detect)* | Models to advertise (comma-separated) |
+| `GRID_THREADS` | `2` | Concurrent jobs |
+| `GRID_MAX_PIXELS` | `1048576` | Max output resolution |
+| `GRID_NSFW` | `false` | Accept NSFW jobs |
+| `WORKFLOW_FILE` | | Custom workflow JSON |
 
-### Docker Resources
+### Model Auto-Detection
 
-Make sure Docker has enough resources:
-- **Memory**: 8 GB minimum, 16 GB recommended
-- **CPU**: 4+ cores
-- **Disk**: 50 GB+ for models
+By default, the bridge scans your ComfyUI checkpoints and advertises matching models. Override with:
 
-### Multiple GPUs
-
-Run separate worker instances per GPU:
-
-```bash
-# GPU 0
-CUDA_VISIBLE_DEVICES=0 ./start.sh
-
-# GPU 1 (different terminal)
-CUDA_VISIBLE_DEVICES=1 ./start.sh
+```ini
+GRID_MODEL=stable_diffusion, flux-schnell
 ```
 
 ---
 
-## Best Practices
+## Docker
 
-### Maximize Earnings
+### Linux (Host Networking)
 
-- **Host Flux** - Highest demand right now
-- **Stay online 24/7** - More uptime = more jobs
-- **Fast GPU** - RTX 4090 crushes jobs quickly
-- **Good internet** - Fast uploads for results
-- **Multiple models** - More variety = more job types
+```bash
+docker build -t comfy-bridge .
+docker run --rm --network host --env-file .env comfy-bridge
+```
 
-### Stability
+### macOS / Windows
 
-- **Monitor VRAM** - Don't overcommit
-- **Check Docker logs** - `docker logs <container>`
-- **Update regularly** - Pull latest worker version
-- **Restart weekly** - Keeps things fresh
+```bash
+docker run --rm \
+  --env-file .env \
+  -e COMFYUI_URL=http://host.docker.internal:8000 \
+  comfy-bridge
+```
 
-### Hardware Tips
+### Docker Compose
 
-| GPU | VRAM | What to Run |
-|-----|------|-------------|
-| RTX 3060 | 12 GB | Flux Schnell, SDXL |
-| RTX 3080 | 10 GB | SDXL, SD 1.5 |
-| RTX 3090 | 24 GB | Everything including video |
-| RTX 4080 | 16 GB | Flux, SDXL, some video |
-| RTX 4090 | 24 GB | Everything, fast |
+```bash
+# Linux
+docker-compose -f docker-compose.linux.yml up --build
 
-**Cloud options:** Runpod, Vast.ai work great for this.
+# macOS/Windows
+docker-compose -f docker-compose.win-macos.yml up --build
+```
+
+---
+
+## Custom Workflows
+
+Export a workflow from ComfyUI as JSON, place it in `workflows/`, and set:
+
+```ini
+WORKFLOW_FILE=my_workflow.json
+```
+
+The bridge uses your workflow as a template for incoming jobs.
+
+---
+
+## Earning
+
+### How It Works
+
+1. User requests an image at aipg.art or via API
+2. The Grid routes the job to your worker
+3. Your GPU generates the image via ComfyUI
+4. You upload the result
+5. You earn AIPG
+
+### What Earns Most
+
+- **Flux models** — high demand, good rewards
+- **Large images** — more compute = more reward
+- **High step counts** — more work = more pay
+- **24/7 uptime** — consistent availability wins
 
 ---
 
 ## Troubleshooting
 
-**Docker won't start:**
-- Make sure Docker Desktop is running
-- Check Docker has enough memory allocated
-- Try `docker system prune` to free space
+**No jobs coming in?**
+- Check `Advertising models:` in logs
+- Make sure `GRID_MODEL` matches what users request
+- Verify ComfyUI is running
 
-**Out of VRAM:**
-- Host fewer models simultaneously
-- Choose smaller models (SD 1.5 vs Flux)
-- Close other GPU applications
-- Restart the worker
+**ComfyUI unreachable?**
+- Confirm `COMFYUI_URL` is correct
+- Check ComfyUI is running on that port
 
-**Build fails:**
-- Check Node.js version (18+)
-- Delete `node_modules` and reinstall
-- Check Docker disk space
+**400 Bad Request?**
+- Model name mismatch — check `GRID_MODEL` values
 
-**No jobs coming in:**
-- Normal during low-traffic periods
-- Verify worker shows online in dashboard
-- Make sure you're hosting popular models (Flux, SDXL)
-
-**Slow generation:**
-- Check GPU utilization (should be high during jobs)
-- Ensure no other processes using GPU
-- Consider faster GPU
-
-**Network errors:**
-- Check internet connection
-- Verify API key is correct
-- Check firewall isn't blocking
-
----
-
-## Model Registration
-
-All models on The Grid are registered in the **ModelVault** contract on Base mainnet. This ensures:
-
-- Only verified models can be hosted
-- Model metadata (VRAM, capabilities) is on-chain
-- Workers can't serve unauthorized models
-
-You don't need to worry about this—the worker handles it automatically.
+**Auth errors?**
+- Verify `GRID_API_KEY` is correct
 
 ---
 
@@ -271,7 +196,7 @@ You don't need to worry about this—the worker handles it automatically.
 
 | Resource | URL |
 |----------|-----|
-| **Repository** | [github.com/AIPowerGrid/grid-media-worker](https://github.com/AIPowerGrid/grid-media-worker) |
+| **Repository** | [github.com/AIPowerGrid/comfy-bridge](https://github.com/AIPowerGrid/comfy-bridge) |
 | **Get API Key** | [dashboard.aipowergrid.io](https://dashboard.aipowergrid.io) |
-| **Generate Images** | [aipg.art](https://aipg.art) |
+| **ComfyUI** | [github.com/comfyanonymous/ComfyUI](https://github.com/comfyanonymous/ComfyUI) |
 | **Discord** | [discord.gg/W9D8j6HCtC](https://discord.gg/W9D8j6HCtC) |
