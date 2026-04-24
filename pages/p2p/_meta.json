@@ -5,5 +5,9 @@
   "setup-api-node": "Run an API Node",
   "setup-worker": "Run a P2P Worker",
   "claim-resolution": "Claim Resolution",
-  "troubleshooting": "Troubleshooting"
+  "troubleshooting": "Troubleshooting",
+  "---": {
+    "type": "separator"
+  },
+  "future-onchain": "Future: On-Chain"
 }
