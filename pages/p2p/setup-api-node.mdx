@@ -1,0 +1,206 @@
+# Run a P2P API Node
+
+This guide explains how to run an AI Power Grid API node in P2P mode.
+
+## Prerequisites
+
+- Python 3.11+
+- Redis (still needed for hybrid mode)
+- PostgreSQL (for user/API key management)
+
+## Installation
+
+```bash
+# Clone the repo
+git clone https://github.com/AIPowerGrid/system-core.git
+cd system-core
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Install P2P dependencies
+pip install libp2p trio
+```
+
+## Configuration
+
+Create a `.env` file:
+
+```bash
+# ═══════════════════════════════════════════════════════════════
+# P2P SETTINGS
+# ═══════════════════════════════════════════════════════════════
+
+# Enable P2P mode
+P2P_ENABLED=true
+
+# Port for libp2p to listen on
+P2P_LISTEN_PORT=4001
+
+# Bootstrap peers (comma-separated multiaddrs)
+# Get these from the AIPG community or run your own bootstrap node
+P2P_BOOTSTRAP_PEERS=/ip4/bootstrap.aipowergrid.io/tcp/4001/p2p/QmBootstrapPeerID
+
+# Optional: Path to persistent private key
+# If not set, generates new identity on each restart
+P2P_PRIVATE_KEY_PATH=/etc/aipg/p2p-key.pem
+
+# ═══════════════════════════════════════════════════════════════
+# STANDARD SETTINGS (still required)
+# ═══════════════════════════════════════════════════════════════
+
+# Database
+DATABASE_URL=postgresql://user:pass@localhost/aipg
+
+# Redis (for hybrid mode)
+REDIS_URL=redis://localhost:6379
+
+# API settings
+API_PORT=8000
+```
+
+## Running the Node
+
+```bash
+# Start the API server
+uvicorn grid_api.main:app --host 0.0.0.0 --port 8000
+```
+
+You should see:
+
+```
+INFO:     Starting Grid Streaming API...
+INFO:     P2P node ready on port 4001
+INFO:     Peer ID: QmYourPeerID123...
+INFO:     Connected to bootstrap peer: QmBootstrapPeer...
+INFO:     Grid Streaming API ready.
+```
+
+## Verify P2P is Working
+
+```bash
+# Check the root endpoint
+curl http://localhost:8000/
+
+# Should show P2P status
+{
+  "name": "AI Power Grid — Streaming API",
+  "p2p": {
+    "enabled": true,
+    "peer_id": "QmYourPeerID123...",
+    "status": "running"
+  }
+}
+```
+
+## Your Peer Address
+
+Other nodes can connect to you using your multiaddr:
+
+```
+/ip4/YOUR_PUBLIC_IP/tcp/4001/p2p/QmYourPeerID123...
+```
+
+Share this with workers so they can bootstrap from your node.
+
+## Running Multiple API Nodes
+
+For redundancy, run multiple API nodes:
+
+```
+┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
+│  API Node 1     │     │  API Node 2     │     │  API Node 3     │
+│  US East        │◄───▶│  Europe         │◄───▶│  Asia           │
+│  :4001          │     │  :4001          │     │  :4001          │
+└─────────────────┘     └─────────────────┘     └─────────────────┘
+```
+
+Each node needs the others as bootstrap peers:
+
+**Node 1 (.env):**
+```bash
+P2P_BOOTSTRAP_PEERS=/ip4/node2.example.com/tcp/4001/p2p/QmNode2,/ip4/node3.example.com/tcp/4001/p2p/QmNode3
+```
+
+**Node 2 (.env):**
+```bash
+P2P_BOOTSTRAP_PEERS=/ip4/node1.example.com/tcp/4001/p2p/QmNode1,/ip4/node3.example.com/tcp/4001/p2p/QmNode3
+```
+
+## Firewall Configuration
+
+Open the P2P port:
+
+```bash
+# UFW (Ubuntu)
+sudo ufw allow 4001/tcp
+
+# firewalld (RHEL/CentOS)
+sudo firewall-cmd --add-port=4001/tcp --permanent
+sudo firewall-cmd --reload
+```
+
+## Running Behind NAT
+
+If your node is behind NAT:
+
+1. **Port Forward**: Forward port 4001 from your router to your server
+2. **Or Enable Relay**: Set `P2P_RELAY_ENABLED=true` to use relay nodes
+
+```bash
+# For nodes that can relay for others
+P2P_RELAY_HOP_ENABLED=true
+```
+
+## Monitoring
+
+Check P2P stats:
+
+```bash
+# Via API
+curl http://localhost:8000/health
+
+# Logs
+tail -f /var/log/aipg/api.log | grep p2p
+```
+
+## Hybrid Mode
+
+The API node runs both Redis and P2P by default:
+
+- **Local workers** (WebSocket): Use Redis queue
+- **Remote workers** (P2P): Use gossipsub
+
+This allows gradual migration to full P2P.
+
+## Systemd Service
+
+```ini
+# /etc/systemd/system/aipg-api.service
+[Unit]
+Description=AI Power Grid API
+After=network.target postgresql.service redis.service
+
+[Service]
+Type=simple
+User=aipg
+WorkingDirectory=/opt/aipg/system-core
+Environment=PATH=/opt/aipg/venv/bin
+ExecStart=/opt/aipg/venv/bin/uvicorn grid_api.main:app --host 0.0.0.0 --port 8000
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
+```
+
+```bash
+sudo systemctl enable aipg-api
+sudo systemctl start aipg-api
+```
+
+## Next Steps
+
+- [Run a P2P Worker](/p2p/setup-worker) to process jobs
+- [Understand Claim Resolution](/p2p/claim-resolution) for load balancing
+- [Troubleshooting](/p2p/troubleshooting) if things go wrong

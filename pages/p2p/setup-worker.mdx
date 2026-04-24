@@ -1,0 +1,266 @@
+# Run a P2P Worker
+
+This guide explains how to run an AI Power Grid worker in P2P mode.
+
+## What You Need
+
+- A computer with a GPU (or CPU for small models)
+- Ollama, vLLM, or any OpenAI-compatible backend
+- Python 3.11+
+- Internet connection
+
+## Quick Start
+
+### 1. Install Ollama
+
+```bash
+# macOS / Linux
+curl -fsSL https://ollama.com/install.sh | sh
+
+# Pull a model
+ollama pull llama3.2:3b
+```
+
+### 2. Install the Worker
+
+```bash
+# Clone the repo
+git clone https://github.com/AIPowerGrid/grid-inference-worker.git
+cd grid-inference-worker
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Install P2P dependencies
+pip install libp2p trio
+```
+
+### 3. Configure P2P Mode
+
+Create a `.env` file:
+
+```bash
+# ═══════════════════════════════════════════════════════════════
+# P2P SETTINGS
+# ═══════════════════════════════════════════════════════════════
+
+# Enable P2P mode
+P2P_ENABLED=true
+
+# Port for libp2p to listen on
+P2P_LISTEN_PORT=4002
+
+# Bootstrap peers - connect to the AIPG network
+P2P_BOOTSTRAP_PEERS=/ip4/bootstrap.aipowergrid.io/tcp/4001/p2p/QmBootstrapPeerID
+
+# ═══════════════════════════════════════════════════════════════
+# MODEL SETTINGS
+# ═══════════════════════════════════════════════════════════════
+
+# Your model name (what Ollama knows it as)
+MODEL_NAME=llama3.2:3b
+
+# How it appears on the Grid
+GRID_MODEL_NAME=grid/llama3.2:3b
+
+# ═══════════════════════════════════════════════════════════════
+# BACKEND SETTINGS
+# ═══════════════════════════════════════════════════════════════
+
+# Backend type: "ollama" or "openai"
+BACKEND_TYPE=ollama
+
+# Ollama URL (default)
+OLLAMA_URL=http://127.0.0.1:11434
+```
+
+### 4. Start the Worker
+
+```bash
+python -m inference_worker --headless
+```
+
+You should see:
+
+```
+  🚀 P2P Worker started | model=grid/llama3.2:3b
+  📡 Backend: ollama @ http://127.0.0.1:11434/v1/chat/completions
+  🔗 Peer ID: QmYourWorkerPeerID...
+  🎧 Listening on port 4002
+  ✅ Connected to bootstrap peer: QmBootstrapPeer...
+  📥 Subscribed to /aipg/1/jobs/grid-llama3.2-3b
+  📥 Subscribed to /aipg/1/claims
+  ⏳ Waiting for jobs...
+```
+
+## How It Works
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                     YOUR WORKER                                 │
+│                                                                 │
+│  ┌─────────────────┐     ┌─────────────────────────────────┐   │
+│  │ P2P Client      │     │ Local Backend                   │   │
+│  │                 │     │                                 │   │
+│  │ Subscribe to:   │     │ Ollama / vLLM / llama.cpp       │   │
+│  │ /aipg/1/jobs/   │────▶│                                 │   │
+│  │   grid-llama... │     │ Runs inference on your GPU      │   │
+│  │                 │     │                                 │   │
+│  │ Publish to:     │◀────│ Streams tokens                  │   │
+│  │ /aipg/1/results │     │                                 │   │
+│  └─────────────────┘     └─────────────────────────────────┘   │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+When a job arrives:
+1. Worker checks if it should claim (deterministic hash)
+2. If yes, broadcasts claim to `/aipg/1/claims`
+3. Calls local Ollama with the prompt
+4. Streams tokens to `/aipg/1/results/{job_id}`
+
+## Using vLLM Instead
+
+For higher throughput, use vLLM:
+
+```bash
+# Start vLLM
+python -m vllm.entrypoints.openai.api_server \
+  --model meta-llama/Llama-3.2-3B-Instruct \
+  --port 8000
+```
+
+Update `.env`:
+
+```bash
+BACKEND_TYPE=openai
+OPENAI_URL=http://127.0.0.1:8000/v1
+MODEL_NAME=meta-llama/Llama-3.2-3B-Instruct
+GRID_MODEL_NAME=grid/llama3.2:3b
+```
+
+## Multiple Models
+
+Run multiple workers for different models:
+
+```bash
+# Terminal 1: llama3.2:3b
+P2P_LISTEN_PORT=4002 MODEL_NAME=llama3.2:3b python -m inference_worker --headless
+
+# Terminal 2: mistral:7b
+P2P_LISTEN_PORT=4003 MODEL_NAME=mistral:7b python -m inference_worker --headless
+```
+
+## Systemd Service
+
+For always-on operation:
+
+```ini
+# /etc/systemd/system/aipg-worker.service
+[Unit]
+Description=AI Power Grid P2P Worker
+After=network.target ollama.service
+
+[Service]
+Type=simple
+User=aipg
+WorkingDirectory=/opt/aipg/grid-inference-worker
+Environment=PATH=/opt/aipg/venv/bin
+EnvironmentFile=/opt/aipg/grid-inference-worker/.env
+ExecStart=/opt/aipg/venv/bin/python -m inference_worker --headless
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
+```
+
+```bash
+sudo systemctl enable aipg-worker
+sudo systemctl start aipg-worker
+```
+
+## Running Behind NAT
+
+If you're behind a router/NAT:
+
+### Option 1: Port Forward
+
+Forward port 4002 from your router to your machine.
+
+### Option 2: Rely on Mesh
+
+Even without port forwarding, you can connect to bootstrap peers. You may not receive jobs directly but can participate in the mesh.
+
+### Option 3: Use Relay
+
+If relay nodes are available:
+
+```bash
+P2P_RELAY_ENABLED=true
+```
+
+## Monitoring
+
+Watch your worker:
+
+```bash
+# Follow logs
+journalctl -u aipg-worker -f
+
+# Check status
+systemctl status aipg-worker
+```
+
+Example output when processing a job:
+
+```
+📋 Claimed job abc123...
+📥 Processing abc123 | max_tokens=512
+✅ abc123 | 127 tokens | 2.3s | 55.2 TPS | total: 42
+```
+
+## Configuration Reference
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `P2P_ENABLED` | `false` | Enable P2P mode |
+| `P2P_LISTEN_PORT` | `4001` | Port for libp2p |
+| `P2P_BOOTSTRAP_PEERS` | (none) | Comma-separated multiaddrs |
+| `MODEL_NAME` | (required) | Model name for backend |
+| `GRID_MODEL_NAME` | `grid/{MODEL_NAME}` | Name on the Grid |
+| `BACKEND_TYPE` | `ollama` | `ollama` or `openai` |
+| `OLLAMA_URL` | `http://127.0.0.1:11434` | Ollama API URL |
+| `OPENAI_URL` | `http://127.0.0.1:8000/v1` | OpenAI-compatible URL |
+
+## Troubleshooting
+
+### "libp2p not installed"
+
+```bash
+pip install libp2p trio
+```
+
+### "Failed to connect to bootstrap peer"
+
+- Check your internet connection
+- Verify the bootstrap peer address is correct
+- Try a different bootstrap peer
+
+### "Backend error 500"
+
+- Make sure Ollama/vLLM is running
+- Check the model is pulled: `ollama list`
+- Verify the URL in your config
+
+### Worker not receiving jobs
+
+- Check you're subscribed to the right model topic
+- Verify bootstrap connection succeeded
+- Wait a minute for gossipsub mesh to form
+
+## Next Steps
+
+- [Understand Claim Resolution](/p2p/claim-resolution) to see how jobs are distributed
+- [Architecture](/p2p/architecture) for the big picture
+- [Troubleshooting](/p2p/troubleshooting) for more help

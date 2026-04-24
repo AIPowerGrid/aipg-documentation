@@ -1,0 +1,174 @@
+# P2P Architecture
+
+## System Overview
+
+The AI Power Grid P2P network consists of two types of nodes:
+
+1. **API Nodes** - Accept HTTP requests from users, publish jobs to the mesh
+2. **Workers** - Subscribe to job topics, process inference, stream results back
+
+```
+                        ┌─────────────────────────────────────┐
+                        │         P2P MESH (gossipsub)        │
+                        │                                     │
+                        │  Every node connects to every other │
+                        │  via libp2p. No central server.     │
+                        └──────────┬──────────────────────────┘
+                                   │
+        ┌──────────────────────────┼──────────────────────────┐
+        │                          │                          │
+        ▼                          ▼                          ▼
+┌───────────────┐          ┌───────────────┐          ┌───────────────┐
+│  API Node 1   │          │  API Node 2   │          │  API Node 3   │
+│  (anywhere)   │          │  (anywhere)   │          │  (anywhere)   │
+│               │          │               │          │               │
+│  FastAPI +    │          │  FastAPI +    │          │  FastAPI +    │
+│  P2P thread   │          │  P2P thread   │          │  P2P thread   │
+└───────┬───────┘          └───────┬───────┘          └───────────────┘
+        │                          │
+   HTTP request               HTTP request
+        │                          │
+   ┌────┴────┐                ┌────┴────┐
+   │ User A  │                │ User B  │
+   └─────────┘                └─────────┘
+
+
+        ┌──────────────────────────┼──────────────────────────┐
+        │                          │                          │
+        ▼                          ▼                          ▼
+┌───────────────┐          ┌───────────────┐          ┌───────────────┐
+│   Worker 1    │          │   Worker 2    │          │   Worker 3    │
+│   (home PC)   │          │   (cloud VM)  │          │   (basement)  │
+│               │          │               │          │               │
+│  Ollama +     │          │  vLLM +       │          │  Ollama +     │
+│  llama3.2:3b  │          │  llama3.2:3b  │          │  mistral:7b   │
+└───────────────┘          └───────────────┘          └───────────────┘
+```
+
+## Gossipsub Topics
+
+Jobs and results flow through gossipsub topics:
+
+| Topic Pattern | Purpose | Publishers | Subscribers |
+|---------------|---------|------------|-------------|
+| `/aipg/1/jobs/{model}` | Job broadcasts | API nodes | Workers for that model |
+| `/aipg/1/claims` | Claim announcements | Workers | All nodes |
+| `/aipg/1/results/{job_id}` | Streaming results | Workers | API node that submitted job |
+
+### Topic Examples
+
+```
+/aipg/1/jobs/grid-llama3.2-3b     # Jobs for llama3.2:3b
+/aipg/1/jobs/grid-mistral-7b      # Jobs for mistral:7b
+/aipg/1/jobs/grid-flux            # Jobs for Flux image model
+/aipg/1/claims                     # All claim announcements
+/aipg/1/results/abc123-def456     # Results for specific job
+```
+
+## Message Flow
+
+```
+┌─────────┐     ┌──────────┐     ┌──────────────────┐     ┌──────────┐
+│  User   │────▶│ API Node │────▶│ /aipg/1/jobs/... │────▶│ Workers  │
+└─────────┘     └──────────┘     └──────────────────┘     └────┬─────┘
+                     ▲                                         │
+                     │           ┌──────────────────┐          │
+                     │◀──────────│/aipg/1/results/..│◀─────────┘
+                     │           └──────────────────┘
+                     │
+                     ▼
+               Stream to user
+               via SSE
+```
+
+## Component Details
+
+### API Node (system-core)
+
+The API node runs FastAPI with a P2P thread:
+
+```
+┌─────────────────────────────────────────────────┐
+│  API Node                                       │
+│                                                 │
+│  ┌───────────────────┐  ┌───────────────────┐  │
+│  │  FastAPI Server   │  │  P2P Thread       │  │
+│  │  (asyncio)        │  │  (trio)           │  │
+│  │                   │  │                   │  │
+│  │  /v1/chat/...    ◀┼──┼▶ libp2p host     │  │
+│  │  /v1/models       │  │  gossipsub        │  │
+│  │                   │  │                   │  │
+│  └───────────────────┘  └───────────────────┘  │
+│           │                      │              │
+│           └──────────┬───────────┘              │
+│                      │                          │
+│              Thread-safe queues                 │
+│              (inbox/outbox)                     │
+└─────────────────────────────────────────────────┘
+```
+
+### Worker (grid-inference-worker)
+
+Workers run trio directly (no asyncio needed):
+
+```
+┌─────────────────────────────────────────────────┐
+│  Worker                                         │
+│                                                 │
+│  ┌───────────────────────────────────────────┐  │
+│  │  P2P Client (trio)                        │  │
+│  │                                           │  │
+│  │  ┌─────────────┐    ┌─────────────────┐   │  │
+│  │  │ Job Loop   │    │ Claims Loop     │   │  │
+│  │  │             │    │                 │   │  │
+│  │  │ Receive    │    │ Track claims    │   │  │
+│  │  │ jobs       │    │ from others     │   │  │
+│  │  └──────┬──────┘    └─────────────────┘   │  │
+│  │         │                                 │  │
+│  │         ▼                                 │  │
+│  │  ┌─────────────────────────────────────┐  │  │
+│  │  │ Inference Backend (Ollama/vLLM)     │  │  │
+│  │  └─────────────────────────────────────┘  │  │
+│  └───────────────────────────────────────────┘  │
+└─────────────────────────────────────────────────┘
+```
+
+## Bootstrap Process
+
+Nodes find each other via bootstrap peers:
+
+```
+1. Node starts with known bootstrap peer addresses
+   P2P_BOOTSTRAP_PEERS=/ip4/1.2.3.4/tcp/4001/p2p/QmBootstrap
+
+2. Connect to bootstrap peers
+   await host.connect(bootstrap_peer_info)
+
+3. Subscribe to relevant topics
+   - API nodes: subscribe to /aipg/1/claims
+   - Workers: subscribe to /aipg/1/jobs/{model} + /aipg/1/claims
+
+4. Gossipsub mesh forms automatically
+   - Peers discover each other through the mesh
+   - No central discovery server needed
+```
+
+## Hybrid Mode
+
+During transition, you can run both Redis and P2P:
+
+```
+┌──────────────────────────────────────────────────────────────┐
+│  Hybrid Queue                                                │
+│                                                              │
+│  submit_job():                                               │
+│    1. Add to Redis (for local WebSocket workers)             │
+│    2. Publish to P2P (for remote P2P workers)                │
+│                                                              │
+│  pop_job():                                                  │
+│    1. Check Redis                                            │
+│    2. Skip if claimed by P2P worker                          │
+└──────────────────────────────────────────────────────────────┘
+```
+
+This allows gradual migration without breaking existing workers.

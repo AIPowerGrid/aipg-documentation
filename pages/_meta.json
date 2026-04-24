@@ -5,6 +5,7 @@
   "streaming-api": "Streaming API",
   "worker-llm": "Text Worker",
   "worker-media": "Image Worker",
+  "p2p": "P2P Mode (Beta)",
   "staking": "Staking",
   "arc20_token_network": "Token Factory",
   "developers": "For Developers",

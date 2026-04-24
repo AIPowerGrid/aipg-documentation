@@ -1,0 +1,79 @@
+# P2P Mode (Decentralized API)
+
+AI Power Grid can run in **fully decentralized mode** using libp2p gossipsub. No central server required.
+
+## Why P2P?
+
+| Centralized (Default) | Decentralized (P2P) |
+|-----------------------|---------------------|
+| Single API server | Multiple API nodes |
+| Redis job queue | Gossipsub messaging |
+| Single point of failure | No single point of failure |
+| You run the server | Network runs itself |
+
+## The Vision
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                         P2P MESH                                │
+│                   (libp2p gossipsub)                            │
+│                                                                 │
+│   Every node connects to every other node.                      │
+│   No central server. No single point of failure.                │
+│   The Grid runs itself.                                         │
+└────────────┬──────────────────────────┬─────────────────────────┘
+             │                          │
+    ┌────────▼────────┐        ┌────────▼────────┐
+    │   API Node 1    │        │   API Node 2    │    ... N nodes
+    │   (anywhere)    │        │   (anywhere)    │
+    └────────▲────────┘        └────────▲────────┘
+             │                          │
+        HTTP request               HTTP request
+             │                          │
+    ┌────────┴────────┐        ┌────────┴────────┐
+    │     User A      │        │     User B      │
+    └─────────────────┘        └─────────────────┘
+
+
+    ┌─────────────────┐        ┌─────────────────┐
+    │   Worker 1      │        │   Worker 2      │    ... N workers
+    │   (your PC)     │        │   (cloud GPU)   │
+    │                 │        │                 │
+    │   Ollama/vLLM   │        │   Ollama/vLLM   │
+    └────────┬────────┘        └────────┬────────┘
+             │                          │
+             └──────────────────────────┘
+                        P2P mesh
+```
+
+## Key Features
+
+- **No Central Server**: Jobs distributed via gossipsub, not Redis
+- **Permissionless**: Anyone can run a worker or API node
+- **Censorship Resistant**: Can't shut down what has no center
+- **Trustless**: Deterministic claim resolution, no voting needed
+- **Self-Healing**: Nodes join and leave, network adapts
+
+## Quick Start
+
+import { Cards, Card } from 'nextra/components'
+
+<Cards>
+  <Card title="Run an API Node" href="/p2p/setup-api-node" />
+  <Card title="Run a P2P Worker" href="/p2p/setup-worker" />
+  <Card title="How It Works" href="/p2p/how-it-works" />
+</Cards>
+
+## Requirements
+
+- Python 3.11+
+- `libp2p` and `trio` packages
+- At least one bootstrap node address
+
+```bash
+pip install libp2p trio
+```
+
+## Status
+
+P2P mode is currently in **beta**. The hybrid queue allows running both Redis and P2P simultaneously during transition.
