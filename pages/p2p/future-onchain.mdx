@@ -196,6 +196,109 @@ contract JobEscrow {
 
 The hardest problem. Several approaches:
 
+### Approach 0: Verification Nodes (Recommended for Images)
+
+Dedicated nodes that re-run jobs to verify outputs:
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│  VERIFICATION NODE FLOW                                         │
+│                                                                 │
+│  Job submitted with:                                            │
+│    - prompt: "A cat wearing a hat"                              │
+│    - seed: 12345                                                │
+│    - model: flux                                                │
+│                                                                 │
+│         ┌─────────────┐         ┌─────────────┐                │
+│   Job ──▶  Worker A   │   Job ──▶ Verifier B  │                │
+│         │             │         │             │                │
+│         │ Generate    │         │ Generate    │                │
+│         │ image       │         │ same image  │                │
+│         └──────┬──────┘         └──────┬──────┘                │
+│                │                       │                        │
+│                ▼                       ▼                        │
+│         ┌─────────────────────────────────────┐                │
+│         │           COMPARE                   │                │
+│         │                                     │                │
+│         │  Images identical? ──▶ Pay both    │                │
+│         │  Images differ?    ──▶ Investigate │                │
+│         └─────────────────────────────────────┘                │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+**For Images (Deterministic):**
+```python
+def verify_image(image_a: bytes, image_b: bytes) -> bool:
+    """
+    Same model + same seed + same prompt = identical image.
+    Can compare hashes directly.
+    """
+    hash_a = sha256(image_a)
+    hash_b = sha256(image_b)
+    return hash_a == hash_b
+```
+
+**For Text (Non-Deterministic):**
+```python
+def verify_text(text_a: str, text_b: str) -> bool:
+    """
+    LLMs aren't deterministic. Use semantic similarity.
+    Embed both outputs and compare cosine similarity.
+    """
+    embedding_a = embed(text_a)  # e.g., using sentence-transformers
+    embedding_b = embed(text_b)
+
+    similarity = cosine_similarity(embedding_a, embedding_b)
+
+    # Threshold: 0.90 = "close enough"
+    return similarity > 0.90
+```
+
+**Verification Node Economics:**
+```
+┌─────────────────────────────────────────────────────────────────┐
+│  WHO PAYS FOR VERIFICATION?                                     │
+│                                                                 │
+│  Option A: User pays verification fee                           │
+│    Job cost: $0.10 base + $0.02 verification fee               │
+│    Verifier gets the $0.02                                      │
+│                                                                 │
+│  Option B: Protocol pays from inflation                         │
+│    X% of new AIPG emissions go to verification pool            │
+│    Verifiers stake and earn from pool                          │
+│                                                                 │
+│  Option C: Workers pay insurance                                │
+│    Workers pay 2% of earnings to verification fund              │
+│    Fund pays for random spot-checks                            │
+│    Workers who pass all checks get rebate                       │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+**Verification Sampling Rate:**
+```
+┌─────────────────────────────────────────────────────────────────┐
+│  ADAPTIVE SAMPLING                                              │
+│                                                                 │
+│  New worker (reputation < 200):                                 │
+│    100% of jobs verified                                        │
+│    Must prove they're honest                                    │
+│                                                                 │
+│  Established worker (reputation 200-700):                       │
+│    10% of jobs randomly verified                                │
+│    Occasional spot-checks                                       │
+│                                                                 │
+│  Trusted worker (reputation > 700):                             │
+│    1% of jobs randomly verified                                 │
+│    Rare audits to ensure continued honesty                      │
+│                                                                 │
+│  Selection is random and unpredictable:                         │
+│    should_verify = SHA256(job_id + block_hash)[0] < threshold  │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+```
+
 ### Approach 1: Optimistic Verification
 
 Assume outputs are correct. Allow challenges.
@@ -467,6 +570,115 @@ How workers get paid fairly:
 │    - Dispute resolution                                         │
 │    - Payment channels                                           │
 │    - Fully trustless                                            │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+## Image vs Text Verification
+
+Different strategies for different modalities:
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│  IMAGE GENERATION (Easy to verify)                              │
+│                                                                 │
+│  ✅ Deterministic with seed                                     │
+│  ✅ Pixel-perfect comparison possible                           │
+│  ✅ Perceptual hash as backup                                   │
+│  ✅ Same model + seed + prompt = identical output               │
+│                                                                 │
+│  Verification: Run same job, compare SHA256 of output           │
+│  Cost: 2x compute for verified jobs                             │
+│  Confidence: 100% - either matches or doesn't                   │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────┐
+│  TEXT GENERATION (Harder to verify)                             │
+│                                                                 │
+│  ❌ NOT deterministic (floating point variance)                 │
+│  ❌ Different GPUs = different outputs                          │
+│  ❌ Different quantization = different outputs                  │
+│  ⚠️ Even temperature=0 varies                                   │
+│                                                                 │
+│  Verification options:                                          │
+│    1. Semantic similarity (embeddings)                          │
+│    2. Key fact extraction and comparison                        │
+│    3. LLM-as-judge (another model grades output)                │
+│    4. User feedback aggregation                                 │
+│                                                                 │
+│  Confidence: 85-95% depending on method                         │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+### Text Verification Methods
+
+**Method 1: Embedding Similarity**
+```python
+from sentence_transformers import SentenceTransformer
+
+model = SentenceTransformer('all-MiniLM-L6-v2')
+
+def verify_text_similarity(output_a: str, output_b: str) -> float:
+    embeddings = model.encode([output_a, output_b])
+    similarity = cosine_similarity(embeddings[0], embeddings[1])
+    return similarity  # 0.0 to 1.0
+```
+
+**Method 2: Fact Extraction**
+```python
+def extract_key_facts(text: str) -> set:
+    """Use NER/extraction to pull key facts."""
+    # "The capital of France is Paris, with 2M people"
+    # → {"capital:France:Paris", "population:Paris:2M"}
+    pass
+
+def verify_facts(output_a: str, output_b: str) -> float:
+    facts_a = extract_key_facts(output_a)
+    facts_b = extract_key_facts(output_b)
+    overlap = len(facts_a & facts_b) / len(facts_a | facts_b)
+    return overlap
+```
+
+**Method 3: LLM-as-Judge**
+```python
+async def llm_judge(prompt: str, output_a: str, output_b: str) -> bool:
+    """Use a small, fast model to judge if outputs are equivalent."""
+    judge_prompt = f"""
+    Original question: {prompt}
+
+    Response A: {output_a}
+
+    Response B: {output_b}
+
+    Are these responses semantically equivalent? (yes/no)
+    """
+    verdict = await small_llm.complete(judge_prompt)
+    return "yes" in verdict.lower()
+```
+
+### Recommended Strategy
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│  HYBRID VERIFICATION STRATEGY                                   │
+│                                                                 │
+│  Images:                                                        │
+│    → Always use hash comparison (100% accurate)                 │
+│    → Sample 5% of jobs for verification                         │
+│    → Instant, cheap, reliable                                   │
+│                                                                 │
+│  Text:                                                          │
+│    → Use embedding similarity as primary                        │
+│    → Threshold: 0.88 = pass, <0.70 = fail, between = review    │
+│    → Sample 10% of jobs (higher rate due to uncertainty)        │
+│    → For disputes: escalate to LLM-as-judge                     │
+│                                                                 │
+│  Combined:                                                       │
+│    → New workers: 100% verified (both methods)                  │
+│    → Established: 5-10% spot checks                             │
+│    → Trusted: 1% random audits                                  │
 │                                                                 │
 └─────────────────────────────────────────────────────────────────┘
 ```
