@@ -1,0 +1,234 @@
+# How P2P Mode Works
+
+This page explains exactly what happens when a user makes a request in P2P mode.
+
+## Step-by-Step Flow
+
+### 1. User Sends Request
+
+User sends a standard OpenAI-compatible request to any API node:
+
+```bash
+curl https://api-node-1.aipowergrid.io/v1/chat/completions \
+  -H "Authorization: Bearer $API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "grid/llama3.2:3b",
+    "messages": [{"role": "user", "content": "Hello!"}],
+    "stream": true
+  }'
+```
+
+### 2. API Node Creates Job
+
+The API node creates a job with a unique ID and random signature:
+
+```python
+job = {
+    "id": "abc123-def456",
+    "model": "grid/llama3.2-3b",
+    "payload": {
+        "messages": [{"role": "user", "content": "Hello!"}],
+        "max_tokens": 512,
+        "temperature": 0.7
+    },
+    "signature": "7f3a2b1c...",  # Random - used as claim seed
+    "timestamp": 1714000000,
+    "ttl": 60
+}
+```
+
+### 3. Job Broadcast via Gossipsub
+
+```
+API Node publishes to: /aipg/1/jobs/grid-llama3.2-3b
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                     GOSSIPSUB MESH                              │
+│                                                                 │
+│  The message propagates to all nodes subscribed to this topic  │
+└─────────────────────────────────────────────────────────────────┘
+                              │
+        ┌─────────────────────┼─────────────────────┐
+        ▼                     ▼                     ▼
+   Worker 1              Worker 2              Worker 3
+   (llama3.2:3b)        (llama3.2:3b)        (mistral:7b)
+   RECEIVES              RECEIVES              (not subscribed)
+```
+
+### 4. Deterministic Claim Resolution
+
+**This is the magic.** All workers compute the same winner independently:
+
+```python
+def should_claim(job, my_peer_id, known_workers):
+    # Use job's random signature as seed
+    seed = bytes.fromhex(job.signature[:64])
+
+    # Compute my score
+    my_score = SHA256(job.id + seed + my_peer_id)
+
+    # Check if anyone beats me
+    for worker in known_workers:
+        their_score = SHA256(job.id + seed + worker)
+        if their_score < my_score:
+            return False  # They win, I skip
+
+    return True  # I win!
+```
+
+**Example with 3 workers:**
+
+```
+Job ID: abc123-def456
+Signature seed: 0x7f3a2b1c...
+
+┌─────────────────────────────────────────────────────────────────┐
+│  Worker 1 computes:                                             │
+│    score = SHA256("abc123" + seed + "QmWorker1...")            │
+│    score = 0x7a3b2c1d...                                       │
+│                                                                 │
+│  Worker 2 computes:                                             │
+│    score = SHA256("abc123" + seed + "QmWorker2...")            │
+│    score = 0x2f1e0d9c...  ◄── LOWEST SCORE = WINS              │
+│                                                                 │
+│  Worker 3 computes:                                             │
+│    score = SHA256("abc123" + seed + "QmWorker3...")            │
+│    score = 0x9c8b7a6f...                                       │
+└─────────────────────────────────────────────────────────────────┘
+
+Result: Worker 2 processes the job. Others skip silently.
+        No communication needed to reach consensus!
+```
+
+### 5. Winner Claims the Job
+
+Worker 2 broadcasts its claim to prevent any race conditions:
+
+```
+Worker 2 publishes to: /aipg/1/claims
+{
+    "job_id": "abc123-def456",
+    "worker_id": "QmWorker2...",
+    "timestamp": 1714000001
+}
+```
+
+Other workers receive this and mark the job as claimed.
+
+### 6. Worker Processes the Job
+
+Worker 2 calls its local inference backend:
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│  Worker 2                                                       │
+│                                                                 │
+│  1. Build request for local backend                             │
+│     POST http://localhost:11434/v1/chat/completions            │
+│                                                                 │
+│  2. Stream tokens from Ollama/vLLM                              │
+│     "Hello" → "!" → " How" → " can" → " I" → " help" → "?"     │
+│                                                                 │
+│  3. Publish each token to gossipsub                             │
+│     /aipg/1/results/abc123-def456                              │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+### 7. API Node Receives Results
+
+```
+API Node subscribed to: /aipg/1/results/abc123-def456
+                              │
+                              ▼
+Receives:
+  {"type": "token", "token": {"text": "Hello", "index": 1}}
+  {"type": "token", "token": {"text": "!", "index": 2}}
+  {"type": "token", "token": {"text": " How", "index": 3}}
+  ...
+  {"type": "done", "done": {"full_text": "Hello! How can I help?", "token_count": 7}}
+```
+
+### 8. Stream to User
+
+API node converts gossipsub messages to SSE stream:
+
+```
+data: {"choices":[{"delta":{"content":"Hello"}}]}
+
+data: {"choices":[{"delta":{"content":"!"}}]}
+
+data: {"choices":[{"delta":{"content":" How"}}]}
+
+...
+
+data: [DONE]
+```
+
+## Complete Sequence Diagram
+
+```
+User          API Node        Gossipsub         Worker 1      Worker 2
+  │               │               │                │              │
+  │─POST /v1/...─▶│               │                │              │
+  │               │               │                │              │
+  │               │──publish job─▶│                │              │
+  │               │               │                │              │
+  │               │               │───job msg────▶│              │
+  │               │               │───job msg───────────────────▶│
+  │               │               │                │              │
+  │               │               │                │ compute      │ compute
+  │               │               │                │ score        │ score
+  │               │               │                │ = 0x7a...    │ = 0x2f...
+  │               │               │                │              │
+  │               │               │                │ SKIP         │ WINS
+  │               │               │                │              │
+  │               │               │◀──────────────claim──────────│
+  │               │               │                │              │
+  │               │subscribe to   │                │              │──▶ Ollama
+  │               │results topic  │                │              │◀── tokens
+  │               │               │                │              │
+  │               │               │◀───────────token 1───────────│
+  │◀──SSE token───│               │                │              │
+  │               │               │◀───────────token 2───────────│
+  │◀──SSE token───│               │                │              │
+  │               │               │◀──────────done msg───────────│
+  │◀──SSE done────│               │                │              │
+  │               │               │                │              │
+```
+
+## Why This Works
+
+| Challenge | Solution |
+|-----------|----------|
+| Who processes each job? | Deterministic hash - everyone computes same winner |
+| What if two workers claim? | First timestamp wins, hash is tiebreaker |
+| What if a worker crashes? | Job TTL expires, can be resubmitted |
+| How do nodes find each other? | Bootstrap peers + gossipsub mesh discovery |
+| How does user get results? | API node subscribes to job-specific result topic |
+
+## Edge Cases
+
+### Worker Joins Mid-Job
+
+New worker won't have the job in their queue. Job continues normally with existing workers.
+
+### Worker Crashes Mid-Job
+
+1. No more tokens published to result topic
+2. API node times out waiting
+3. Job can be resubmitted (new signature = new claim resolution)
+
+### Network Partition
+
+1. Different parts of network may see different workers
+2. Deterministic claim still works within each partition
+3. May result in duplicate processing (acceptable - idempotent)
+
+### All Workers Offline
+
+1. Job sits in result topic with no response
+2. API node times out
+3. Returns error to user
+4. Job can be retried when workers come online

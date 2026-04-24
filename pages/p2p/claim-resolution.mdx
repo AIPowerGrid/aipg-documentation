@@ -1,0 +1,225 @@
+# Claim Resolution
+
+How does the Grid decide which worker processes each job? **Deterministic hash-based selection.**
+
+## The Problem
+
+When a job is broadcast, multiple workers might want to process it:
+
+```
+                    Job: "Summarize this article"
+                              │
+              ┌───────────────┼───────────────┐
+              ▼               ▼               ▼
+         Worker 1        Worker 2        Worker 3
+         "I'll do it!"   "I'll do it!"   "I'll do it!"
+```
+
+We need to pick ONE worker without:
+- Central coordinator (defeats the purpose of P2P)
+- Voting/consensus (too slow, complex)
+- Race conditions (wastes compute)
+
+## The Solution
+
+Every worker computes the same deterministic function and gets the same answer:
+
+```python
+def should_claim(job, my_peer_id, known_workers):
+    # Random seed from job (same for all workers)
+    seed = job.signature[:64]
+
+    # My score
+    my_score = SHA256(job.id + seed + my_peer_id)
+
+    # Am I the lowest?
+    for worker in known_workers:
+        their_score = SHA256(job.id + seed + worker)
+        if their_score < my_score:
+            return False  # They beat me
+
+    return True  # I win!
+```
+
+## Visual Example
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│  JOB                                                            │
+│  id: "abc123"                                                   │
+│  signature: "7f3a2b1c4d5e6f..."  ← Random, set by API node     │
+└─────────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────────┐
+│  CLAIM RESOLUTION                                               │
+│                                                                 │
+│  seed = "7f3a2b1c4d5e6f..."                                    │
+│                                                                 │
+│  Worker 1: SHA256("abc123" + seed + "QmWorker1...")            │
+│          = 0x7a3b2c1d4e5f...                                   │
+│                                                                 │
+│  Worker 2: SHA256("abc123" + seed + "QmWorker2...")            │
+│          = 0x2f1e0d9c8b7a...  ◄── LOWEST = WINNER              │
+│                                                                 │
+│  Worker 3: SHA256("abc123" + seed + "QmWorker3...")            │
+│          = 0x9c8b7a6f5e4d...                                   │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+         Worker 2 processes the job. Others skip silently.
+```
+
+## Key Properties
+
+### Deterministic
+
+Every worker computes the **exact same result**. No communication needed.
+
+```
+Worker 1 thinks: "Worker 2 should handle this" → skips
+Worker 2 thinks: "I should handle this" → processes
+Worker 3 thinks: "Worker 2 should handle this" → skips
+```
+
+### Fair (Probabilistic)
+
+Over many jobs, each worker wins roughly equally:
+
+```
+Jobs:     #1    #2    #3    #4    #5    #6    #7    #8    #9
+Winner:   W1    W2    W3    W1    W2    W3    W2    W1    W3
+          ──────────────────────────────────────────────────
+          W1: 3 jobs (33%)
+          W2: 3 jobs (33%)
+          W3: 3 jobs (33%)
+```
+
+### Unpredictable
+
+The random signature in each job means workers can't predict or game which jobs they'll get.
+
+### No Single Point of Failure
+
+No coordinator to go down. Every worker independently computes the same answer.
+
+## What About Ties?
+
+SHA256 produces 256-bit outputs. Probability of collision: 1 in 2^256.
+
+That's more atoms than exist in the observable universe. Won't happen.
+
+## What If Workers Disagree on "Known Workers"?
+
+Workers learn about each other through claim broadcasts. During a brief window, they might have different views:
+
+```
+Scenario: Worker 4 just joined
+
+Worker 1 knows: [W1, W2, W3]
+Worker 2 knows: [W1, W2, W3, W4]  ← Saw W4's first claim
+Worker 3 knows: [W1, W2, W3]
+```
+
+This can cause:
+- **Double processing**: Both W1 and W4 think they should process
+- **Acceptable**: Results are idempotent, user just gets faster response
+
+Within seconds, all workers sync up via claim broadcasts.
+
+## Claim Broadcast
+
+After computing they should process, workers broadcast a claim:
+
+```python
+claim = {
+    "job_id": "abc123",
+    "worker_id": "QmWorker2...",
+    "timestamp": 1714000001
+}
+
+await pubsub.publish("/aipg/1/claims", claim)
+```
+
+This serves two purposes:
+1. **Confirmation**: Other workers definitely skip
+2. **Discovery**: Workers learn about each other
+
+## Claim Conflicts
+
+If two workers claim (rare, due to network sync):
+
+```
+Worker 2 claims at t=1714000001.234
+Worker 4 claims at t=1714000001.567
+
+Rule: Earliest timestamp wins
+Tiebreaker: Lower peer ID wins
+```
+
+Both workers see both claims and agree on the winner.
+
+## Load Balancing
+
+The random signature ensures even distribution **automatically**:
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│  100 JOBS OVER TIME                                             │
+│                                                                 │
+│  Worker 1 (RTX 4090):  ████████████████████████████████  33%   │
+│  Worker 2 (RTX 3080):  ████████████████████████████████  33%   │
+│  Worker 3 (RTX 3070):  ████████████████████████████████  34%   │
+│                                                                 │
+│  Equal distribution regardless of hardware!                     │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+**Note**: Currently, all workers get equal share. Future versions may weight by:
+- GPU performance
+- Historical reliability
+- Stake amount
+
+## The Algorithm
+
+```python
+import hashlib
+
+def compute_claim_score(job_id: str, seed: bytes, worker_id: str) -> bytes:
+    """Lower score wins."""
+    data = job_id.encode() + seed + worker_id.encode()
+    return hashlib.sha256(data).digest()
+
+def should_claim(job, my_worker_id: str, known_workers: list[str]) -> bool:
+    """Deterministic winner selection."""
+    if not known_workers:
+        return True  # I'm the only one
+
+    seed = bytes.fromhex(job.signature[:64])
+    my_score = compute_claim_score(job.id, seed, my_worker_id)
+
+    for worker_id in known_workers:
+        if worker_id == my_worker_id:
+            continue
+        their_score = compute_claim_score(job.id, seed, worker_id)
+        if their_score < my_score:
+            return False  # Someone else should process
+
+    return True  # I should process
+```
+
+## Why This Works
+
+| Requirement | How It's Met |
+|-------------|--------------|
+| No coordinator | Pure computation, no communication needed |
+| Consistent | SHA256 is deterministic |
+| Fair | Random seed = uniform distribution |
+| Fast | One hash per known worker |
+| Secure | Can't predict or manipulate outcomes |
+
+This is the same approach used by:
+- **Livepeer**: Video transcoding network
+- **Filecoin**: Storage provider selection
+- **Many DHTs**: Kademlia routing

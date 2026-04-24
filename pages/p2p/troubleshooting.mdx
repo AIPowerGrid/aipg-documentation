@@ -1,0 +1,305 @@
+# P2P Troubleshooting
+
+Common issues and solutions for P2P mode.
+
+## Connection Issues
+
+### "Failed to connect to bootstrap peer"
+
+**Symptoms:**
+```
+⚠️ Failed to connect to /ip4/1.2.3.4/tcp/4001/p2p/QmPeer...: Connection refused
+```
+
+**Solutions:**
+
+1. **Check the address is correct**
+   ```bash
+   # Verify the multiaddr format
+   /ip4/1.2.3.4/tcp/4001/p2p/QmPeerID...
+   ```
+
+2. **Check the bootstrap peer is online**
+   ```bash
+   nc -zv 1.2.3.4 4001
+   ```
+
+3. **Try a different bootstrap peer**
+   ```bash
+   P2P_BOOTSTRAP_PEERS=/ip4/backup.aipowergrid.io/tcp/4001/p2p/QmBackup...
+   ```
+
+4. **Check your firewall**
+   ```bash
+   sudo ufw status
+   sudo ufw allow 4001/tcp
+   ```
+
+### "P2P node failed to start within timeout"
+
+**Symptoms:**
+```
+RuntimeError: P2P node failed to start within timeout
+```
+
+**Solutions:**
+
+1. **Check port availability**
+   ```bash
+   lsof -i :4001
+   # Kill any existing process using the port
+   ```
+
+2. **Try a different port**
+   ```bash
+   P2P_LISTEN_PORT=4002
+   ```
+
+3. **Check libp2p installation**
+   ```bash
+   pip install --upgrade libp2p trio
+   ```
+
+### Worker not receiving jobs
+
+**Symptoms:**
+```
+⏳ Waiting for jobs...
+# (nothing happens)
+```
+
+**Solutions:**
+
+1. **Verify subscription topic**
+   ```
+   Check logs for: 📥 Subscribed to /aipg/1/jobs/grid-llama3.2-3b
+
+   Make sure GRID_MODEL_NAME matches what API nodes are sending
+   ```
+
+2. **Wait for mesh formation**
+   ```
+   Gossipsub needs ~30 seconds to form a stable mesh.
+   Wait a minute after startup.
+   ```
+
+3. **Check you have bootstrap connections**
+   ```
+   Look for: ✅ Connected to bootstrap peer: QmPeer...
+   ```
+
+4. **Submit a test job**
+   ```bash
+   curl http://localhost:8000/v1/chat/completions \
+     -H "Content-Type: application/json" \
+     -d '{"model": "grid/llama3.2:3b", "messages": [{"role": "user", "content": "test"}]}'
+   ```
+
+## Backend Issues
+
+### "Backend error 500"
+
+**Symptoms:**
+```
+Backend error 500: {"error": "model not found"}
+```
+
+**Solutions:**
+
+1. **Check Ollama is running**
+   ```bash
+   curl http://localhost:11434/api/version
+   ```
+
+2. **Check the model is pulled**
+   ```bash
+   ollama list
+   # Should show llama3.2:3b
+
+   ollama pull llama3.2:3b
+   ```
+
+3. **Verify MODEL_NAME matches**
+   ```bash
+   # In .env
+   MODEL_NAME=llama3.2:3b  # Must match Ollama's name exactly
+   ```
+
+### "Backend error: Connection refused"
+
+**Symptoms:**
+```
+httpx.ConnectError: Connection refused
+```
+
+**Solutions:**
+
+1. **Start Ollama**
+   ```bash
+   ollama serve
+   ```
+
+2. **Check URL in config**
+   ```bash
+   OLLAMA_URL=http://127.0.0.1:11434  # Not https!
+   ```
+
+3. **For vLLM, check the port**
+   ```bash
+   OPENAI_URL=http://127.0.0.1:8000/v1
+   ```
+
+## Claim Issues
+
+### "Not our turn for job"
+
+**Symptoms:**
+```
+Not our turn for job abc123...
+# (job goes to another worker)
+```
+
+**This is normal!** With multiple workers, jobs are distributed. Your worker will get its share.
+
+Check your claim rate over time:
+```
+✅ abc123 | 127 tokens | total: 1
+✅ def456 | 89 tokens | total: 2
+✅ ghi789 | 203 tokens | total: 3
+```
+
+### Worker always skipping jobs
+
+**Symptoms:**
+Every job shows "Not our turn"
+
+**Solutions:**
+
+1. **Check known workers list**
+   ```
+   If you only know about yourself, you should win every job.
+   If you know about other workers with lower scores, you'll skip.
+   ```
+
+2. **Restart to get new peer ID**
+   ```bash
+   # New peer ID = different claim scores
+   systemctl restart aipg-worker
+   ```
+
+3. **Check for peer ID collision**
+   ```
+   Extremely unlikely, but if two workers have same ID, one always loses.
+   ```
+
+## Memory Issues
+
+### Memory growing over time
+
+**Symptoms:**
+Worker memory usage increases continuously
+
+**Solutions:**
+
+1. **Claims are cleaned up automatically**
+   ```
+   Claims older than 2 minutes are pruned every 10 jobs.
+   Check logs for: Cleaned up X old claims
+   ```
+
+2. **Restart periodically** (temporary fix)
+   ```bash
+   # Add to cron
+   0 */6 * * * systemctl restart aipg-worker
+   ```
+
+## Network Issues
+
+### Behind NAT / No incoming connections
+
+**Symptoms:**
+```
+- Can connect to bootstrap peers
+- But no jobs arrive
+- Other workers can't reach you
+```
+
+**Solutions:**
+
+1. **Port forward**
+   ```
+   Forward port 4001 (or your P2P_LISTEN_PORT) on your router
+   ```
+
+2. **Check with external tool**
+   ```bash
+   # From outside your network
+   nc -zv your-public-ip 4001
+   ```
+
+3. **Use relay (if available)**
+   ```bash
+   P2P_RELAY_ENABLED=true
+   ```
+
+### Slow job delivery
+
+**Symptoms:**
+Jobs take several seconds to arrive
+
+**Solutions:**
+
+1. **Reduce gossipsub heartbeat**
+   ```
+   Currently hardcoded to 5s. Lower = faster propagation but more bandwidth.
+   ```
+
+2. **Add more bootstrap peers**
+   ```bash
+   P2P_BOOTSTRAP_PEERS=/ip4/peer1/...,/ip4/peer2/...,/ip4/peer3/...
+   ```
+
+## Debugging
+
+### Enable debug logging
+
+```python
+import logging
+logging.basicConfig(level=logging.DEBUG)
+logging.getLogger("libp2p").setLevel(logging.DEBUG)
+```
+
+### Check subscription status
+
+Look for these log lines:
+```
+📥 Subscribed to /aipg/1/jobs/grid-llama3.2-3b
+📥 Subscribed to /aipg/1/claims
+```
+
+### Check peer connections
+
+```python
+# Number of connected peers
+len(host.get_network().connections)
+```
+
+### Test gossipsub manually
+
+```python
+# Publish a test message
+await pubsub.publish("/test/topic", b"hello")
+```
+
+## Getting Help
+
+1. **Check the logs first** - most issues are visible in output
+2. **Join the AIPG Discord** - community support
+3. **Open a GitHub issue** - for bugs with reproduction steps
+
+Include in bug reports:
+- Python version
+- libp2p version: `pip show libp2p`
+- Your .env (redact sensitive values)
+- Full error traceback
+- Steps to reproduce
