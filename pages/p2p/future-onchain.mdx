@@ -1,0 +1,522 @@
+# Future: Fully On-Chain P2P
+
+import { Callout } from 'nextra/components'
+
+<Callout type="info">
+This page describes the **future vision** for a fully decentralized, on-chain AI Power Grid. Current P2P mode is a stepping stone toward this goal.
+</Callout>
+
+## The Challenge
+
+Moving fully on-chain introduces hard problems:
+
+| Challenge | Why It's Hard |
+|-----------|---------------|
+| **Output Verification** | Can't re-run inference to verify (expensive, non-deterministic) |
+| **Fair Rewards** | How to pay workers fairly without central authority? |
+| **Quality Assurance** | How to ensure workers aren't returning garbage? |
+| **Sybil Resistance** | How to prevent one entity running 1000 fake workers? |
+| **Gas Costs** | Can't put every token on-chain |
+
+## Proposed Architecture
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                      ON-CHAIN (Base L2)                         │
+│                                                                 │
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────────────────┐ │
+│  │   Worker    │  │    Job      │  │      Dispute            │ │
+│  │  Registry   │  │   Escrow    │  │     Resolution          │ │
+│  │             │  │             │  │                         │ │
+│  │  - Stakes   │  │  - Deposits │  │  - Challenges           │ │
+│  │  - Scores   │  │  - Releases │  │  - Slashing             │ │
+│  │  - Models   │  │  - Refunds  │  │  - Appeals              │ │
+│  └─────────────┘  └─────────────┘  └─────────────────────────┘ │
+│                                                                 │
+└───────────────────────────┬─────────────────────────────────────┘
+                            │
+                    State commitments
+                    Payment settlements
+                            │
+┌───────────────────────────┼─────────────────────────────────────┐
+│                      OFF-CHAIN (P2P)                            │
+│                                                                 │
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────────────────┐ │
+│  │    Job      │  │   Result    │  │      Verification       │ │
+│  │  Broadcast  │  │  Streaming  │  │       Sampling          │ │
+│  │             │  │             │  │                         │ │
+│  │  gossipsub  │  │  gossipsub  │  │  Random re-computation  │ │
+│  └─────────────┘  └─────────────┘  └─────────────────────────┘ │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+## Worker Registry
+
+Workers must register on-chain to participate:
+
+```solidity
+contract WorkerRegistry {
+    struct Worker {
+        address owner;
+        bytes32 peerId;           // libp2p peer ID
+        uint256 stake;            // AIPG staked
+        uint256 reputationScore;  // 0-1000
+        string[] models;          // Models they serve
+        uint256 jobsCompleted;
+        uint256 jobsDisputed;
+        bool active;
+    }
+
+    mapping(bytes32 => Worker) public workers;
+
+    // Minimum stake to participate
+    uint256 public constant MIN_STAKE = 1000 * 10**18; // 1000 AIPG
+
+    function register(bytes32 peerId, string[] calldata models) external payable {
+        require(msg.value >= MIN_STAKE, "Insufficient stake");
+        workers[peerId] = Worker({
+            owner: msg.sender,
+            peerId: peerId,
+            stake: msg.value,
+            reputationScore: 500, // Start neutral
+            models: models,
+            jobsCompleted: 0,
+            jobsDisputed: 0,
+            active: true
+        });
+    }
+
+    function slash(bytes32 peerId, uint256 amount) external onlyDisputeContract {
+        workers[peerId].stake -= amount;
+        workers[peerId].reputationScore -= 50;
+        if (workers[peerId].stake < MIN_STAKE) {
+            workers[peerId].active = false;
+        }
+    }
+}
+```
+
+### Stake-Weighted Claim Resolution
+
+Higher stake = higher chance of winning jobs:
+
+```python
+def compute_weighted_claim_score(job_id, seed, worker_id, stake):
+    """
+    Lower score wins. Stake gives advantage.
+
+    A worker with 2x stake has 2x chance of winning.
+    """
+    base_score = SHA256(job_id + seed + worker_id)
+
+    # Convert to number, divide by stake
+    # Higher stake = lower score = more likely to win
+    score_int = int.from_bytes(base_score, 'big')
+    weighted_score = score_int // stake
+
+    return weighted_score
+```
+
+This creates economic incentive to stake more, securing the network.
+
+## Job Escrow
+
+Users deposit payment before job execution:
+
+```solidity
+contract JobEscrow {
+    struct Job {
+        bytes32 jobId;
+        address user;
+        uint256 payment;         // AIPG deposited
+        uint256 maxTokens;
+        bytes32 assignedWorker;
+        uint256 deadline;
+        JobStatus status;
+        bytes32 resultHash;      // Hash of output (for disputes)
+    }
+
+    enum JobStatus { Pending, Claimed, Completed, Disputed, Refunded }
+
+    mapping(bytes32 => Job) public jobs;
+
+    function createJob(
+        bytes32 jobId,
+        uint256 maxTokens
+    ) external payable {
+        require(msg.value > 0, "Payment required");
+
+        jobs[jobId] = Job({
+            jobId: jobId,
+            user: msg.sender,
+            payment: msg.value,
+            maxTokens: maxTokens,
+            assignedWorker: bytes32(0),
+            deadline: block.timestamp + 5 minutes,
+            status: JobStatus.Pending,
+            resultHash: bytes32(0)
+        });
+
+        // Emit event for P2P network to pick up
+        emit JobCreated(jobId, msg.sender, msg.value, maxTokens);
+    }
+
+    function completeJob(
+        bytes32 jobId,
+        bytes32 resultHash,
+        uint256 tokenCount,
+        bytes calldata signature
+    ) external {
+        Job storage job = jobs[jobId];
+        require(job.status == JobStatus.Claimed, "Not claimed");
+        require(block.timestamp <= job.deadline, "Expired");
+
+        // Verify worker signature
+        require(verifyWorkerSignature(job.assignedWorker, jobId, resultHash, signature));
+
+        job.resultHash = resultHash;
+        job.status = JobStatus.Completed;
+
+        // Calculate payment based on tokens
+        uint256 payout = calculatePayout(job.payment, tokenCount, job.maxTokens);
+
+        // Pay worker
+        payable(workerRegistry.getOwner(job.assignedWorker)).transfer(payout);
+
+        // Refund unused portion to user
+        if (payout < job.payment) {
+            payable(job.user).transfer(job.payment - payout);
+        }
+    }
+}
+```
+
+## Output Verification
+
+The hardest problem. Several approaches:
+
+### Approach 1: Optimistic Verification
+
+Assume outputs are correct. Allow challenges.
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│  OPTIMISTIC VERIFICATION FLOW                                  │
+│                                                                 │
+│  1. Worker completes job, submits result hash on-chain         │
+│                                                                 │
+│  2. Challenge window opens (e.g., 10 minutes)                  │
+│     ┌─────────────────────────────────────────────────────┐    │
+│     │  Anyone can challenge by:                           │    │
+│     │  - Staking a challenge bond                         │    │
+│     │  - Providing evidence of bad output                 │    │
+│     └─────────────────────────────────────────────────────┘    │
+│                                                                 │
+│  3a. No challenge → Payment released to worker                 │
+│                                                                 │
+│  3b. Challenge raised → Dispute resolution                     │
+│      ┌─────────────────────────────────────────────────────┐   │
+│      │  - Multiple verifiers re-run the job               │   │
+│      │  - Compare outputs                                 │   │
+│      │  - Majority wins                                   │   │
+│      │  - Loser gets slashed                              │   │
+│      └─────────────────────────────────────────────────────┘   │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+**Pros**: Cheap (most jobs not challenged)
+**Cons**: Delay before payment, requires verifiers
+
+### Approach 2: Random Sampling
+
+Randomly select X% of jobs for verification:
+
+```python
+def should_verify(job_id, block_hash):
+    """
+    Deterministic random selection.
+    ~5% of jobs get verified.
+    """
+    combined = SHA256(job_id + block_hash)
+    return combined[0] < 13  # 13/256 ≈ 5%
+```
+
+For selected jobs:
+1. Send to 3 workers instead of 1
+2. Compare outputs
+3. Slash any worker that differs significantly
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│  SAMPLING VERIFICATION                                          │
+│                                                                 │
+│  95% of jobs:                                                   │
+│    User → Worker → Result → Payment                             │
+│                                                                 │
+│  5% of jobs (randomly selected):                                │
+│    User → Worker 1 ─┐                                           │
+│         → Worker 2 ─┼─→ Compare → If match: Pay all            │
+│         → Worker 3 ─┘             If differ: Slash outlier      │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+**Pros**: Catches cheaters probabilistically
+**Cons**: 5% overhead, non-deterministic outputs make comparison hard
+
+### Approach 3: Commit-Reveal with Reputation
+
+Workers build reputation over time:
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│  REPUTATION TIERS                                               │
+│                                                                 │
+│  Tier 1 (New Workers):                                          │
+│    - All jobs verified                                          │
+│    - Low payment until proven                                   │
+│    - Need 100 successful jobs to advance                        │
+│                                                                 │
+│  Tier 2 (Established):                                          │
+│    - 10% of jobs verified                                       │
+│    - Standard payment                                           │
+│    - Need 1000 jobs + high rating to advance                    │
+│                                                                 │
+│  Tier 3 (Trusted):                                              │
+│    - 1% of jobs verified                                        │
+│    - Premium payment (priority in claims)                       │
+│    - Single bad job → back to Tier 2                            │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+## Dispute Resolution
+
+When verification fails or user challenges:
+
+```solidity
+contract DisputeResolution {
+    struct Dispute {
+        bytes32 jobId;
+        address challenger;
+        uint256 challengeBond;
+        bytes evidence;
+        DisputeStatus status;
+        bytes32[] verifierVotes;
+    }
+
+    enum DisputeStatus { Open, Verifying, Resolved }
+
+    // Verifier selection: random from high-reputation workers
+    function selectVerifiers(bytes32 disputeId) internal returns (bytes32[] memory) {
+        // Use block hash + dispute ID for randomness
+        // Select 5 workers with reputation > 800
+        // They must re-run the job and vote
+    }
+
+    function resolveDispute(bytes32 disputeId) external {
+        Dispute storage dispute = disputes[disputeId];
+
+        // Count votes
+        uint256 forWorker = 0;
+        uint256 forChallenger = 0;
+
+        for (uint i = 0; i < dispute.verifierVotes.length; i++) {
+            if (dispute.verifierVotes[i] == VOTE_WORKER) forWorker++;
+            else forChallenger++;
+        }
+
+        if (forWorker > forChallenger) {
+            // Worker was honest
+            // Slash challenger bond
+            // Pay worker + bonus from challenge bond
+        } else {
+            // Worker cheated
+            // Slash worker stake
+            // Refund user
+            // Reward challenger
+        }
+    }
+}
+```
+
+## Payment Channels (Gas Optimization)
+
+Can't put every token on-chain. Use payment channels:
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│  PAYMENT CHANNEL FLOW                                           │
+│                                                                 │
+│  1. User opens channel with worker, deposits 100 AIPG          │
+│     ┌───────────────────────────────────────────────────────┐  │
+│     │  On-chain: Lock 100 AIPG in channel contract          │  │
+│     └───────────────────────────────────────────────────────┘  │
+│                                                                 │
+│  2. Jobs happen off-chain, user signs IOUs                      │
+│     ┌───────────────────────────────────────────────────────┐  │
+│     │  Job 1: User signs "Worker can claim 0.5 AIPG"        │  │
+│     │  Job 2: User signs "Worker can claim 1.2 AIPG"        │  │
+│     │  Job 3: User signs "Worker can claim 1.8 AIPG"        │  │
+│     │  ...                                                  │  │
+│     │  No gas fees for these!                               │  │
+│     └───────────────────────────────────────────────────────┘  │
+│                                                                 │
+│  3. Settle on-chain (once per day/week)                         │
+│     ┌───────────────────────────────────────────────────────┐  │
+│     │  Worker submits final IOU (e.g., 45 AIPG)             │  │
+│     │  Contract pays worker, refunds user remainder         │  │
+│     │  One transaction settles hundreds of jobs!            │  │
+│     └───────────────────────────────────────────────────────┘  │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+## Sybil Resistance
+
+Preventing one entity from running many fake workers:
+
+### Economic Sybil Resistance
+
+```
+Cost to run N workers = N × MIN_STAKE
+
+If MIN_STAKE = 1000 AIPG:
+  - 1 worker = 1000 AIPG staked
+  - 10 workers = 10,000 AIPG staked
+  - 100 workers = 100,000 AIPG staked
+
+The attacker needs real capital at risk.
+If they cheat, they lose it all.
+```
+
+### Reputation Sybil Resistance
+
+```
+New workers start with low reputation:
+  - Fewer jobs
+  - Lower payment
+  - More verification
+
+Building reputation takes time.
+Creating 100 new workers means 100x the time to build reputation.
+```
+
+### Hardware Attestation (Future)
+
+```
+Workers prove they have real hardware:
+  - Trusted execution environment (TEE)
+  - GPU attestation
+  - Proof of unique hardware
+
+One GPU = one high-reputation worker slot.
+```
+
+## Reward Distribution
+
+How workers get paid fairly:
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│  REWARD FORMULA                                                 │
+│                                                                 │
+│  Base Payment = tokens_generated × price_per_token              │
+│                                                                 │
+│  Multipliers:                                                   │
+│    × reputation_bonus    (0.8 - 1.2 based on score)            │
+│    × speed_bonus         (faster = more)                        │
+│    × stake_bonus         (higher stake = slight bonus)          │
+│                                                                 │
+│  Final Payment = Base × reputation × speed × stake              │
+│                                                                 │
+│  Example:                                                       │
+│    100 tokens × $0.001 = $0.10 base                            │
+│    × 1.1 (high reputation)                                      │
+│    × 1.05 (fast response)                                       │
+│    × 1.02 (10x min stake)                                       │
+│    = $0.118 final payment                                       │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+## Migration Path
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│  PHASE 1: Current (Centralized)                                 │
+│    - Central API server                                         │
+│    - Redis job queue                                            │
+│    - Off-chain payments                                         │
+│                                                                 │
+│  PHASE 2: P2P Mode (Now)                                        │
+│    - Decentralized job distribution                             │
+│    - Gossipsub messaging                                        │
+│    - Still off-chain payments                                   │
+│                                                                 │
+│  PHASE 3: Hybrid On-Chain                                       │
+│    - Worker registry on-chain                                   │
+│    - Job escrow on-chain                                        │
+│    - Execution still off-chain (P2P)                            │
+│    - Settlement on-chain                                        │
+│                                                                 │
+│  PHASE 4: Full Decentralization                                 │
+│    - Verification system active                                 │
+│    - Dispute resolution                                         │
+│    - Payment channels                                           │
+│    - Fully trustless                                            │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+## Open Questions
+
+These need community input:
+
+1. **Verification Cost**: Who pays for re-computation in disputes?
+2. **Non-Determinism**: LLM outputs vary. How similar is "same"?
+3. **Challenge Incentives**: How to incentivize challenges without spam?
+4. **Verifier Selection**: How to ensure verifiers are independent?
+5. **Cross-Chain**: Support multiple chains? Bridge tokens?
+
+## Economics Summary
+
+| Component | On-Chain | Off-Chain |
+|-----------|----------|-----------|
+| Worker Registration | ✅ | |
+| Staking | ✅ | |
+| Job Creation | ✅ (hash only) | Full payload |
+| Job Execution | | ✅ (P2P) |
+| Result Streaming | | ✅ (P2P) |
+| Result Hash | ✅ | |
+| Payment Settlement | ✅ | Channels |
+| Dispute Resolution | ✅ | |
+
+Estimated gas costs (Base L2):
+- Worker registration: ~$0.10
+- Job creation: ~$0.02
+- Job completion: ~$0.02
+- Dispute: ~$0.50
+
+With payment channels, most jobs cost **zero gas** after initial channel setup.
+
+## Comparison to Existing Systems
+
+| System | Verification | Payment | Decentralization |
+|--------|--------------|---------|------------------|
+| **OpenAI** | Centralized | Credit card | None |
+| **Livepeer** | Random sampling | On-chain | Full |
+| **Render** | Trusted nodes | On-chain | Partial |
+| **AIPG (Future)** | Optimistic + sampling | Channels | Full |
+
+## Get Involved
+
+This is a community effort. Join the discussion:
+
+- **Discord**: Discuss verification approaches
+- **GitHub**: Propose smart contract designs
+- **Governance**: Vote on economic parameters
+
+The goal: **AI inference that runs itself, pays itself, and polices itself.**
