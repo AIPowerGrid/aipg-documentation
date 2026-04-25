@@ -106,8 +106,8 @@ You should see:
 │  │ /aipg/1/jobs/   │────▶│                                 │   │
 │  │   grid-llama... │     │ Runs inference on your GPU      │   │
 │  │                 │     │                                 │   │
-│  │ Publish to:     │◀────│ Streams tokens                  │   │
-│  │ /aipg/1/results │     │                                 │   │
+│  │ Direct stream   │◀────│ Streams tokens                  │   │
+│  │ to requester    │     │                                 │   │
 │  └─────────────────┘     └─────────────────────────────────┘   │
 │                                                                 │
 └─────────────────────────────────────────────────────────────────┘
@@ -117,7 +117,7 @@ When a job arrives:
 1. Worker checks if it should claim (deterministic hash)
 2. If yes, broadcasts claim to `/aipg/1/claims`
 3. Calls local Ollama with the prompt
-4. Streams tokens to `/aipg/1/results/{job_id}`
+4. Opens direct stream to API node and streams tokens (efficient point-to-point)
 
 ## Using vLLM Instead
 

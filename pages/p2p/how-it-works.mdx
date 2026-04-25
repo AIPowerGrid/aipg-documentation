@@ -21,7 +21,7 @@ curl https://api-node-1.aipowergrid.io/v1/chat/completions \
 
 ### 2. API Node Creates Job
 
-The API node creates a job with a unique ID and random signature:
+The API node creates a job with a unique ID, random signature, and its peer ID:
 
 ```python
 job = {
@@ -33,6 +33,7 @@ job = {
         "temperature": 0.7
     },
     "signature": "7f3a2b1c...",  # Random - used as claim seed
+    "requester_peer_id": "QmApiNode1...",  # Worker streams results here
     "timestamp": 1714000000,
     "ttl": 60
 }
@@ -119,30 +120,39 @@ Other workers receive this and mark the job as claimed.
 
 ### 6. Worker Processes the Job
 
-Worker 2 calls its local inference backend:
+Worker 2 opens a direct stream to the API node and streams results:
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
 │  Worker 2                                                       │
 │                                                                 │
-│  1. Build request for local backend                             │
+│  1. Open direct libp2p stream to requester                      │
+│     stream = host.new_stream(requester_peer_id, "/aipg/1/result-stream")
+│     stream.write("abc123-def456\n")  # Send job ID first        │
+│                                                                 │
+│  2. Build request for local backend                             │
 │     POST http://localhost:11434/v1/chat/completions            │
 │                                                                 │
-│  2. Stream tokens from Ollama/vLLM                              │
+│  3. Stream tokens from Ollama/vLLM → direct to API node         │
 │     "Hello" → "!" → " How" → " can" → " I" → " help" → "?"     │
+│     (sent over direct stream, not gossipsub!)                   │
 │                                                                 │
-│  3. Publish each token to gossipsub                             │
-│     /aipg/1/results/abc123-def456                              │
+│  4. Close stream when done                                      │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
+**Why direct streams?** With gossipsub, 500 tokens = 500 messages through the entire mesh. With direct streams, 500 tokens = 1 stream to 1 peer. Much more efficient.
+
 ### 7. API Node Receives Results
 
+The API node receives tokens on the direct stream:
+
 ```
-API Node subscribed to: /aipg/1/results/abc123-def456
-                              │
-                              ▼
-Receives:
+Worker opens stream to: QmApiNode1...
+Protocol: /aipg/1/result-stream
+
+Stream contents (newline-delimited JSON):
+  abc123-def456                                              ← job ID
   {"type": "token", "token": {"text": "Hello", "index": 1}}
   {"type": "token", "token": {"text": "!", "index": 2}}
   {"type": "token", "token": {"text": " How", "index": 3}}
@@ -152,7 +162,7 @@ Receives:
 
 ### 8. Stream to User
 
-API node converts gossipsub messages to SSE stream:
+API node converts stream messages to SSE:
 
 ```
 data: {"choices":[{"delta":{"content":"Hello"}}]}
@@ -174,7 +184,8 @@ User          API Node        Gossipsub         Worker 1      Worker 2
   │─POST /v1/...─▶│               │                │              │
   │               │               │                │              │
   │               │──publish job─▶│                │              │
-  │               │               │                │              │
+  │               │ (includes     │                │              │
+  │               │  peer ID)     │                │              │
   │               │               │───job msg────▶│              │
   │               │               │───job msg───────────────────▶│
   │               │               │                │              │
@@ -186,17 +197,16 @@ User          API Node        Gossipsub         Worker 1      Worker 2
   │               │               │                │              │
   │               │               │◀──────────────claim──────────│
   │               │               │                │              │
-  │               │subscribe to   │                │              │──▶ Ollama
-  │               │results topic  │                │              │◀── tokens
-  │               │               │                │              │
-  │               │               │◀───────────token 1───────────│
-  │◀──SSE token───│               │                │              │
-  │               │               │◀───────────token 2───────────│
-  │◀──SSE token───│               │                │              │
-  │               │               │◀──────────done msg───────────│
-  │◀──SSE done────│               │                │              │
-  │               │               │                │              │
+  │               │                                │              │──▶ Ollama
+  │               │◀═══════════direct stream══════════════════════│◀── tokens
+  │               │   (job_id + tokens)            │              │
+  │◀──SSE token───│                                │              │
+  │◀──SSE token───│                                │              │
+  │◀──SSE done────│                                │              │
+  │               │                                │              │
 ```
+
+Note: Results flow over a **direct libp2p stream** (═══), not gossipsub. Only the requesting API node receives the tokens.
 
 ## Why This Works
 
@@ -206,7 +216,8 @@ User          API Node        Gossipsub         Worker 1      Worker 2
 | What if two workers claim? | First timestamp wins, hash is tiebreaker |
 | What if a worker crashes? | Job TTL expires, can be resubmitted |
 | How do nodes find each other? | Bootstrap peers + gossipsub mesh discovery |
-| How does user get results? | API node subscribes to job-specific result topic |
+| How does user get results? | Worker opens direct stream to API node's peer ID |
+| Why not gossipsub for results? | 500 tokens = 500 mesh messages vs 1 direct stream |
 
 ## Edge Cases
 
@@ -216,8 +227,8 @@ New worker won't have the job in their queue. Job continues normally with existi
 
 ### Worker Crashes Mid-Job
 
-1. No more tokens published to result topic
-2. API node times out waiting
+1. Direct stream closes unexpectedly
+2. API node detects closed stream, times out
 3. Job can be resubmitted (new signature = new claim resolution)
 
 ### Network Partition
