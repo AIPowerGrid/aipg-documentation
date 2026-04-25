@@ -45,25 +45,38 @@ The AI Power Grid P2P network consists of two types of nodes:
 └───────────────┘          └───────────────┘          └───────────────┘
 ```
 
-## Gossipsub Topics
+## Communication Channels
 
-Jobs and results flow through gossipsub topics:
+The network uses two communication methods:
+
+### Gossipsub (One-to-Many)
+
+For broadcasts that need to reach multiple nodes:
 
 | Topic Pattern | Purpose | Publishers | Subscribers |
 |---------------|---------|------------|-------------|
 | `/aipg/1/jobs/{model}` | Job broadcasts | API nodes | Workers for that model |
 | `/aipg/1/claims` | Claim announcements | Workers | All nodes |
-| `/aipg/1/results/{job_id}` | Streaming results | Workers | API node that submitted job |
-
-### Topic Examples
 
 ```
 /aipg/1/jobs/grid-llama3.2-3b     # Jobs for llama3.2:3b
 /aipg/1/jobs/grid-mistral-7b      # Jobs for mistral:7b
 /aipg/1/jobs/grid-flux            # Jobs for Flux image model
 /aipg/1/claims                     # All claim announcements
-/aipg/1/results/abc123-def456     # Results for specific job
 ```
+
+### Direct Streams (One-to-One)
+
+For result streaming, workers open a direct libp2p stream to the requester:
+
+| Protocol | Purpose | Direction |
+|----------|---------|-----------|
+| `/aipg/1/result-stream` | Token streaming | Worker → API node |
+
+**Why direct streams for results?**
+- 500 tokens = 500 gossipsub messages through entire mesh (wasteful)
+- 500 tokens = 1 direct stream to requester (efficient)
+- Only the requesting API node receives the tokens
 
 ## Message Flow
 
@@ -71,15 +84,19 @@ Jobs and results flow through gossipsub topics:
 ┌─────────┐     ┌──────────┐     ┌──────────────────┐     ┌──────────┐
 │  User   │────▶│ API Node │────▶│ /aipg/1/jobs/... │────▶│ Workers  │
 └─────────┘     └──────────┘     └──────────────────┘     └────┬─────┘
-                     ▲                                         │
+                     ▲                (gossipsub)              │
+                     │                                         │
                      │           ┌──────────────────┐          │
-                     │◀──────────│/aipg/1/results/..│◀─────────┘
+                     │◀──────────│  Direct Stream   │◀─────────┘
+                     │           │ /aipg/1/result-  │
+                     │           │     stream       │
                      │           └──────────────────┘
-                     │
                      ▼
                Stream to user
                via SSE
 ```
+
+The job includes the API node's `requester_peer_id`. Workers use this to open a direct stream back.
 
 ## Component Details
 
