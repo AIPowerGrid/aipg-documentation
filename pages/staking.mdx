@@ -1,206 +1,104 @@
-# Staking
+---
+title: Staking (Wind-Down)
+description: The AIPG staking program has ended. Existing stakers can withdraw at any time.
+---
 
-Stake your AIPG tokens to earn passive rewards. No lockup—withdraw anytime.
+import { Callout } from 'nextra/components'
+
+# Staking — Withdrawal Only
+
+<Callout type="warning">
+  **The staking rewards program has ended.** New stakes are disabled and rewards
+  no longer accrue. Existing stakers can withdraw their AIPG and any unclaimed
+  rewards at any time — there is no deadline and no lockup.
+</Callout>
+
+Going forward, AIPG rewards flow to **active participants** in the network rather
+than passive token holders:
+
+- **[AI Worker Nodes](/run-a-node)** — run a GPU worker, earn AIPG per inference job
+- **[Validator Nodes](/validator-node)** _(coming soon)_ — verify inference results, earn fees
 
 ---
 
-## How It Works
+## How to Withdraw
 
-```
-┌─────────────────────────────────────────────────────────┐
-│                    STAKING FLOW                         │
-├─────────────────────────────────────────────────────────┤
-│                                                         │
-│   1. STAKE              2. EARN              3. CLAIM   │
-│   ──────              ──────              ─────   │
-│                                                         │
-│   Deposit AIPG    →   Rewards accrue   →   Withdraw    │
-│   to StakingVault     every second         anytime     │
-│                                                         │
-└─────────────────────────────────────────────────────────┘
-```
+1. Go to **[aipowergrid.io/staking](https://aipowergrid.io/staking)**
+2. Connect the wallet you used to stake
+3. Click **MAX** to withdraw your entire stake (plus any unclaimed rewards)
+4. Approve the transaction
 
-1. **Stake** - Deposit AIPG into the StakingVault contract
-2. **Earn** - Rewards accrue continuously based on your share of total staked
-3. **Claim** - Withdraw rewards anytime, no lockup period
+That's it. The contract is non-custodial — only you can move your funds, and there
+is no lockup or unbonding period.
 
 ---
 
-## Stake AIPG
+## Withdraw via Contract
 
-### Via Web Interface
+If you prefer to interact directly with the contract:
 
-1. Go to [aipowergrid.io/staking](https://aipowergrid.io/staking)
-2. Connect your wallet (MetaMask, Coinbase Wallet, etc.)
-3. Enter the amount to stake
-4. Approve AIPG spending (first time only)
-5. Click Stake
-
-### Via Contract
-
-**StakingVault:** `0x3ED14A6D5A48614D77f313389611410d38fd8277`
+**StakingVault:** `0x3ED14A6D5A48614D77f313389611410d38fd8277` ([BaseScan](https://basescan.org/address/0x3ED14A6D5A48614D77f313389611410d38fd8277))
 
 ```javascript
 import { ethers } from 'ethers';
 
 const stakingVault = new ethers.Contract(
   '0x3ED14A6D5A48614D77f313389611410d38fd8277',
-  ['function stake(uint256 amount) external',
-   'function withdraw(uint256 amount) external',
-   'function getReward() external',
-   'function exit() external',
-   'function earned(address account) view returns (uint256)',
-   'function balanceOf(address account) view returns (uint256)'],
+  [
+    'function withdraw(uint256 amount) external',
+    'function getReward() external',
+    'function exit() external',
+    'function earned(address account) view returns (uint256)',
+    'function balanceOf(address account) view returns (uint256)',
+  ],
   signer
 );
 
-// Approve first (one-time)
-await aipgToken.approve(stakingVault.address, amount);
-
-// Stake
-await stakingVault.stake(ethers.parseEther('1000'));
+// One call: withdraw entire stake + claim any unclaimed rewards
+await stakingVault.exit();
 ```
 
----
+To check what you have before withdrawing:
 
-## Check Your Balance
-
-### Staked Amount
 ```javascript
 const staked = await stakingVault.balanceOf(yourAddress);
-console.log('Staked:', ethers.formatEther(staked), 'AIPG');
-```
-
-### Earned Rewards
-```javascript
 const earned = await stakingVault.earned(yourAddress);
-console.log('Earned:', ethers.formatEther(earned), 'AIPG');
+
+console.log('Staked:', ethers.formatEther(staked), 'AIPG');
+console.log('Unclaimed rewards:', ethers.formatEther(earned), 'AIPG');
 ```
-
----
-
-## Claim Rewards
-
-Claim your accumulated rewards at any time:
-
-```javascript
-// Claim rewards only
-await stakingVault.getReward();
-
-// Or unstake everything + claim in one tx
-await stakingVault.exit();
-```
-
-Rewards are transferred directly to your wallet.
-
----
-
-## Withdraw
-
-No lockup period. Withdraw your staked AIPG anytime:
-
-```javascript
-// Withdraw specific amount
-await stakingVault.withdraw(ethers.parseEther('500'));
-
-// Or withdraw all + claim rewards
-await stakingVault.exit();
-```
-
----
-
-## Reward Mechanics
-
-The StakingVault uses a Synthetix-style reward distribution:
-
-- **Continuous accrual** - Rewards accrue every second
-- **Proportional** - Your share of rewards = your share of total staked
-- **Weekly funding** - Treasury funds new reward periods
-- **No compounding** - Rewards don't auto-restake (claim and restake manually if desired)
-
-### Example
-
-```
-Total staked by everyone: 10,000,000 AIPG
-Your stake: 100,000 AIPG
-Your share: 1%
-
-Weekly rewards distributed: 200,000 AIPG
-Your weekly earnings: 2,000 AIPG
-```
-
----
-
-## APY
-
-APY varies based on:
-- **Total rewards funded** per period
-- **Total AIPG staked** by all users
-
-| If Total Staked | Approximate APY* |
-|-----------------|------------------|
-| 10M AIPG | Higher |
-| 15M AIPG | Medium |
-| 20M AIPG | Lower |
-
-*Actual APY depends on treasury funding decisions and participation levels.
-
-**Current reward info:** Check [aipowergrid.io/staking](https://aipowergrid.io/staking) for live rates.
-
----
-
-## Contract Details
-
-| Property | Value |
-|----------|-------|
-| **Contract** | `0x3ED14A6D5A48614D77f313389611410d38fd8277` |
-| **Network** | Base Mainnet |
-| **Staking Token** | AIPG |
-| **Reward Token** | AIPG |
-| **Lockup** | None |
-| **Minimum Stake** | Any amount > 0 |
-
-**View on BaseScan:** [StakingVault](https://basescan.org/address/0x3ED14A6D5A48614D77f313389611410d38fd8277)
-
----
-
-## Get AIPG
-
-Need AIPG to stake? Get it on Uniswap:
-
-**[Buy AIPG on Uniswap](https://app.uniswap.org/swap?outputCurrency=0xa1c0decafe3e9bf06a5f29b7015cd373a9854608)**
-
-**AIPG Token:** `0xa1c0deCaFE3E9Bf06A5F29B7015CD373a9854608`
 
 ---
 
 ## FAQ
 
-**Is there a lockup period?**
-No. Withdraw anytime.
+**Why is staking ending?**
+The mission shifted to rewarding active network participation. Passive staking
+locked tokens without contributing inference capacity. AI worker and validator
+nodes do real work for users, and that's what AIPG should reward.
 
-**Is there a minimum stake?**
-No. Any amount > 0 works.
+**Is there a deadline to withdraw?**
+No. Your tokens are not at risk. The contract is non-custodial and there is no
+admin function that can move them.
 
-**When do I start earning?**
-Immediately after staking, if a reward period is active.
+**What about my unclaimed rewards?**
+Whatever you'd earned before the program ended is still claimable. `exit()` claims
+them automatically. Or call `getReward()` to claim without withdrawing.
 
-**How often should I claim?**
-Up to you. Rewards accumulate until claimed. Claiming costs gas, so batching makes sense.
+**Can I move my AIPG into a worker node instead?**
+Yes — that's the recommended path. AI Worker Nodes require a 1,000 AIPG minimum
+stake. See [Run a Node](/run-a-node).
 
-**Can I stake from a hardware wallet?**
-Yes. Connect your Ledger/Trezor to MetaMask and use the staking interface.
-
-**Are my tokens safe?**
-The contract is non-custodial. Only you can withdraw your stake. The contract has been reviewed and uses standard security patterns (ReentrancyGuard, SafeERC20, Pausable).
+**Are the contract addresses changing?**
+No. The same StakingVault contract still handles withdrawals. Only new stakes
+were disabled.
 
 ---
 
-## Links
+## Get AIPG
 
-| Resource | URL |
-|----------|-----|
-| Stake AIPG | [aipowergrid.io/staking](https://aipowergrid.io/staking) |
-| StakingVault Contract | [BaseScan](https://basescan.org/address/0x3ED14A6D5A48614D77f313389611410d38fd8277) |
-| AIPG Token | [BaseScan](https://basescan.org/address/0xa1c0deCaFE3E9Bf06A5F29B7015CD373a9854608) |
-| Buy AIPG | [Uniswap](https://app.uniswap.org/swap?outputCurrency=0xa1c0decafe3e9bf06a5f29b7015cd373a9854608) |
+Need AIPG to run a worker or validator?
+
+**[Buy AIPG on Uniswap](https://app.uniswap.org/swap?outputCurrency=0xa1c0decafe3e9bf06a5f29b7015cd373a9854608)**
+
+**Token:** `0xa1c0deCaFE3E9Bf06A5F29B7015CD373a9854608` ([BaseScan](https://basescan.org/address/0xa1c0deCaFE3E9Bf06A5F29B7015CD373a9854608))

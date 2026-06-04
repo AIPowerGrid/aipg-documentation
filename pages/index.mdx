@@ -1,94 +1,82 @@
+---
+title: AI Power Grid Documentation
+description: Free AI for everyone. Decentralized inference, OpenAI-compatible API, community-funded.
+---
+
+import { Callout, Cards } from 'nextra/components'
+
 # AI Power Grid
 
-Decentralized AI inference on Base. Generate images, chat with LLMs, and build on The Grid.
+**Free AI for everyone.** Build agents, ship products, learn AI — without barriers.
+The Grid is a decentralized GPU network with an OpenAI-compatible API, funded by
+paid users so anyone can build for free.
 
----
-
-## What is AIPG?
-
-AI Power Grid is a decentralized network where GPU owners run AI models and users generate content. No corporate API. No centralized control. Just open-source AI powered by the community.
-
-**The Grid** = the network of workers, models, and infrastructure that makes it all work.
-
----
-
-## Get Started
-
-| I want to... | Go here |
-|--------------|---------|
-| **Generate images** | [aipg.art](https://aipg.art) |
-| **Chat with AI** | [aipg.chat](https://aipg.chat) |
-| **Run a GPU worker** | [LLM Worker](/worker-llm) or [Media Worker](/worker-media) |
-| **Stake AIPG** | [Staking Guide](/staking) |
-| **Build with the API** | [Developers](/developers) |
-| **Streaming API** | [OpenAI/Anthropic endpoints](/streaming-api) |
-| **Launch a token** | [Token Factory](/arc20_token_network) |
+<Callout type="info">
+  Free daily access is live — no credit card, no trial that expires.
+  [Get your free API key](https://api.aipowergrid.io/register) to start building.
+</Callout>
 
 ---
 
 ## How It Works
 
+Every paid request funds free access for someone else. The more the network grows,
+the more free AI it can provide.
+
 ```
-┌─────────────────────────────────────────────────────────┐
-│                       THE GRID                          │
-├─────────────────────────────────────────────────────────┤
-│                                                         │
-│   USERS              WORKERS              OUTPUT        │
-│                                                         │
-│   Submit       →     GPUs run        →    Images,       │
-│   prompts            AI models            text, etc.    │
-│                                                         │
-│   Pay with Den       Earn AIPG            Verified      │
-│   (電) credits        rewards              on-chain      │
-│                                                         │
-└─────────────────────────────────────────────────────────┘
+   Paid Users  ─funds→  Node Operators  ─compute→  Free Users
+       │                       │                        │
+   APIs &                   Earn AIPG               Learn,
+   integrations             per request             build, ship
 ```
 
-1. **You request** - Submit a prompt via our apps or API
-2. **Workers generate** - Decentralized GPU nodes run the models
-3. **You receive** - Get your AI-generated content
-4. **Workers earn** - GPU operators earn AIPG for their compute
+| Role | What you do | What you get |
+|------|-------------|--------------|
+| **Free user** | Sign up, get an API key, start building | Daily free quota, OpenAI-compatible API |
+| **Paid user** | Top up for higher limits | Unlimited access, your usage funds free tier |
+| **Node operator** | Run a GPU worker | Earn AIPG per request served |
+| **Validator** _(soon)_ | Verify inference results | Earn verification fees, secure the network |
 
 ---
 
-## The Token
+## Start Here
 
-**AIPG** is the native token on Base L2.
+<Cards>
+  <Cards.Card title="Quick Start — Hello World" href="/quick-start" />
+  <Cards.Card title="API Reference (OpenAI / Anthropic compatible)" href="/streaming-api" />
+  <Cards.Card title="Run an AI Worker Node" href="/run-a-node" />
+  <Cards.Card title="Become a Validator (Coming Soon)" href="/validator-node" />
+  <Cards.Card title="Confidential Computing on Blackwell" href="/confidential-computing" />
+  <Cards.Card title="Autonomous Network Roadmap" href="/autonomous-network" />
+</Cards>
 
-| Property | Value |
-|----------|-------|
-| **Network** | Base (Coinbase L2) |
-| **Supply** | 150M (fixed, minting disabled) |
+---
+
+## Why AIPG?
+
+- **Free tier that doesn't expire.** Students, hobbyists, devs in emerging markets — everyone gets daily access.
+- **OpenAI-compatible.** Drop-in replacement for `/v1/chat/completions`. Existing SDKs just work.
+- **No gatekeepers.** No corporate API. No usage profiling. No model deprecations on someone else's schedule.
+- **Community-owned compute.** Anyone with a GPU can join the network and earn.
+- **Heading on-chain.** Validators, smart-contract payments, and confidential computing in active development.
+
+---
+
+## The Network at a Glance
+
+| | |
+|---|---|
+| **Token** | AIPG on Base L2 |
 | **Contract** | `0xa1c0deCaFE3E9Bf06A5F29B7015CD373a9854608` |
+| **Supply** | 150M (fixed, minting disabled) |
+| **Worker stake** | 1,000 AIPG minimum |
+| **Validator stake** _(soon)_ | 10,000 AIPG minimum |
+| **Apps** | [aipg.art](https://aipg.art) · [aipg.chat](https://aipg.chat) |
+| **Dashboard** | [dashboard.aipowergrid.io](https://dashboard.aipowergrid.io) |
+| **Discord** | [discord.gg/W9D8j6HCtC](https://discord.gg/W9D8j6HCtC) |
 
-**Used for:**
-- Staking rewards
-- Worker bonding
-- Worker earnings
-
-**Get AIPG:** [Uniswap](https://app.uniswap.org/swap?outputCurrency=0xa1c0decafe3e9bf06a5f29b7015cd373a9854608)
-
----
-
-## Quick Links
-
-| Resource | Link |
-|----------|------|
-| Generate images | [aipg.art](https://aipg.art) |
-| Chat with AI | [aipg.chat](https://aipg.chat) |
-| API Dashboard | [dashboard.aipowergrid.io](https://dashboard.aipowergrid.io) |
-| Staking | [aipowergrid.io/staking](https://aipowergrid.io/staking) |
-| Discord | [discord.gg/W9D8j6HCtC](https://discord.gg/W9D8j6HCtC) |
-| GitHub | [github.com/AIPowerGrid](https://github.com/AIPowerGrid) |
-
----
-
-## Documentation
-
-- **[The Grid](/grid-overview)** - How the network works
-- **[Generate](/generate)** - Create images and text
-- **[Streaming API](/streaming-api)** - OpenAI/Anthropic compatible endpoints
-- **[LLM Worker](/worker-llm)** / **[Media Worker](/worker-media)** - Earn AIPG with your GPU
-- **[Staking](/staking)** - Stake and earn rewards
-- **[Token Factory](/arc20_token_network)** - Launch AI-powered tokens
-- **[For Developers](/developers)** - SDK, API, and contracts
+<Callout type="warning">
+  **Staking is winding down.** The passive-rewards staking program has ended.
+  Existing stakers can withdraw anytime — see the [staking guide](/staking).
+  Going forward, AIPG rewards flow to active participants: workers and validators.
+</Callout>

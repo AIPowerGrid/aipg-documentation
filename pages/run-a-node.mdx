@@ -1,0 +1,95 @@
+---
+title: Run a Node
+description: Two ways to contribute to The Grid — AI worker nodes (live) and validator nodes (coming soon).
+---
+
+import { Callout, Cards } from 'nextra/components'
+
+# Run a Node
+
+Two roles, two stake levels, two ways to earn AIPG by doing real work for the network.
+
+| | AI Worker Node | Validator Node |
+|---|---|---|
+| **Status** | Live | Coming soon |
+| **Stake** | 1,000 AIPG minimum | 10,000 AIPG minimum |
+| **What you do** | Serve inference jobs (chat, image generation) | Verify that workers' results are honest |
+| **Hardware** | GPU required (4 GB VRAM minimum, 12+ GB recommended) | Modest CPU + bandwidth; GPU optional for re-execution |
+| **Earnings** | Per-request fees from users | Verification fees + slashed bonds of dishonest workers |
+| **Risk** | Stake slashed if you serve bad results | Stake slashed for false attestations |
+
+<Callout type="info">
+  Both roles use the same on-chain bonding pattern — your stake is held by the
+  `WorkerRegistry` or `ValidatorRegistry` facet on the [Grid Diamond](/autonomous-network)
+  contract on Base. There's no admin function over your stake — only you can withdraw it.
+</Callout>
+
+---
+
+## AI Worker Nodes (Live)
+
+If you have a GPU sitting idle, you can put it to work. AI worker nodes pick up
+inference jobs from the network, run the model, and return the result. You earn
+AIPG per request.
+
+**Two flavors:**
+
+<Cards>
+  <Cards.Card title="Text Worker — LLMs via Ollama, vLLM, etc." href="/worker-llm" />
+  <Cards.Card title="Image Worker — ComfyUI" href="/worker-media" />
+</Cards>
+
+You can run both on the same machine if you have the VRAM, or pick one based on
+what your hardware does best.
+
+### The 1,000 AIPG bond
+
+To register a worker, you stake 1,000 AIPG to the `WorkerRegistry` Diamond
+facet. This is not a fee — it's collateral. As long as you serve honest results,
+your stake stays untouched and you can withdraw it whenever you stop running the
+worker.
+
+If a [validator](/validator-node) catches you returning bad results (wrong
+model, truncated output, fabricated response), your stake is slashed. This is
+what makes the network trustworthy without a central authority.
+
+### What you earn
+
+Per-request fees, paid in AIPG. Rates depend on:
+- Model size (bigger models pay more per token)
+- Throughput (faster workers serve more jobs)
+- Quality (workers with clean attestation history get preference)
+- Confidential workloads pay a premium (see [Confidential Computing](/confidential-computing))
+
+Live rates are visible on [dashboard.aipowergrid.io](https://dashboard.aipowergrid.io).
+
+---
+
+## Validator Nodes (Coming Soon)
+
+If you want to help secure the network rather than provide compute, validator
+nodes are the higher-stake role. Validators sample inference jobs at random,
+re-execute or cross-check the result, and submit on-chain attestations. They
+earn a share of network fees and a cut of any slashed worker bonds.
+
+**Stake:** 10,000 AIPG. The higher stake reflects the higher trust position —
+validators have more economic weight in the slashing mechanism.
+
+**Hardware:** Modest. Validators don't need to serve every job, so they don't
+need worker-grade GPUs. A reliable server with stable bandwidth is enough for
+sampling. Validators who want to re-execute jobs themselves (rather than rely
+on cross-validation) can add GPU capacity.
+
+Full details and the operator runbook will publish when the
+`ValidatorRegistryFacet` ships. Follow the [Discord](https://discord.gg/W9D8j6HCtC)
+to be notified.
+
+→ **[Validator Node details](/validator-node)**
+
+---
+
+## Get AIPG to Stake
+
+**[Buy AIPG on Uniswap](https://app.uniswap.org/swap?outputCurrency=0xa1c0decafe3e9bf06a5f29b7015cd373a9854608)**
+
+Token: `0xa1c0deCaFE3E9Bf06A5F29B7015CD373a9854608` ([BaseScan](https://basescan.org/address/0xa1c0deCaFE3E9Bf06A5F29B7015CD373a9854608))
