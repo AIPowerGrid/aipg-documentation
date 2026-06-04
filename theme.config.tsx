@@ -4,7 +4,7 @@ import { DocsThemeConfig } from 'nextra-theme-docs'
 const config: DocsThemeConfig = {
   logo: (
     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-      <img src="/logo.png" alt="AIPG" style={{ height: '28px', width: 'auto' }} />
+      <img src="/docs/logo.png" alt="AIPG" style={{ height: '28px', width: 'auto' }} />
       <span style={{ fontWeight: 600, fontSize: '1rem' }}>Docs</span>
     </div>
   ),
@@ -19,14 +19,12 @@ const config: DocsThemeConfig = {
 
   docsRepositoryBase: 'https://github.com/AIPowerGrid/aipg-documentation/tree/main',
 
-  // Force dark mode
   darkMode: false,
   nextThemes: {
     defaultTheme: 'dark',
     forcedTheme: 'dark',
   },
 
-  // Custom navbar items linking back to main site
   navbar: {
     extraContent: (
       <div className="nav-extra-links">
@@ -49,50 +47,30 @@ const config: DocsThemeConfig = {
     ),
   },
 
-  // Main SEO
-  useNextSeoProps() {
-    return {
-      titleTemplate: '%s – AI Power Grid',
-      title: 'AI Power Grid Docs',
-      description: 'Documentation for The Grid - decentralized AI inference on Base. Generate images, chat with LLMs, run workers, and build on open-source AI infrastructure.',
-      openGraph: {
-        type: 'website',
-        url: 'https://docs.aipowergrid.io/',
-        title: 'AI Power Grid Documentation',
-        description: 'Documentation for The Grid - decentralized AI inference on Base.',
-        images: [
-          {
-            url: 'https://docs.aipowergrid.io/og-image.webp',
-            width: 1200,
-            height: 630,
-            alt: 'AI Power Grid'
-          }
-        ]
-      },
-      twitter: {
-        cardType: 'summary_large_image',
-        site: '@AIPowerGrid',
-        handle: '@AIPowerGrid'
-      }
-    }
-  },
-
   head: (
     <>
+      <title>AI Power Grid Docs</title>
+      <meta name="description" content="Free AI for everyone. Documentation for The Grid — decentralized inference on Base." />
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       <meta name="theme-color" content="#0a0a0b" />
-      <meta property="og:image" content="https://docs.aipowergrid.io/og-image.webp" />
+      <meta property="og:type" content="website" />
+      <meta property="og:title" content="AI Power Grid Documentation" />
+      <meta property="og:description" content="Free AI for everyone. Documentation for The Grid — decentralized inference on Base." />
+      <meta property="og:url" content="https://aipowergrid.io/docs" />
+      <meta property="og:image" content="https://aipowergrid.io/docs/og-image.webp" />
       <meta property="og:image:width" content="1200" />
       <meta property="og:image:height" content="630" />
-      <meta name="twitter:image" content="https://docs.aipowergrid.io/og-image.webp" />
-      <link rel="icon" href="/logo.png" />
+      <meta name="twitter:card" content="summary_large_image" />
+      <meta name="twitter:site" content="@AIPowerGrid" />
+      <meta name="twitter:image" content="https://aipowergrid.io/docs/og-image.webp" />
+      <link rel="icon" href="/docs/logo.png" />
       <link rel="preconnect" href="https://fonts.googleapis.com" />
       <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
     </>
   ),
 
   footer: {
-    text: `${new Date().getFullYear()} © AI Power Grid`,
+    content: `${new Date().getFullYear()} © AI Power Grid`,
   },
 
   sidebar: {
@@ -105,7 +83,7 @@ const config: DocsThemeConfig = {
   },
 
   editLink: {
-    text: 'Edit this page on GitHub →',
+    content: 'Edit this page on GitHub →',
   },
 
   feedback: {
