@@ -1,4 +1,4 @@
-{
+export default {
   "index": "Overview",
   "architecture": "Architecture",
   "how-it-works": "How It Works",

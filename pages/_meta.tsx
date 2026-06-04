@@ -1,4 +1,4 @@
-{
+export default {
   "index": "Introduction",
   "-- use --": {
     "type": "separator",
@@ -50,10 +50,6 @@
     "type": "page",
     "href": "https://github.com/aipowergrid",
     "newWindow": true
-  },
-  "ai-power-grid-whitepaper": {
-    "title": "AI Power Grid Whitepaper",
-    "display": "hidden"
   },
   "ai-workers": {
     "title": "AI Workers (Legacy)",
