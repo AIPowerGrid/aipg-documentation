@@ -1,0 +1,145 @@
+---
+title: Confidential Computing
+description: Hardware-isolated AI inference on NVIDIA Blackwell. Even the node operator can't see your prompts.
+---
+
+import { Callout } from 'nextra/components'
+
+# Confidential Computing
+
+<Callout type="info">
+  **Coming with the Blackwell rollout.** AIPG's confidential computing tier
+  becomes available as Blackwell GPUs (B200 / B300) join the network. The
+  software stack and attestation flow are being built now.
+</Callout>
+
+For most workloads, "decentralized inference" just means your request runs on a
+GPU you don't own. But when the prompt itself is sensitive — medical records,
+legal documents, proprietary code, embedded API keys — that's not enough. The
+node operator can in principle read everything passing through their GPU.
+
+**Confidential computing closes that gap.** Your prompt and the model's output
+are encrypted in GPU memory, decrypted only inside a hardware-isolated Trusted
+Execution Environment (TEE), and the network proves cryptographically that the
+inference happened on genuine secure hardware.
+
+---
+
+## What Changes for Users
+
+When you submit a request marked as confidential:
+
+1. Your prompt is encrypted end-to-end to the GPU's TEE
+2. The node operator's host OS cannot see plaintext — not in RAM, not in GPU memory, not on the bus
+3. The GPU returns an **attestation** — a signed report from NVIDIA hardware proving the workload ran inside a genuine TEE
+4. Your client verifies the attestation before trusting the response
+
+The OpenAI-compatible API stays the same. The only difference is one extra
+header on the request and an attestation blob in the response.
+
+```http
+POST /v1/chat/completions
+X-AIPG-Confidential: required
+Content-Type: application/json
+
+{"model": "...", "messages": [...]}
+```
+
+If no confidential-capable worker is available, the request fails fast — you
+never silently fall back to a non-private worker.
+
+---
+
+## How the TEE Works (NVIDIA Confidential Computing)
+
+NVIDIA Confidential Computing (NVCC) is supported starting with the Hopper
+generation (H100 / H200) and matures with **Blackwell (B200 / B300)**. The
+guarantees:
+
+- **Memory encryption** — GPU memory is encrypted with a per-instance key. The
+  host OS, hypervisor, and other VMs on the same machine cannot read it.
+- **TDX / SEV-SNP integration** — the CPU side runs in a confidential VM (Intel
+  TDX or AMD SEV-SNP), so the entire data path is protected, not just the GPU.
+- **Hardware attestation** — NVIDIA hardware signs a quote describing the GPU
+  model, firmware version, driver, and workload measurement. The signature
+  chains back to NVIDIA's root of trust.
+- **Measured boot** — the workload binary is hashed before launch, and that hash
+  is included in the attestation. Tampered code is detectable.
+
+Blackwell extends this with higher memory bandwidth (better confidential
+performance) and improved attestation throughput, which matters when validators
+are sampling attestations on every job.
+
+---
+
+## What Operators Need
+
+To run a confidential AI worker on AIPG:
+
+- **NVIDIA Blackwell or Hopper GPU** with Confidential Computing enabled in
+  firmware (B200 / B300 recommended; H100 / H200 also supported)
+- **Confidential VM** on the host — Intel TDX (Xeon 6) or AMD SEV-SNP (EPYC 4+)
+- **NVIDIA driver ≥ R570** with NVCC support
+- **AIPG worker software** built with TEE attestation
+- **Standard 1,000 AIPG worker stake** — confidential workers use the same
+  bonding as regular workers, with a separate fee schedule for confidential jobs
+
+Confidential workers can choose to serve *only* confidential workloads, or
+serve both tiers from the same node. Confidential jobs pay more — the market
+sets the premium.
+
+---
+
+## Verifying Attestation
+
+Your client verifies the attestation against NVIDIA's attestation service. A
+minimal flow:
+
+```python
+from aipg import Client
+from aipg.attestation import verify_nvidia_attestation
+
+client = Client(api_key="...")
+
+response = client.chat.completions.create(
+    model="llama-3-70b",
+    messages=[...],
+    extra_headers={"X-AIPG-Confidential": "required"},
+)
+
+# Verify before trusting the response
+report = response.attestation  # base64-encoded NVIDIA attestation
+verify_nvidia_attestation(
+    report,
+    expected_workload_hash=KNOWN_GOOD_WORKER_HASH,
+)
+```
+
+The SDK can do this for you automatically — set `verify_attestation=True` on
+the client.
+
+---
+
+## Use Cases
+
+- **Health-tech** — clinical notes, scan analysis, anything subject to HIPAA
+- **Legal & financial** — document review, contract analysis, due diligence
+- **Enterprise code analysis** — proprietary codebases, internal tooling
+- **Personal AI** — journaling, therapy, anything you wouldn't want a stranger to read
+- **Agent workloads handling credentials** — agents that touch real secrets shouldn't run on commodity nodes
+
+---
+
+## Status & Roadmap
+
+| Milestone | Status |
+|-----------|--------|
+| Hopper attestation prototyping | In progress |
+| Blackwell hardware procurement | In progress |
+| Worker software with TEE | In progress |
+| Public attestation verifier | Planned |
+| Production confidential tier | After Blackwell GA on the network |
+
+The fastest way to follow progress is the AIPG
+[Discord](https://discord.gg/W9D8j6HCtC). Operators with Blackwell hardware
+who want to be early test nodes are welcome — ping the team in `#node-operators`.

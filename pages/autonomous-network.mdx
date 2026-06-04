@@ -1,0 +1,123 @@
+---
+title: Autonomous Network
+description: AIPG is becoming a fully on-chain, self-routing inference network. No central coordinator. No corporate kill switch.
+---
+
+import { Callout } from 'nextra/components'
+
+# The Autonomous Network
+
+<Callout type="info">
+  **In active development.** Pieces are rolling out as Diamond facets on the Grid
+  contract. The vision: no team at the center, no single point of failure, no
+  one who can turn it off.
+</Callout>
+
+Every AI API you've used can be unplugged. Stripe can freeze your account. AWS
+can suspend your inference endpoint. OpenAI can deprecate a model out from under
+your product. That's not a flaw in their operations — it's the shape of
+centralized services.
+
+AIPG is being built so that no single entity can stop the inference. Workers
+register themselves on-chain. Jobs route through cryptographic commitments.
+Payments settle in smart contracts. Validators police results with their own
+stakes on the line. The team builds the protocol. The protocol runs itself.
+
+---
+
+## What's Already On-Chain
+
+These pieces live on Base today as facets of the [Grid Diamond](https://eips.ethereum.org/EIPS/eip-2535) contract:
+
+- **`WorkerRegistry`** — workers bond AIPG and publish their endpoints on-chain
+- **`JobAnchor`** — every completed job commits a result hash on-chain, creating an audit trail
+- **`ModelVault`** — the canonical list of supported models and their reference hashes
+- **`RecipeVault`** — image-generation recipes (prompts, samplers, seeds) anchored for reproducibility
+- **`StakingVault`** — non-custodial bonds, no admin keys over user funds
+- **`RoleManager`** — on-chain permissions (no off-chain ACLs)
+
+Look them up in [Developers](/developers) for live addresses.
+
+---
+
+## What's Coming
+
+### Validator-attested job routing
+
+Today the API node picks which worker handles a job. The next step: workers
+**self-claim** jobs through a deterministic on-chain mechanism (described in
+[Claim Resolution](/p2p/claim-resolution)), and validators attest to whether
+the work was honest. The routing layer disappears into the contract.
+
+### Smart-contract payments
+
+Inference fees flow through the contract instead of an off-chain settlement
+service. Workers receive payment as soon as a job's attestation window closes.
+Validators take a cut. No invoices, no payouts CSV, no team in the middle.
+
+### Bonded validators
+
+The big trust upgrade. Validators stake 10K AIPG, sample jobs at random,
+re-execute on their own hardware, and attest results on-chain. False
+attestations get slashed. See [Validator Nodes](/validator-node).
+
+### Dispute resolution
+
+When attestations disagree, the contract runs a fraud-proof protocol — third
+parties re-execute the disputed job, the loser is slashed, the dispute settles
+deterministically. No human arbitration.
+
+---
+
+## Why On-Chain Routing Matters
+
+Most "decentralized AI" projects are decentralized in their compute layer and
+centralized everywhere else. There's still an API node that decides who runs
+what, a payment processor in the loop, and a team that can — under pressure —
+yank the rug.
+
+Putting routing, settlement, and verification into smart contracts changes the
+shape of the network:
+
+| What | Before (centralized) | After (autonomous) |
+|---|---|---|
+| **Job assignment** | API node picks a worker | Workers self-claim via deterministic on-chain rule |
+| **Payment settlement** | Off-chain payment processor | Smart-contract escrow + release |
+| **Result verification** | "Trust the worker" | Validator sampling + slashing |
+| **Disputes** | Email the team | Fraud-proof in contract, deterministic outcome |
+| **Failure mode** | Provider can turn it off | Network keeps running while workers exist |
+
+This is the same trajectory as Ethereum rollups: start with a centralized
+sequencer for performance, then progressively decentralize sequencing and
+proving until the L1 settlement is what gives you trust. AIPG's "API node" is
+today's sequencer. Validators + on-chain routing are how it goes away.
+
+---
+
+## Confidential Computing as the Final Piece
+
+Once jobs route on-chain, payments settle on-chain, and validators verify
+on-chain, there's still one open question: *who can see the prompts?* The host
+OS of the worker can.
+
+[Confidential Computing](/confidential-computing) closes that — prompts and
+outputs are encrypted in GPU memory, decrypted only inside an NVIDIA-attested
+TEE on Blackwell hardware. The network can prove that your sensitive workload
+ran in a secure enclave, and no one — not the operator, not the protocol team
+— can read your data.
+
+That's the full picture: autonomous routing, on-chain settlement, validator
+verification, hardware-isolated privacy. An inference network that nobody can
+shut down and nobody can spy on.
+
+---
+
+## Read the Deep Design
+
+The full on-chain economics proposal — sampling rates, slashing math, dispute
+resolution, fee splits — lives at **[Future On-Chain Architecture](/p2p/future-onchain)**.
+It's the source-of-truth for what's being built and how the pieces fit
+together.
+
+For day-to-day operator and developer docs while the autonomous layer rolls
+out, see [P2P Mode](/p2p) and [For Developers](/developers).

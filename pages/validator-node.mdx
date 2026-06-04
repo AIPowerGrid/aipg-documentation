@@ -1,0 +1,119 @@
+---
+title: Validator Nodes
+description: Bonded validators verify inference results and secure the AIPG network. Coming soon.
+---
+
+import { Callout } from 'nextra/components'
+
+# Validator Nodes
+
+<Callout type="info">
+  **Status: in active development.** Validator nodes will launch after the
+  `ValidatorRegistry` Diamond facet is deployed to the Grid contract on Base.
+  Join the [Discord](https://discord.gg/W9D8j6HCtC) to follow progress.
+</Callout>
+
+Validators are the trust layer of The Grid. They verify that workers actually ran
+the model they claimed to run and returned an honest result. In return for taking
+this risk on, validators earn a share of network fees.
+
+---
+
+## At a Glance
+
+| | |
+|---|---|
+| **Status** | Coming soon |
+| **Minimum stake** | 10,000 AIPG |
+| **Reward source** | Verification fees on every inference job |
+| **Slashing** | False attestations → stake at risk |
+| **Implementation** | Diamond facet on the Grid contract (EIP-2535) |
+| **Hardware** | Modest — CPU + bandwidth, no GPU required for sampling |
+
+---
+
+## How Validation Works
+
+When a worker completes an inference job, it commits a result hash on-chain via
+the `JobAnchor` module. Validators independently sample a fraction of jobs and
+check whether the committed result matches what the model would actually produce.
+
+```
+Worker          → submits result + hash to JobAnchor
+JobAnchor       → emits event with jobId + resultHash
+Validators      → sample a subset of jobs
+                  re-run the model (or compare to other validators)
+                  attest: valid / invalid
+ValidatorRegistry → settles rewards, slashes false attestations
+```
+
+Validators don't need to verify every job — sampling plus economic stake creates
+the right incentives. A worker that cheats only escapes detection until the
+moment a validator happens to sample its job, and then loses its bond.
+
+---
+
+## Why It Needs a Separate Role
+
+The original network treated workers as both the compute layer and the trust
+layer. That works when workers compete on the same model and you can compare
+outputs across them, but it breaks for:
+
+- **Long-context generation** where outputs are non-deterministic
+- **Image generation** where bit-exact comparison is meaningless
+- **Specialized models** where only one or two workers are running them at any moment
+
+A separate validator role solves this with **economic finality**: validators put
+up a much larger bond (10K vs 1K AIPG), they re-execute jobs on their own
+hardware, and they're slashed for false attestations. This is the same pattern
+used by rollup sequencers and Cosmos validators — apply enough financial
+pressure to honest validators and dishonesty becomes unprofitable.
+
+---
+
+## Implementation: Diamond Facet
+
+The Grid contract on Base is built using the [EIP-2535 Diamond
+pattern](https://eips.ethereum.org/EIPS/eip-2535), which lets us add new facets
+(modules) without redeploying. The validator system will ship as a new facet
+alongside the existing `WorkerRegistry`, `JobAnchor`, and other modules.
+
+Planned facet surface:
+
+```solidity
+contract ValidatorRegistryFacet {
+    function registerValidator(bytes32 p2pPeerId, string endpoint) external;
+    function attestJob(bytes32 jobId, bytes32 resultHash, bool isValid) external;
+    function slashValidator(address validator, uint256 amount, string reason) external;
+    function getActiveValidators() external view returns (address[] memory);
+}
+```
+
+The facet integrates with:
+- **`JobAnchor`** — validators submit attestations against the same jobIds workers commit
+- **P2P network** — validators run bootstrap and relay nodes for the libp2p mesh
+- **Reward system** — fees from paid users are split between workers and validators
+
+---
+
+## What You'll Need (When Live)
+
+- **10,000 AIPG** for the bond (slashable)
+- **A Base mainnet wallet** to sign attestations
+- **A reliable host** with stable bandwidth (validator software is light — no GPU required for sampling, optional GPU for re-execution)
+- **A libp2p endpoint** the network can dial for relay traffic
+
+We'll publish the operator runbook, slashing conditions, and reward economics
+when the facet ships.
+
+---
+
+## Get Notified
+
+The fastest way to hear about launch is the AIPG Discord:
+
+**[discord.gg/W9D8j6HCtC](https://discord.gg/W9D8j6HCtC)**
+
+If you want to dig into the design today, the on-chain economics proposal at
+[Autonomous Network](/autonomous-network) covers verification sampling,
+reward math, and dispute resolution in more depth.
