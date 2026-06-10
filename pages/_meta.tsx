@@ -1,5 +1,6 @@
 export default {
   "index": "Introduction",
+  "quick-start": "Quick Start",
   "-- use --": {
     "type": "separator",
     "title": "Use the Grid"

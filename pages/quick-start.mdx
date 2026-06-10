@@ -1,0 +1,108 @@
+---
+title: Quick Start
+description: From zero to your first Grid API call in about two minutes.
+---
+
+import { Callout } from 'nextra/components'
+
+# Quick Start
+
+From zero to your first AI call in about two minutes.
+
+## 1. Get a free API key
+
+Register at **[api.aipowergrid.io/register](https://api.aipowergrid.io/register)** —
+OAuth (Google / GitHub / Discord), wallet connect, or just a username. Your key
+is shown **once**; store it somewhere safe.
+
+```bash
+export AIPG_API_KEY="your-key-here"
+```
+
+## 2. Check what's online
+
+The Grid runs on community workers, so the live model list changes as workers
+connect and disconnect. Always start here:
+
+```bash
+curl https://api.aipowergrid.io/v1/models
+```
+
+<Callout type="info">
+  An empty `data` array means no streaming workers are connected right now —
+  chat requests will return 503 until one comes online. Image generation runs
+  on a separate worker pool and keeps working either way.
+</Callout>
+
+## 3. Make your first call
+
+The API is OpenAI-compatible — any OpenAI client works. Pick a model from the
+step-2 list:
+
+```bash
+curl -N https://api.aipowergrid.io/v1/chat/completions \
+  -H "Authorization: Bearer $AIPG_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "grid/llama-3.3-70b-versatile",
+    "messages": [{"role": "user", "content": "Explain AI Power Grid in one sentence."}],
+    "stream": true
+  }'
+```
+
+**Python** (`pip install openai`):
+
+```python
+from openai import OpenAI
+
+client = OpenAI(
+    base_url="https://api.aipowergrid.io/v1",
+    api_key="your-key",
+)
+
+stream = client.chat.completions.create(
+    model="grid/llama-3.3-70b-versatile",   # use a model from /v1/models
+    messages=[{"role": "user", "content": "Hello, Grid!"}],
+    stream=True,
+)
+for chunk in stream:
+    print(chunk.choices[0].delta.content or "", end="", flush=True)
+```
+
+**JavaScript** (`npm install openai`):
+
+```ts
+import OpenAI from 'openai';
+
+const client = new OpenAI({
+  baseURL: 'https://api.aipowergrid.io/v1',
+  apiKey: 'your-key',
+});
+
+const stream = await client.chat.completions.create({
+  model: 'grid/llama-3.3-70b-versatile',
+  messages: [{ role: 'user', content: 'Hello, Grid!' }],
+  stream: true,
+});
+for await (const chunk of stream) {
+  process.stdout.write(chunk.choices[0]?.delta?.content ?? '');
+}
+```
+
+## 4. Generate an image
+
+```bash
+curl https://api.aipowergrid.io/v1/images/generations \
+  -H "Authorization: Bearer $AIPG_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"prompt": "a lighthouse in a thunderstorm, cinematic"}'
+```
+
+Returns a URL to the finished image (typically 10–60s depending on worker load).
+
+## Where next
+
+- **[API reference](/streaming-api)** — endpoints, streaming format, rate limits
+- **[For developers](/developers)** — SDKs, contracts, repos
+- **[Run a node](/run-a-node)** — earn AIPG with your GPU
+- **[Discord](https://discord.gg/W9D8j6HCtC)** — get help, meet the community
