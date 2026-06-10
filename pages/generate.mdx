@@ -111,7 +111,7 @@ client = OpenAI(
 )
 
 stream = client.chat.completions.create(
-    model="grid/openai/gpt-oss-120bb",
+    model="grid/llama-3.3-70b-versatile",
     messages=[{"role": "user", "content": "Hello!"}],
     stream=True,
 )
@@ -125,30 +125,34 @@ Or with curl:
 curl -N https://api.aipowergrid.io/v1/chat/completions \
   -H "Authorization: Bearer YOUR_KEY" \
   -H "Content-Type: application/json" \
-  -d '{"model":"grid/openai/gpt-oss-120bb","messages":[{"role":"user","content":"Hello"}],"stream":true}'
+  -d '{"model":"grid/llama-3.3-70b-versatile","messages":[{"role":"user","content":"Hello"}],"stream":true}'
 ```
 
-### Grid SDK (Python)
+### Python (OpenAI SDK)
 
-**Repository:** [github.com/AIPowerGrid/grid-sdk](https://github.com/AIPowerGrid/grid-sdk)
+The API is OpenAI-compatible — use the standard `openai` package, no custom
+SDK needed. Check [`/v1/models`](https://api.aipowergrid.io/v1/models) for the
+models currently online.
 
 ```bash
-pip install grid-sdk
+pip install openai
 ```
 
 ```python
-from grid_sdk.streaming import StreamingChatClient
+from openai import OpenAI
 
-client = StreamingChatClient(
+client = OpenAI(
     base_url="https://api.aipowergrid.io/v1",
     api_key="your-grid-api-key",
 )
 
-for chunk in client.stream_chat(
-    model="grid/openai/gpt-oss-120bb",
+stream = client.chat.completions.create(
+    model="grid/llama-3.3-70b-versatile",
     messages=[{"role": "user", "content": "What is AI Power Grid?"}],
-):
-    print(chunk, end="", flush=True)
+    stream=True,
+)
+for chunk in stream:
+    print(chunk.choices[0].delta.content or "", end="", flush=True)
 ```
 
 ---

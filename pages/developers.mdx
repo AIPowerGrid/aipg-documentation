@@ -18,7 +18,7 @@ client = OpenAI(
 )
 
 stream = client.chat.completions.create(
-    model="grid/openai/gpt-oss-120bb",
+    model="grid/llama-3.3-70b-versatile",
     messages=[{"role": "user", "content": "What is AI Power Grid?"}],
     stream=True,
 )
@@ -41,8 +41,7 @@ Real token-by-token streaming. **[Full docs →](/streaming-api)**
 | `POST /v1/chat/completions` | OpenAI | Text gen with streaming |
 | `POST /v1/messages` | Anthropic | Text gen with streaming |
 | `POST /v1/images/generations` | OpenAI | Image generation |
-| `GET /v1/models` | OpenAI | List available models |
-| `GET /v1/health` | Grid | Worker status |
+| `GET /v1/models` | OpenAI | List models currently online |
 
 **Authentication:** `Authorization: Bearer YOUR_KEY` or `apikey: YOUR_KEY`
 
@@ -66,42 +65,12 @@ Poll-based generation. Still supported for backward compatibility.
 
 ## SDK
 
-### Grid SDK (Python)
+### Use the standard OpenAI SDK
 
-The official Python SDK with streaming support.
-
-**Repository:** [github.com/AIPowerGrid/grid-sdk](https://github.com/AIPowerGrid/grid-sdk)
-
-```bash
-pip install grid-sdk
-```
-
-```python
-from grid_sdk.streaming import StreamingChatClient
-
-client = StreamingChatClient(
-    base_url="https://api.aipowergrid.io/v1",
-    api_key="your-key",
-)
-
-# Streaming
-for chunk in client.stream_chat(
-    model="grid/openai/gpt-oss-120bb",
-    messages=[{"role": "user", "content": "Hello!"}],
-):
-    print(chunk, end="")
-
-# Async streaming
-async for chunk in client.astream_chat(
-    model="grid/openai/gpt-oss-120bb",
-    messages=[{"role": "user", "content": "Hello!"}],
-):
-    print(chunk, end="")
-```
-
-### OpenAI SDK (Any Language)
-
-Since the API is OpenAI compatible, any OpenAI SDK works:
+The API is OpenAI-compatible, so you don't need a custom SDK — point the
+official `openai` package (or any OpenAI client in any language) at the Grid
+base URL. Query [`/v1/models`](https://api.aipowergrid.io/v1/models) for the
+list of models currently online and use one of those names.
 
 **Python:**
 ```bash
@@ -128,7 +97,7 @@ const client = new OpenAI({ baseURL: 'https://api.aipowergrid.io/v1', apiKey: 'y
 curl -N https://api.aipowergrid.io/v1/chat/completions \
   -H "Authorization: Bearer YOUR_KEY" \
   -H "Content-Type: application/json" \
-  -d '{"model":"grid/openai/gpt-oss-120bb","messages":[{"role":"user","content":"Hi"}],"stream":true}'
+  -d '{"model":"grid/llama-3.3-70b-versatile","messages":[{"role":"user","content":"Hi"}],"stream":true}'
 ```
 
 ---
@@ -196,7 +165,6 @@ All contracts on **Base Mainnet** (Chain ID: 8453).
 | Repo | Purpose |
 |------|---------|
 | [system-core](https://github.com/AIPowerGrid/system-core) | Grid API server (Flask + FastAPI) |
-| [grid-sdk](https://github.com/AIPowerGrid/grid-sdk) | Python SDK with streaming |
 | [grid-inference-worker](https://github.com/AIPowerGrid/grid-inference-worker) | Text/LLM worker |
 | [comfy-bridge](https://github.com/AIPowerGrid/comfy-bridge) | Image worker (ComfyUI) |
 | [aipg-documentation](https://github.com/AIPowerGrid/aipg-documentation) | These docs |
@@ -207,4 +175,4 @@ All contracts on **Base Mainnet** (Chain ID: 8453).
 
 - **Discord:** [discord.gg/W9D8j6HCtC](https://discord.gg/W9D8j6HCtC)
 - **GitHub Issues:** Open issues on the relevant repo
-- **API Status:** [api.aipowergrid.io/v1/health](https://api.aipowergrid.io/v1/health)
+- **Models online:** [api.aipowergrid.io/v1/models](https://api.aipowergrid.io/v1/models)

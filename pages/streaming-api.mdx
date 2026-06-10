@@ -47,7 +47,7 @@ curl -N https://api.aipowergrid.io/v1/chat/completions \
   -H "Authorization: Bearer YOUR_KEY" \
   -H "Content-Type: application/json" \
   -d '{
-    "model": "grid/openai/gpt-oss-120bb",
+    "model": "grid/llama-3.3-70b-versatile",
     "messages": [{"role": "user", "content": "What is AI Power Grid?"}],
     "max_tokens": 256,
     "stream": true
@@ -57,11 +57,11 @@ curl -N https://api.aipowergrid.io/v1/chat/completions \
 **Response** (Server-Sent Events):
 
 ```
-data: {"id":"chatcmpl-abc123","object":"chat.completion.chunk","created":1234,"model":"grid/openai/gpt-oss-120bb","choices":[{"index":0,"delta":{"role":"assistant"},"finish_reason":null}]}
+data: {"id":"chatcmpl-abc123","object":"chat.completion.chunk","created":1234,"model":"grid/llama-3.3-70b-versatile","choices":[{"index":0,"delta":{"role":"assistant"},"finish_reason":null}]}
 
-data: {"id":"chatcmpl-abc123","object":"chat.completion.chunk","created":1234,"model":"grid/openai/gpt-oss-120bb","choices":[{"index":0,"delta":{"content":"AI"},"finish_reason":null}]}
+data: {"id":"chatcmpl-abc123","object":"chat.completion.chunk","created":1234,"model":"grid/llama-3.3-70b-versatile","choices":[{"index":0,"delta":{"content":"AI"},"finish_reason":null}]}
 
-data: {"id":"chatcmpl-abc123","object":"chat.completion.chunk","created":1234,"model":"grid/openai/gpt-oss-120bb","choices":[{"index":0,"delta":{"content":" Power"},"finish_reason":null}]}
+data: {"id":"chatcmpl-abc123","object":"chat.completion.chunk","created":1234,"model":"grid/llama-3.3-70b-versatile","choices":[{"index":0,"delta":{"content":" Power"},"finish_reason":null}]}
 
 data: [DONE]
 ```
@@ -75,7 +75,7 @@ curl https://api.aipowergrid.io/v1/chat/completions \
   -H "Authorization: Bearer YOUR_KEY" \
   -H "Content-Type: application/json" \
   -d '{
-    "model": "grid/openai/gpt-oss-120bb",
+    "model": "grid/llama-3.3-70b-versatile",
     "messages": [{"role": "user", "content": "Hello"}],
     "max_tokens": 128
   }'
@@ -102,7 +102,7 @@ curl -N https://api.aipowergrid.io/v1/messages \
   -H "x-api-key: YOUR_KEY" \
   -H "Content-Type: application/json" \
   -d '{
-    "model": "grid/openai/gpt-oss-120bb",
+    "model": "grid/llama-3.3-70b-versatile",
     "messages": [{"role": "user", "content": "What is AI Power Grid?"}],
     "max_tokens": 256,
     "stream": true
@@ -161,7 +161,7 @@ client = OpenAI(
 
 # Streaming
 stream = client.chat.completions.create(
-    model="grid/openai/gpt-oss-120bb",
+    model="grid/llama-3.3-70b-versatile",
     messages=[{"role": "user", "content": "Hello!"}],
     stream=True,
 )
@@ -170,7 +170,7 @@ for chunk in stream:
 
 # Non-streaming
 response = client.chat.completions.create(
-    model="grid/openai/gpt-oss-120bb",
+    model="grid/llama-3.3-70b-versatile",
     messages=[{"role": "user", "content": "Hello!"}],
 )
 print(response.choices[0].message.content)
@@ -187,7 +187,7 @@ client = Anthropic(
 )
 
 with client.messages.stream(
-    model="grid/openai/gpt-oss-120bb",
+    model="grid/llama-3.3-70b-versatile",
     messages=[{"role": "user", "content": "Hello!"}],
     max_tokens=512,
 ) as stream:
@@ -206,7 +206,7 @@ const client = new OpenAI({
 });
 
 const stream = await client.chat.completions.create({
-  model: 'grid/openai/gpt-oss-120bb',
+  model: 'grid/llama-3.3-70b-versatile',
   messages: [{ role: 'user', content: 'Hello!' }],
   stream: true,
 });
@@ -240,20 +240,25 @@ Den is used for request priority in the queue. Users with more den get served fa
 
 ---
 
-## Health Check
+## Check what's online
+
+List the models currently served by connected workers:
 
 ```bash
-curl https://api.aipowergrid.io/v1/health
+curl https://api.aipowergrid.io/v1/models
 ```
 
 ```json
 {
-  "status": "ok",
-  "redis": true,
-  "workers_connected": 3,
-  "models_available": ["grid/openai/gpt-oss-120bb", "grid/llama3.2:3b"]
+  "object": "list",
+  "data": [
+    {"id": "grid/llama-3.3-70b-versatile", "object": "model"}
+  ]
 }
 ```
+
+An empty `data` array means no streaming workers are connected for any model
+right now — requests will return 503 until a worker comes online.
 
 ---
 
