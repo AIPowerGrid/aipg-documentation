@@ -9,7 +9,7 @@ Navigation (sidebar order, labels, separators, external links) is data-driven by
 
 - **Top-level `.mdx`** — the docs pages: `index`, `quick-start`, `generate`, `streaming-api`
   (OpenAI/Anthropic-compatible API), `developers`, `run-a-node`, `worker-llm`, `worker-media`,
-  `validator-node`, `grid-overview`, `autonomous-network`, `confidential-computing`,
+  `grid-validator`, `grid-overview`, `autonomous-network`, `confidential-computing`,
   `tokenomics`, `staking`, `arc20_token_network`, `whitepaper`, `about`.
 - **`_meta.tsx`** — top-level sidebar: ordered keys, section separators (Use the Grid / Run a
   Node / The Grid / Economy / Reference), external `page`-type links (Discord, GitHub), and

@@ -1,6 +1,6 @@
 # TypeScript / JavaScript Standards
 
-Used by: aigarth-agent, grid-frontend, grid-chat-new, grid-sdk, aipg-sdk-js, aipg-documentation, etc.
+Used by: aigarth-agent, grid-frontend, aipg-chat, grid-sdk, aipg-sdk-js, aipg-documentation, etc.
 
 ## Toolchain (CI + pre-commit gates)
 

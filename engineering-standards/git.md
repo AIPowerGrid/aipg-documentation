@@ -42,8 +42,8 @@ One rule, applied to every first-party repo — no bare names, no `Mixed_Case`.
 
 - **`grid-`** = the platform / protocol / infrastructure: the network, workers, SDKs,
   bridges, validator, core. Examples: `grid-core`, `grid-inference-worker`,
-  `grid-comfy-bridge`, `grid-validator`, `grid-sdk-python`, `grid-sdk-js`,
-  `grid-frontend`, `grid-erc20-bridge`.
+  `grid-grid-comfy-bridge`, `grid-validator`, `grid-sdk-python`, `grid-sdk-js`,
+  `grid-frontend`, `grid-grid-erc20-bridge`.
 - **`aipg-`** = org / brand / public surfaces: `aipg-website`, `aipg-documentation`,
   `aipg-smart-contracts`, `aipg-art-gallery`, `aipg-chat`.
 - **Named products/personas keep their proper name** (no prefix) — e.g. `aigarth`.

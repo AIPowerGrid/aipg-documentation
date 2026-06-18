@@ -1,6 +1,6 @@
 # Python Standards
 
-Used by: system-core, comfy-bridge, grid-inference-worker, aipg-sdk-python, validator-node, etc.
+Used by: grid-core, grid-comfy-bridge, grid-inference-worker, aipg-sdk-python, grid-validator, etc.
 
 ## Toolchain (CI + pre-commit gates)
 
