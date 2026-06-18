@@ -36,6 +36,23 @@
 - **SPDX headers on every source file**:
   `# SPDX-License-Identifier: AGPL-3.0-or-later` (+ `SPDX-FileCopyrightText`). CI checks presence.
 
+## Repository naming
+
+One rule, applied to every first-party repo — no bare names, no `Mixed_Case`.
+
+- **`grid-`** = the platform / protocol / infrastructure: the network, workers, SDKs,
+  bridges, validator, core. Examples: `grid-core`, `grid-inference-worker`,
+  `grid-comfy-bridge`, `grid-validator`, `grid-sdk-python`, `grid-sdk-js`,
+  `grid-frontend`, `grid-erc20-bridge`.
+- **`aipg-`** = org / brand / public surfaces: `aipg-website`, `aipg-documentation`,
+  `aipg-smart-contracts`, `aipg-art-gallery`, `aipg-chat`.
+- **Named products/personas keep their proper name** (no prefix) — e.g. `aigarth`.
+  This is the only sanctioned exception; use it sparingly.
+- All lowercase, hyphen-separated. No `_`, no caps.
+- Renames are cheap (GitHub redirects the old path), but after one: update each
+  clone's `git remote set-url`, any CI/deploy scripts that hardcode the name, and
+  `AGENTS.md` cross-references.
+
 ## Repo hygiene
 
 - Standard files in every repo: `README.md`, `AGENTS.md` (dox root), `LICENSE`,
