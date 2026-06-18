@@ -1,6 +1,6 @@
 # Python Standards
 
-Used by: grid-core, grid-comfy-bridge, grid-text-worker, aipg-sdk-python, grid-validator, etc.
+Used by: grid-core, grid-media-worker, grid-text-worker, aipg-sdk-python, grid-validator, etc.
 
 ## Toolchain (CI + pre-commit gates)
 

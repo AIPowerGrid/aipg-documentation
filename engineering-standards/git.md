@@ -42,7 +42,7 @@ One rule, applied to every first-party repo — no bare names, no `Mixed_Case`.
 
 - **`grid-`** = the platform / protocol / infrastructure: the network, workers, SDKs,
   bridges, validator, core. Examples: `grid-core`, `grid-text-worker`,
-  `grid-comfy-bridge`, `grid-validator`, `grid-sdk-python`, `grid-sdk-js`,
+  `grid-media-worker`, `grid-validator`, `grid-sdk-python`, `grid-sdk-js`,
   `grid-frontend`, `grid-erc20-bridge`.
 - **`aipg-`** = org / brand / public surfaces: `aipg-website`, `aipg-documentation`,
   `aipg-smart-contracts`, `aipg-art-gallery`, `aipg-chat`.
