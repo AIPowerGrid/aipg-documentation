@@ -10,9 +10,11 @@ import { Callout } from 'nextra/components'
 Generate images on The Grid using ComfyUI. Earn AIPG for powering AI art.
 
 <Callout type="info">
-  **Worker bond: 1,000 AIPG minimum.** Image workers use the same bonding model
-  as text workers — stake AIPG via `WorkerRegistry`, get slashed if you serve
-  bad results. See [Run a Node](/run-a-node) for the bigger picture.
+  **No bond required to run a worker today.** Image workers can connect and start
+  serving with just an API key. A planned on-chain bonding mechanism (stake via
+  `WorkerRegistry`, slashable for bad results) is in development and **not yet
+  required** — same model as text workers. See [Run a Node](/run-a-node) for the
+  bigger picture.
 </Callout>
 
 ---
@@ -22,7 +24,7 @@ Generate images on The Grid using ComfyUI. Earn AIPG for powering AI art.
 The **Comfy Bridge** connects your ComfyUI installation to The Grid:
 
 1. You run ComfyUI locally with your models
-2. The bridge polls The Grid for jobs
+2. The bridge holds a persistent WebSocket to The Grid, which pushes jobs to it
 3. Your GPU renders images
 4. You upload results and earn AIPG
 

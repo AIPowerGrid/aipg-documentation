@@ -12,7 +12,7 @@ Two roles, two stake levels, two ways to earn AIPG by doing real work for the ne
 | | AI Worker Node | Validator Node |
 |---|---|---|
 | **Status** | Live | Coming soon |
-| **Stake** | 1,000 AIPG minimum | 10,000 AIPG minimum |
+| **Stake** | Not required yet (planned ~1,000 AIPG) | 10,000 AIPG minimum |
 | **What you do** | Serve inference jobs (chat, image generation) | Verify that workers' results are honest |
 | **Hardware** | GPU required (4 GB VRAM minimum, 12+ GB recommended) | Modest CPU + bandwidth; GPU optional for re-execution |
 | **Earnings** | Per-request fees from users | Verification fees + slashed bonds of dishonest workers |
@@ -42,16 +42,18 @@ AIPG per request.
 You can run both on the same machine if you have the VRAM, or pick one based on
 what your hardware does best.
 
-### The 1,000 AIPG bond
+### The worker bond (planned, not yet required)
 
-To register a worker, you stake 1,000 AIPG to the `WorkerRegistry` Diamond
-facet. This is not a fee — it's collateral. As long as you serve honest results,
-your stake stays untouched and you can withdraw it whenever you stop running the
-worker.
+Running a worker today does **not** require a stake — connect with an API key and
+start serving. A bonding mechanism is in development: workers will stake to the
+`WorkerRegistry` Diamond facet (~1,000 AIPG). This is not a fee — it's collateral.
+As long as you serve honest results, your stake stays untouched and you can
+withdraw it whenever you stop running the worker.
 
-If a [validator](/validator-node) catches you returning bad results (wrong
-model, truncated output, fabricated response), your stake is slashed. This is
-what makes the network trustworthy without a central authority.
+Once the bond ships, if a [validator](/validator-node) catches you returning bad
+results (wrong model, truncated output, fabricated response), your stake is
+slashed. This is what will make the network trustworthy without a central
+authority.
 
 ### What you earn
 
