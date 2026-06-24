@@ -22,6 +22,7 @@ export default {
     "title": "The Grid"
   },
   "grid-overview": "Architecture Overview",
+  "proof-of-quality": "Proof of Intelligence",
   "autonomous-network": "Autonomous Network",
   "confidential-computing": "Confidential Computing",
   "-- economy --": {

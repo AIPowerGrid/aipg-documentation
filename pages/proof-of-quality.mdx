@@ -1,0 +1,61 @@
+# Proof of Intelligence
+
+Centralized AI APIs ask you to **trust** the model behind the endpoint. The AI
+Power Grid **proves** it. Every model on the network is continuously benchmarked
+for real intelligence — you get **measured capability, not a precision label.**
+
+## Why this exists
+
+On a decentralized network, you can't take a worker's word for what it's
+running. A node could claim it serves a full-precision model at long context
+while actually running a badly quantized version at a fraction of the context.
+And quantization is a spectrum: a clean quant can be indistinguishable from the
+original, while a broken one produces fluent-sounding nonsense that fails the
+moment real reasoning is required.
+
+So the grid stops trusting the label and **measures the model itself.** A great
+quantized model that passes is welcome; a "full-precision" model that fails is
+not. We rank by delivered intelligence.
+
+## How it works
+
+**Validator nodes** continuously and unpredictably send **probe batteries** to
+every model on the network and grade the answers automatically:
+
+- **Structured generation** — render a chess position to SVG, emit JSON to a
+  schema, write code that has to compile. Quantization damage shows up first in
+  structured and spatial tasks, and a parser catches it instantly.
+- **Reasoning** — math and logic with verifiable answers.
+- **Long-context recall** — hide a fact deep in a long prompt and ask for it.
+  This also **verifies the model's real context length**, not just the claimed
+  one.
+- **Instruction following & perplexity** — format adherence and a low-level
+  signal of degradation.
+
+The probes are **mixed into real traffic, procedurally generated, and randomly
+timed**, so they can't be detected or pre-answered. There's no static benchmark
+to game.
+
+## What it produces
+
+- A live **quality score and capability tier** for every model on the grid —
+  effective context length, structured-output reliability, reasoning accuracy.
+- **Smart routing**: your request goes to nodes that measurably perform;
+  persistent under-performers are downranked and removed.
+- **Collateralized quality**: operators stake AIPG to serve. Serve measured
+  garbage and the stake is **slashed**. Quality isn't a promise — it's backed by
+  skin in the game.
+
+## What it means for you
+
+- **Pick capability, not quants.** Choose a measured tier; the network guarantees
+  the model behind it actually performs.
+- **Trust that's verifiable.** No centralized provider publishes continuous,
+  independent measurements of the model you're hitting. The grid does.
+- **Honest hardware.** Declared GPUs are cross-checked against measured
+  throughput, so capacity is real, not advertised.
+
+> The last revolution was metered in kilowatt-hours. This one is metered in
+> tokens — and on the grid, every token is proven.
+
+See also: [Validator Node](/validator-node) · [Architecture Overview](/grid-overview)
