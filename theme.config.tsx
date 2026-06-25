@@ -52,7 +52,7 @@ const config: DocsThemeConfig = {
       <title>AI Power Grid Docs</title>
       <meta name="description" content="Free AI for everyone. Documentation for The Grid — decentralized inference on Base." />
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-      <meta name="theme-color" content="#0a0a0b" />
+      <meta name="theme-color" content="#000000" />
       <meta property="og:type" content="website" />
       <meta property="og:title" content="AI Power Grid Documentation" />
       <meta property="og:description" content="Free AI for everyone. Documentation for The Grid — decentralized inference on Base." />

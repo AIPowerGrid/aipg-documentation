@@ -59,7 +59,7 @@ which is intentionally NOT published.
 
 ## Local Contracts
 
-- **Inherit org engineering standards:** `aipg-documentation/engineering-standards/`
+- **Inherit org engineering standards:** `engineering-standards/`
   (core + `git.md` + the matching language file). The rules below are docs-repo specializations.
 - **Only `pages/` is published.** Anything that must NOT ship to the public site (standards,
   research, internal notes) lives outside `pages/`. Adding a routable page = adding to `pages/`.
