@@ -1,6 +1,6 @@
 ---
 title: Image Worker (ComfyUI)
-description: Run an image worker on AIPG. Bond 1,000 AIPG, serve image generation jobs through ComfyUI.
+description: Run an image worker on AIPG. No bond required today — serve image generation jobs through ComfyUI.
 ---
 
 import { Callout } from 'nextra/components'
@@ -65,7 +65,7 @@ pip install -r requirements.txt
 python main.py
 ```
 
-ComfyUI should be running at `http://127.0.0.1:8000`.
+ComfyUI should be running at `http://127.0.0.1:8188`.
 
 ### 2. Get an API Key
 
@@ -89,7 +89,7 @@ Edit `.env`:
 
 ```ini
 GRID_API_KEY=your-api-key-here
-COMFYUI_URL=http://127.0.0.1:8000
+COMFYUI_URL=http://127.0.0.1:8188
 ```
 
 ### 5. Run
@@ -109,7 +109,7 @@ All settings go in `.env`:
 | Variable | Default | Description |
 |----------|---------|-------------|
 | `GRID_API_KEY` | *(required)* | Your API key |
-| `COMFYUI_URL` | `http://127.0.0.1:8000` | Your ComfyUI address |
+| `COMFYUI_URL` | `http://127.0.0.1:8188` | Your ComfyUI address |
 | `GRID_WORKER_NAME` | `ComfyWorker` | Name shown on the network |
 | `GRID_MODEL` | *(auto-detect)* | Models to advertise (comma-separated) |
 | `GRID_THREADS` | `2` | Concurrent jobs |
@@ -141,7 +141,7 @@ docker run --rm --network host --env-file .env comfy-bridge
 ```bash
 docker run --rm \
   --env-file .env \
-  -e COMFYUI_URL=http://host.docker.internal:8000 \
+  -e COMFYUI_URL=http://host.docker.internal:8188 \
   comfy-bridge
 ```
 

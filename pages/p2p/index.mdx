@@ -1,6 +1,16 @@
+import { Callout } from 'nextra/components'
+
 # P2P Mode (Decentralized API)
 
-AI Power Grid can run in **fully decentralized mode** using libp2p gossipsub. No central server required.
+P2P mode is designed to let AI Power Grid run in a **decentralized mode** using
+libp2p gossipsub, with no central server required.
+
+<Callout type="info">
+  **P2P mode is in beta.** The primary, default path today is the hosted API at
+  `https://api.aipowergrid.io/v1` — the coordinator is centralized. The
+  decentralized mode described below is the goal P2P is building toward, not the
+  current default.
+</Callout>
 
 ## Why P2P?
 
@@ -19,8 +29,8 @@ AI Power Grid can run in **fully decentralized mode** using libp2p gossipsub. No
 │                   (libp2p gossipsub)                            │
 │                                                                 │
 │   Every node connects to every other node.                      │
-│   No central server. No single point of failure.                │
-│   The Grid runs itself.                                         │
+│   The goal: no central server, no single point of failure —     │
+│   the Grid runs itself.                                         │
 └────────────┬──────────────────────────┬─────────────────────────┘
              │                          │
     ┌────────▼────────┐        ┌────────▼────────┐
@@ -46,12 +56,14 @@ AI Power Grid can run in **fully decentralized mode** using libp2p gossipsub. No
                         P2P mesh
 ```
 
-## Key Features
+## What P2P Mode Aims to Enable
+
+These are the design goals of P2P mode, not guarantees of the current beta:
 
 - **No Central Server**: Jobs distributed via gossipsub, not Redis
 - **Permissionless**: Anyone can run a worker or API node
-- **Censorship Resistant**: Can't shut down what has no center
-- **Trustless**: Deterministic claim resolution, no voting needed
+- **Censorship Resistant**: Designed so there's no central point to shut down
+- **Trustless**: Deterministic claim resolution, aiming to avoid voting
 - **Self-Healing**: Nodes join and leave, network adapts
 
 ## Quick Start

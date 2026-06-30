@@ -18,7 +18,7 @@ client = OpenAI(
 )
 
 stream = client.chat.completions.create(
-    model="grid/llama-3.3-70b-versatile",
+    model="gpt-oss-120b",
     messages=[{"role": "user", "content": "What is AI Power Grid?"}],
     stream=True,
 )
@@ -39,8 +39,10 @@ Real token-by-token streaming. **[Full docs →](/streaming-api)**
 | Endpoint | Format | Description |
 |----------|--------|-------------|
 | `POST /v1/chat/completions` | OpenAI | Text gen with streaming |
+| `POST /v1/responses` | OpenAI Responses | Text gen (Responses API) |
 | `POST /v1/messages` | Anthropic | Text gen with streaming |
 | `POST /v1/images/generations` | OpenAI | Image generation |
+| `POST /v1/videos/generations` | OpenAI | Video generation (LTX-2.3) |
 | `GET /v1/models` | OpenAI | List models currently online |
 
 **Authentication:** `Authorization: Bearer YOUR_KEY` or `apikey: YOUR_KEY`
@@ -97,7 +99,7 @@ const client = new OpenAI({ baseURL: 'https://api.aipowergrid.io/v1', apiKey: 'y
 curl -N https://api.aipowergrid.io/v1/chat/completions \
   -H "Authorization: Bearer YOUR_KEY" \
   -H "Content-Type: application/json" \
-  -d '{"model":"grid/llama-3.3-70b-versatile","messages":[{"role":"user","content":"Hi"}],"stream":true}'
+  -d '{"model":"gpt-oss-120b","messages":[{"role":"user","content":"Hi"}],"stream":true}'
 ```
 
 ---

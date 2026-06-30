@@ -9,11 +9,11 @@ This page explains exactly what happens when a user makes a request in P2P mode.
 User sends a standard OpenAI-compatible request to any API node:
 
 ```bash
-curl https://api-node-1.aipowergrid.io/v1/chat/completions \
+curl https://api.aipowergrid.io/v1/chat/completions \
   -H "Authorization: Bearer $API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
-    "model": "grid/llama3.2:3b",
+    "model": "gpt-oss-120b",
     "messages": [{"role": "user", "content": "Hello!"}],
     "stream": true
   }'
@@ -26,7 +26,7 @@ The API node creates a job with a unique ID, random signature, and its peer ID:
 ```python
 job = {
     "id": "abc123-def456",
-    "model": "grid/llama3.2-3b",
+    "model": "gpt-oss-120b",
     "payload": {
         "messages": [{"role": "user", "content": "Hello!"}],
         "max_tokens": 512,

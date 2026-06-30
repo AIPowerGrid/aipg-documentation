@@ -1,6 +1,11 @@
-# Token Factory: Launch AI-Powered Tokens on Base
+# AIPG Token Factory: Build Your Own AI Network on Base
 
-Deploy tokens that are **backed by real AI compute** from day one. Your token isn't just a ticker—it's a key to the AIPG network.
+The AIPG Token Factory is a toolkit for **developers who want to launch their own
+networks and tokens on top of AIPG**. Instead of building AI infrastructure from
+scratch, you deploy a token that taps into the models AIPG already serves — and
+build your own product, economy, and community around it.
+
+Your token isn't just a ticker—it's designed to be a key to the AIPG network.
 
 ---
 
@@ -18,12 +23,12 @@ Most tokens ship with a promise and a roadmap. Yours ships with **working AI inf
 
 ## What You Get
 
-When you deploy through AIPG's Token Factory, your token is wired into a production AI network from block one:
+When you deploy through AIPG's Token Factory, your token is designed to wire into the AIPG network so you can launch your own service on top of it:
 
 | Capability | Description |
 |------------|-------------|
 | **Grid Access** | Your users can pay for AI compute with your token |
-| **Model Registry** | Access 50+ registered AI models (Flux, SDXL, LLMs) |
+| **Model Registry** | Access a growing set of open models AIPG already serves (FLUX, image, LLMs) |
 | **Recipe Library** | Thousands of ComfyUI workflows ready to use |
 | **Worker Network** | Decentralized GPU workers fulfill jobs |
 | **Job Anchoring** | On-chain Merkle proofs for every generation |
@@ -118,7 +123,7 @@ For autonomous AI agents with on-chain treasuries.
 
 ## Integration Architecture
 
-Your token plugs into AIPG's existing production contracts:
+Your token is designed to plug into AIPG's on-chain contracts:
 
 ```
 ┌────────────────────────────────────────────────────────────────────┐
@@ -142,7 +147,7 @@ Your token plugs into AIPG's existing production contracts:
 │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐  ┌────────────┐ │
 │  │ ModelVault  │  │ RecipeVault │  │  JobAnchor  │  │  Worker    │ │
 │  │             │  │             │  │             │  │  Registry  │ │
-│  │ 50+ models  │  │ Workflows   │  │ Merkle      │  │            │ │
+│  │ open models │  │ Workflows   │  │ Merkle      │  │            │ │
 │  │ registered  │  │ stored      │  │ proofs      │  │ GPU nodes  │ │
 │  └─────────────┘  └─────────────┘  └─────────────┘  └────────────┘ │
 │                                                                    │
@@ -230,7 +235,7 @@ Your users can run any public recipe or create private ones.
 
 | Benefit | Details |
 |---------|---------|
-| **Instant Utility** | Token works from block 1 |
+| **Built-in Utility** | Token is designed to work as compute credits on launch |
 | **Revenue Stream** | Earn on every compute job |
 | **No Infra Costs** | AIPG network handles compute |
 | **Deflationary Option** | Burn on use if desired |
@@ -314,7 +319,7 @@ For generation via the API, users can also call the Grid Streaming API directly:
 ```bash
 curl -N https://api.aipowergrid.io/v1/chat/completions \
   -H "Authorization: Bearer YOUR_KEY" \
-  -d '{"model":"grid/llama3.2:3b","messages":[{"role":"user","content":"Hello"}],"stream":true}'
+  -d '{"model":"gpt-oss-120b","messages":[{"role":"user","content":"Hello"}],"stream":true}'
 ```
 
 ### Step 4: Launch
@@ -377,7 +382,7 @@ Your token benefits from AIPG's production infrastructure:
 ### Factory-Specific
 
 - **Immutable Config**: Core parameters locked at deploy
-- **Revenue Routing**: Trustless splits via smart contracts
+- **Revenue Routing**: Splits handled by smart contracts (trust-minimized; see roadmap for status)
 - **Rate Limits**: Configurable spam protection
 - **Allowlists**: Optional restricted access
 

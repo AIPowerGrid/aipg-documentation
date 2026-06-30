@@ -13,8 +13,10 @@ The Grid Streaming API provides **real token-by-token streaming** — not fake c
 | Endpoint | Format | Method |
 |----------|--------|--------|
 | `/v1/chat/completions` | OpenAI | POST |
+| `/v1/responses` | OpenAI Responses | POST |
 | `/v1/messages` | Anthropic | POST |
 | `/v1/images/generations` | OpenAI | POST |
+| `/v1/videos/generations` | OpenAI (LTX-2.3) | POST |
 | `/v1/models` | OpenAI | GET |
 | `/health` | Grid | GET |
 
@@ -47,7 +49,7 @@ curl -N https://api.aipowergrid.io/v1/chat/completions \
   -H "Authorization: Bearer YOUR_KEY" \
   -H "Content-Type: application/json" \
   -d '{
-    "model": "grid/llama-3.3-70b-versatile",
+    "model": "gpt-oss-120b",
     "messages": [{"role": "user", "content": "What is AI Power Grid?"}],
     "max_tokens": 256,
     "stream": true
@@ -57,11 +59,11 @@ curl -N https://api.aipowergrid.io/v1/chat/completions \
 **Response** (Server-Sent Events):
 
 ```
-data: {"id":"chatcmpl-abc123","object":"chat.completion.chunk","created":1234,"model":"grid/llama-3.3-70b-versatile","choices":[{"index":0,"delta":{"role":"assistant"},"finish_reason":null}]}
+data: {"id":"chatcmpl-abc123","object":"chat.completion.chunk","created":1234,"model":"gpt-oss-120b","choices":[{"index":0,"delta":{"role":"assistant"},"finish_reason":null}]}
 
-data: {"id":"chatcmpl-abc123","object":"chat.completion.chunk","created":1234,"model":"grid/llama-3.3-70b-versatile","choices":[{"index":0,"delta":{"content":"AI"},"finish_reason":null}]}
+data: {"id":"chatcmpl-abc123","object":"chat.completion.chunk","created":1234,"model":"gpt-oss-120b","choices":[{"index":0,"delta":{"content":"AI"},"finish_reason":null}]}
 
-data: {"id":"chatcmpl-abc123","object":"chat.completion.chunk","created":1234,"model":"grid/llama-3.3-70b-versatile","choices":[{"index":0,"delta":{"content":" Power"},"finish_reason":null}]}
+data: {"id":"chatcmpl-abc123","object":"chat.completion.chunk","created":1234,"model":"gpt-oss-120b","choices":[{"index":0,"delta":{"content":" Power"},"finish_reason":null}]}
 
 data: [DONE]
 ```
@@ -75,7 +77,7 @@ curl https://api.aipowergrid.io/v1/chat/completions \
   -H "Authorization: Bearer YOUR_KEY" \
   -H "Content-Type: application/json" \
   -d '{
-    "model": "grid/llama-3.3-70b-versatile",
+    "model": "gpt-oss-120b",
     "messages": [{"role": "user", "content": "Hello"}],
     "max_tokens": 128
   }'
@@ -102,7 +104,7 @@ curl -N https://api.aipowergrid.io/v1/messages \
   -H "x-api-key: YOUR_KEY" \
   -H "Content-Type: application/json" \
   -d '{
-    "model": "grid/llama-3.3-70b-versatile",
+    "model": "gpt-oss-120b",
     "messages": [{"role": "user", "content": "What is AI Power Grid?"}],
     "max_tokens": 256,
     "stream": true
@@ -125,12 +127,12 @@ curl https://api.aipowergrid.io/v1/images/generations \
   }'
 ```
 
-Default model: **FLUX.2 [klein]** (4 steps, sub-second generation).
+Default model: **FLUX.2 Klein 4B FP8** (4 steps, sub-second generation).
 
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
 | `prompt` | string | required | Image description |
-| `model` | string | FLUX.2 [klein] | Image model |
+| `model` | string | FLUX.2 Klein 4B FP8 | Image model |
 | `size` | string | 1024x1024 | Width x Height |
 | `n` | int | 1 | Number of images (1-4) |
 
@@ -161,7 +163,7 @@ client = OpenAI(
 
 # Streaming
 stream = client.chat.completions.create(
-    model="grid/llama-3.3-70b-versatile",
+    model="gpt-oss-120b",
     messages=[{"role": "user", "content": "Hello!"}],
     stream=True,
 )
@@ -170,7 +172,7 @@ for chunk in stream:
 
 # Non-streaming
 response = client.chat.completions.create(
-    model="grid/llama-3.3-70b-versatile",
+    model="gpt-oss-120b",
     messages=[{"role": "user", "content": "Hello!"}],
 )
 print(response.choices[0].message.content)
@@ -187,7 +189,7 @@ client = Anthropic(
 )
 
 with client.messages.stream(
-    model="grid/llama-3.3-70b-versatile",
+    model="gpt-oss-120b",
     messages=[{"role": "user", "content": "Hello!"}],
     max_tokens=512,
 ) as stream:
@@ -206,7 +208,7 @@ const client = new OpenAI({
 });
 
 const stream = await client.chat.completions.create({
-  model: 'grid/llama-3.3-70b-versatile',
+  model: 'gpt-oss-120b',
   messages: [{ role: 'user', content: 'Hello!' }],
   stream: true,
 });
@@ -252,7 +254,7 @@ curl https://api.aipowergrid.io/v1/models
 {
   "object": "list",
   "data": [
-    {"id": "grid/llama-3.3-70b-versatile", "object": "model"}
+    {"id": "gpt-oss-120b", "object": "model"}
   ]
 }
 ```

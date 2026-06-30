@@ -61,7 +61,7 @@ P2P_BOOTSTRAP_PEERS=/ip4/bootstrap.aipowergrid.io/tcp/4001/p2p/QmBootstrapPeerID
 MODEL_NAME=llama3.2:3b
 
 # How it appears on the Grid
-GRID_MODEL_NAME=grid/llama3.2:3b
+GRID_MODEL_NAME=gpt-oss-120b
 
 # ═══════════════════════════════════════════════════════════════
 # BACKEND SETTINGS
@@ -83,7 +83,7 @@ python -m inference_worker --headless
 You should see:
 
 ```
-  🚀 P2P Worker started | model=grid/llama3.2:3b
+  🚀 P2P Worker started | model=gpt-oss-120b
   📡 Backend: ollama @ http://127.0.0.1:11434/v1/chat/completions
   🔗 Peer ID: QmYourWorkerPeerID...
   🎧 Listening on port 4002
@@ -136,7 +136,7 @@ Update `.env`:
 BACKEND_TYPE=openai
 OPENAI_URL=http://127.0.0.1:8000/v1
 MODEL_NAME=meta-llama/Llama-3.2-3B-Instruct
-GRID_MODEL_NAME=grid/llama3.2:3b
+GRID_MODEL_NAME=gpt-oss-120b
 ```
 
 ## Multiple Models
