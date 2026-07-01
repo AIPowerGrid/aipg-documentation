@@ -24,7 +24,7 @@ We're currently giving generous amounts of Den so you can explore freely.
 [aipg.art](https://aipg.art) is the AI art gallery powered by The Grid.
 
 **What you can do:**
-- Generate images with Flux, SDXL, Stable Diffusion, and more
+- Generate images with z-image-turbo, FLUX.2 Klein 4B, Krea 2 Turbo, and more
 - Browse community creations
 - Use pre-built workflows or customize parameters
 - Download your generations
@@ -38,11 +38,13 @@ We're currently giving generous amounts of Den so you can explore freely.
 
 **Available Models:**
 
-| Model | Best For | VRAM on Worker |
-|-------|----------|----------------|
-| **Flux** | Highest quality, photorealism | 12GB+ |
-| **SDXL** | High-res, detailed images | 8GB+ |
-| **SD 1.5** | Fast generations, wide LoRA support | 6GB+ |
+| Model | Best For |
+|-------|----------|
+| **z-image-turbo** | Fast, high-quality generations |
+| **FLUX.2 Klein 4B FP8** | Highest quality, photorealism |
+| **Krea 2 Turbo** | Fast, stylized generations |
+
+Available models track what workers are currently serving — check the [art gallery](https://aipg.art) or [`/v1/models`](https://api.aipowergrid.io/v1/models) for the live list.
 
 **Parameters you can adjust:**
 - Steps (quality vs speed)
@@ -69,12 +71,12 @@ Anyone with the model can regenerate the exact image from chain data alone. Futu
 
 ### aipg.chat
 
-[aipg.chat](https://aipg.chat) is an OpenWebUI-powered chat interface running on The Grid.
+[aipg.chat](https://aipg.chat) is the chat interface running on The Grid.
 
 **What you get:**
 - Chat with open-source LLMs (gpt-oss-120b, gpt-oss-20b, qwen3-27b, and more)
 - No corporate API middleman
-- Decentralized inference via Grid workers
+- Inference runs on Grid workers
 - Conversation history
 
 **How to use:**
@@ -196,7 +198,7 @@ categories:
 - gpt-oss-20b
 - qwen3-27b
 - deepseek-v4-flash-nvfp4
-- Gemma4-26B
+- Gemma4-26B_A4B-uncensored
 
 ### Coming Soon
 - Audio/music generation
@@ -214,7 +216,7 @@ Models are continuously being added.
 - Same seed + same settings = same image
 
 **For faster generations:**
-- Use Flux Schnell for quick iterations
+- Use a turbo model (z-image-turbo, Krea 2 Turbo) for quick iterations
 - Lower step counts for drafts
 - Generate at smaller sizes, upscale after
 

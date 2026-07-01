@@ -7,7 +7,7 @@ import { Callout } from 'nextra/components'
 
 # Image Worker
 
-Generate images on The Grid using ComfyUI. Earn AIPG for powering AI art.
+Generate images on The Grid using ComfyUI. Earn USDC + AIPG for powering AI art.
 
 <Callout type="info">
   **No bond required to run a worker today.** Image workers can connect and start
@@ -26,7 +26,7 @@ The **Comfy Bridge** connects your ComfyUI installation to The Grid:
 1. You run ComfyUI locally with your models
 2. The bridge holds a persistent WebSocket to The Grid, which pushes jobs to it
 3. Your GPU renders images
-4. You upload results and earn AIPG
+4. You upload results and earn USDC + AIPG
 
 Your existing ComfyUI setup works as-is. The bridge just connects it to the network.
 
@@ -45,10 +45,11 @@ Your existing ComfyUI setup works as-is. The bridge just connects it to the netw
 
 | Model | VRAM | Notes |
 |-------|------|-------|
-| SD 1.5 | 6 GB | Fast, huge LoRA ecosystem |
-| SDXL | 8 GB | 1024px native, great quality |
-| Flux Schnell | 12 GB | Fast, excellent quality |
-| Flux Dev | 12 GB | Best quality, slower |
+| z-image-turbo | 6–8 GB | Fast, high-quality |
+| Krea 2 Turbo | 8–12 GB | Fast, stylized |
+| FLUX.2 Klein 4B FP8 | 12 GB+ | Best quality, photorealism |
+
+Check [`/v1/models`](https://api.aipowergrid.io/v1/models) for the models the Grid is currently serving.
 
 ---
 
@@ -122,7 +123,7 @@ All settings go in `.env`:
 By default, the bridge scans your ComfyUI checkpoints and advertises matching models. Override with:
 
 ```ini
-GRID_MODEL=stable_diffusion, flux-schnell
+GRID_MODEL=z-image-turbo, krea-2-turbo
 ```
 
 ---
@@ -177,11 +178,11 @@ The bridge uses your workflow as a template for incoming jobs.
 2. The Grid routes the job to your worker
 3. Your GPU generates the image via ComfyUI
 4. You upload the result
-5. You earn AIPG
+5. You earn USDC + AIPG
 
 ### What Earns Most
 
-- **Flux models** — high demand, good rewards
+- **In-demand models** (z-image-turbo, FLUX.2 Klein) — high demand, good rewards
 - **Large images** — more compute = more reward
 - **High step counts** — more work = more pay
 - **24/7 uptime** — consistent availability wins

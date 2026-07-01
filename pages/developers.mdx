@@ -47,19 +47,10 @@ Real token-by-token streaming. **[Full docs →](/streaming-api)**
 
 **Authentication:** `Authorization: Bearer YOUR_KEY` or `apikey: YOUR_KEY`
 
-### Legacy API (v2)
+### Legacy API (v2) — Retired
 
-Poll-based generation. Still supported for backward compatibility.
-
-| Endpoint | Description |
-|----------|-------------|
-| `POST /api/v2/generate/text/async` | Submit text generation |
-| `GET /api/v2/generate/text/status/{id}` | Poll for text results |
-| `POST /api/v2/generate/async` | Submit image generation |
-| `GET /api/v2/generate/status/{id}` | Poll for image results |
-| `GET /api/v2/status/models` | List all models |
-
-**Authentication:** `apikey: YOUR_KEY` header
+The poll-based `/api/v2/` horde endpoints have been **retired**. Use the
+OpenAI-compatible `/v1/` endpoints above for all integrations.
 
 **API reference:** OpenAI-compatible API at `https://api.aipowergrid.io/v1` — see [docs.aipowergrid.io](https://docs.aipowergrid.io)
 

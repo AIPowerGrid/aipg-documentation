@@ -102,7 +102,7 @@ from aipg.attestation import verify_nvidia_attestation
 client = Client(api_key="...")
 
 response = client.chat.completions.create(
-    model="llama-3-70b",
+    model="gpt-oss-120b",
     messages=[...],
     extra_headers={"X-AIPG-Confidential": "required"},
 )

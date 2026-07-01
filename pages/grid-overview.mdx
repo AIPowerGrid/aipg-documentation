@@ -1,6 +1,6 @@
 # The Grid
 
-The Grid is a decentralized AI inference network. GPU owners run workers, users generate AI content, and everything is powered by AIPG tokens on Base.
+The Grid is a GPU-powered AI inference network, built to decentralize. GPU owners run workers, users generate AI content, and everything is powered by AIPG tokens on Base.
 
 ---
 
@@ -18,16 +18,16 @@ The Grid is a decentralized AI inference network. GPU owners run workers, users 
 │    painting"  ──────────►    running AI   ──────────►  or text      │
 │                              models                    response     │
 │                                                                     │
-│   Pay with Den (電)          Earn AIPG                 Verified     │
-│   platform credits           rewards                   on-chain     │
+│   Pay with Den (電)          Earn USDC + AIPG          On-chain     │
+│   platform credits           rewards                   (planned)    │
 │                                                                     │
 └─────────────────────────────────────────────────────────────────────┘
 ```
 
 1. **You request** - Submit a prompt via aipg.art, aipg.chat, or the API
-2. **Workers generate** - Decentralized GPU nodes run AI models
+2. **Workers generate** - GPU nodes run AI models
 3. **You receive** - Get your image, text, or other AI output
-4. **Workers earn** - GPU operators earn AIPG for their compute
+4. **Workers earn** - GPU operators earn USDC + AIPG for their compute
 
 ---
 
@@ -35,13 +35,13 @@ The Grid is a decentralized AI inference network. GPU owners run workers, users 
 
 ### Generate Images
 
-Create AI art at [aipg.art](https://aipg.art) using models like Flux, SDXL, and Stable Diffusion. Choose from thousands of workflows, adjust parameters, and generate.
+Create AI art at [aipg.art](https://aipg.art) using models like z-image-turbo, FLUX.2 Klein 4B, and Krea 2 Turbo. Choose from curated workflows, adjust parameters, and generate.
 
 Coming soon: **Mint your generations as NFTs** with full on-chain reproducibility. Every parameter stored on the blockchain—the image can be regenerated from chain data alone.
 
 ### Chat with AI
 
-Use [aipg.chat](https://aipg.chat) for text conversations powered by LLMs running on The Grid. Open-source models, no corporate API, decentralized inference.
+Use [aipg.chat](https://aipg.chat) for text conversations powered by LLMs running on The Grid. Open-source models, no corporate API.
 
 ### Build with the API
 
@@ -49,7 +49,7 @@ Get an API key at [console.aipowergrid.io](https://console.aipowergrid.io) and i
 
 ### Run a Worker
 
-Contribute your GPU to The Grid. Run inference (text) or media (image/video/audio) workers and earn AIPG rewards based on the work you complete.
+Contribute your GPU to The Grid. Run inference (text) or media (image/video/audio) workers and earn USDC + AIPG rewards based on the work you complete.
 
 ### Staking (Wind-Down)
 
@@ -99,7 +99,7 @@ The Grid runs on smart contracts deployed to Base mainnet. The system is modular
 
 | Component | Purpose |
 |-----------|---------|
-| **ModelVault** | Registry of AI models (Flux, SDXL, LLMs, etc.) |
+| **ModelVault** | Registry of AI models (image, video, LLMs, etc.) |
 | **RecipeVault** | Stored workflows for reproducible generation |
 | **JobAnchor** | On-chain verification of completed jobs |
 | **WorkerRegistry** | Worker registration and bonding |

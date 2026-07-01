@@ -28,7 +28,7 @@ When you deploy through AIPG's Token Factory, your token is designed to wire int
 | Capability | Description |
 |------------|-------------|
 | **Grid Access** | Your users can pay for AI compute with your token |
-| **Model Registry** | Access a growing set of open models AIPG already serves (FLUX, image, LLMs) |
+| **Model Registry** | Access a growing set of open models AIPG already serves (image, video, LLMs) |
 | **Recipe Library** | Thousands of ComfyUI workflows ready to use |
 | **Worker Network** | Decentralized GPU workers fulfill jobs |
 | **Job Anchoring** | On-chain Merkle proofs for every generation |
@@ -75,7 +75,7 @@ When someone uses your token for AI generation:
 Every job creates value:
 
 - **Your Treasury**: Receives the MAIT spent (or burn reduces supply)
-- **GPU Workers**: Earn AIPG for compute work
+- **GPU Workers**: Earn USDC + AIPG for compute work
 - **AIPG Network**: Protocol fee sustains infrastructure
 - **Your Holders**: Token has real utility = real demand
 
@@ -156,7 +156,7 @@ Your token is designed to plug into AIPG's on-chain contracts:
                               ▼
 ┌────────────────────────────────────────────────────────────────────┐
 │                      GPU WORKER NETWORK                            │
-│  Decentralized nodes running Flux, SDXL, LLMs                      │
+│  GPU nodes running image, video, and LLM models                    │
 │  Bonded with AIPG stake, slashable for misbehavior                 │
 └────────────────────────────────────────────────────────────────────┘
 ```
@@ -199,7 +199,7 @@ When a user spends your token for AI compute:
 4. **Token Handling**: Based on config—burned, sent to treasury, or split
 5. **Job Execution**: Grid assigns job to bonded worker
 6. **Completion**: Worker submits result, anchored via Merkle root
-7. **Settlement**: Worker earns AIPG, your treasury earns revenue share
+7. **Settlement**: Worker earns USDC + AIPG, your treasury earns revenue share
 
 ### Supported Models
 
@@ -207,12 +207,12 @@ Your token holders get access to all registered models:
 
 | Category | Examples | Use Case |
 |----------|----------|----------|
-| **Image Gen** | Flux.1, SDXL, SD 1.5 | Text-to-image, img2img |
+| **Image Gen** | z-image-turbo, FLUX.2 Klein 4B, Krea 2 Turbo | Text-to-image, img2img |
+| **Video Gen** | LTX-2.3 | Text-to-video |
 | **ControlNet** | Canny, Depth, Pose | Guided generation |
 | **LoRA** | Style adapters, character models | Fine-tuned outputs |
-| **Inpainting** | Flux Inpaint, SDXL Inpaint | Edit regions |
 | **Upscale** | 4x-UltraSharp, ESRGAN | Resolution enhancement |
-| **LLM** | Llama, Mistral, Qwen | Text generation, chat |
+| **LLM** | gpt-oss-120b, qwen3-27b, deepseek-v4-flash-nvfp4 | Text generation, chat |
 
 Models are registered in `ModelVault` with full metadata: VRAM requirements, supported features, constraints.
 
@@ -253,7 +253,7 @@ Your users can run any public recipe or create private ones.
 ### Revenue Split Example
 
 ```
-User pays 100 MYTOKEN for a Flux generation:
+User pays 100 MYTOKEN for an image generation:
 
 ┌─────────────────────────────────────────┐
 │ 100 MYTOKEN paid                        │
@@ -263,7 +263,7 @@ User pays 100 MYTOKEN for a Flux generation:
 │ → 10 MYTOKEN protocol fee (buys AIPG)   │
 ├─────────────────────────────────────────┤
 │ Meanwhile:                              │
-│ → GPU worker earns 0.5 AIPG for job     │
+│ → GPU worker earns USDC + AIPG for job  │
 │ → Job anchored on-chain forever         │
 │ → User gets deterministic image         │
 └─────────────────────────────────────────┘
@@ -425,7 +425,7 @@ A: Yes. We can add compute hooks to existing ERC-20s via wrapper contracts.
 A: Gas costs on Base (~$1-5) plus a one-time factory fee (TBD, likely small AIPG amount).
 
 **Q: How do workers get paid?**
-A: Workers always receive AIPG. The payment router handles conversion from your token.
+A: Workers receive USDC + AIPG (~50/50 target). The payment router handles conversion from your token.
 
 **Q: Can I run my own workers?**
 A: Yes. Register your GPUs in WorkerRegistry, bond AIPG, and earn from jobs paid in any factory token.
