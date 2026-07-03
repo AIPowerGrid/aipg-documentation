@@ -1,6 +1,6 @@
 ---
 title: Validator Nodes
-description: Bonded validators verify inference results and secure the AIPG network. Coming soon.
+description: Validator nodes submit signed evidence about worker quality, honesty, and provenance across text, image, and video generation.
 ---
 
 import { Callout } from 'nextra/components'
@@ -8,14 +8,16 @@ import { Callout } from 'nextra/components'
 # Validator Nodes
 
 <Callout type="info">
-  **Status: in active development.** Validator nodes will launch after the
-  `ValidatorRegistry` Diamond facet is deployed to the Grid contract on Base.
-  Join the [Discord](https://discord.gg/W9D8j6HCtC) to follow progress.
+  **Status: in active development.** The first validator release is an
+  evidence-only audit runner. Validator rewards, staking, routing weight, and
+  slashing come later, after Grid-issued assignments, targeted probes, quorum,
+  and dispute tooling are live.
 </Callout>
 
-Validators are the trust layer of The Grid. They verify that workers actually ran
-the model they claimed to run and returned an honest result. In return for taking
-this risk on, validators earn a share of network fees.
+Validators are the Grid's quality, honesty, and provenance layer. They do not
+magically prove a remote machine is running a specific private model stack.
+They measure whether workers deliver the capability they advertise, follow job
+parameters, and deserve more trust.
 
 ---
 
@@ -23,33 +25,48 @@ this risk on, validators earn a share of network fees.
 
 | | |
 |---|---|
-| **Status** | Coming soon |
-| **Minimum stake** | 10,000 AIPG |
-| **Reward source** | Verification fees on every inference job |
-| **Slashing** | False attestations → stake at risk |
-| **Implementation** | Diamond facet on the Grid contract (EIP-2535) |
-| **Hardware** | Modest — CPU + bandwidth, no GPU required for sampling |
+| **Status** | V0 preview in progress; evidence-only |
+| **What validators do** | Run unpredictable probes and submit signed attestations |
+| **Current authority** | Informational evidence for dashboards and engineering feedback |
+| **Later authority** | Routing reputation, rewards, and objective-fraud slashing after quorum |
+| **Hardware** | CPU + bandwidth for V0; optional GPU for future reference/re-execution lanes |
+| **Base role** | Bonds, validator stake, epoch roots, reward roots, and dispute outcomes |
 
 ---
 
-## How Validation Works
+## Validator Data Flow
 
-When a worker completes an inference job, it commits a result hash on-chain via
-the `JobAnchor` module. Validators independently sample a fraction of jobs and
-check whether the committed result matches what the model would actually produce.
+The target architecture is staged. V0 validators can run model-routed text
+canaries and submit evidence, but that evidence does not move money or slash
+stake. Economic meaning starts only after the Grid can assign a validator to
+probe a specific worker and compare the result against quorum or trusted
+reference output.
 
+```mermaid
+flowchart TD
+  A["Grid assignment service"] --> B["Signed assignment<br/>worker, modality, policy, nonce, deadline"]
+  B --> C["Validator node"]
+  C --> D["Challenge engine<br/>text, image, video"]
+  D --> E["Targeted probe endpoint"]
+  E --> F["Assigned worker"]
+  E --> G["Reference worker pool<br/>bonded, highly validated"]
+  F --> H["Candidate output"]
+  G --> I["Reference output(s)"]
+  H --> J["Modality scorer"]
+  I --> J
+  J --> K["Evidence hashes + verdict"]
+  K --> L["Signed attestation"]
+  L --> M["Grid evidence store"]
+  M --> N["Quorum + dispute logic"]
+  N --> O["Worker scorecards<br/>routing reputation"]
+  N --> P["Epoch roots<br/>attestations, rewards, certificates"]
+  P --> Q["Base contracts<br/>bonds, stake, rewards"]
+  N --> R["Future objective-fraud slashing"]
 ```
-Worker          → submits result + hash to JobAnchor
-JobAnchor       → emits event with jobId + resultHash
-Validators      → sample a subset of jobs
-                  re-run the model (or compare to other validators)
-                  attest: valid / invalid
-ValidatorRegistry → settles rewards, slashes false attestations
-```
 
-Validators don't need to verify every job — sampling plus economic stake creates
-the right incentives. A worker that cheats only escapes detection until the
-moment a validator happens to sample its job, and then loses its bond.
+The important rule: raw prompts, raw outputs, private thresholds, live challenge
+seeds, answer keys, and golden media hashes stay off-chain. Base gets compact
+commitments, bonds, stake, rewards, and dispute outcomes.
 
 ---
 
@@ -63,48 +80,95 @@ outputs across them, but it breaks for:
 - **Image generation** where bit-exact comparison is meaningless
 - **Specialized models** where only one or two workers are running them at any moment
 
-A separate validator role solves this with **economic finality**: validators put
-up a much larger bond (10K vs 1K AIPG), they re-execute jobs on their own
-hardware, and they're slashed for false attestations. This is the same pattern
-used by rollup sequencers and Cosmos validators — apply enough financial
-pressure to honest validators and dishonesty becomes unprofitable.
+A separate validator role lets the network measure delivered capability without
+pretending every model label or quantization choice is directly provable. If a
+worker can solve the text task, follow the image or video contract, and match a
+certified deterministic workflow within tolerance, the network can reward that
+usefulness. If it repeatedly fails objective checks, routing reputation should
+drop first. Slashing is reserved for later, objective fraud cases with quorum
+and a dispute path.
 
 ---
 
-## Implementation: Diamond Facet
+## Validation Lanes
 
-The Grid contract on Base is built using the [EIP-2535 Diamond
-pattern](https://eips.ethereum.org/EIPS/eip-2535), which lets us add new facets
-(modules) without redeploying. The validator system will ship as a new facet
-alongside the existing `WorkerRegistry`, `JobAnchor`, and other modules.
+Validators span text, image, and video, but each lane needs different evidence.
 
-Planned facet surface:
+- **Proof of usefulness** — text reasoning, JSON/schema output, code tests,
+  tool-use chains, image prompt constraints, and video duration or motion checks.
+- **Proof of fidelity** — deterministic workflows with workflow hashes, model
+  hashes, explicit seeds, dimensions, and pHash/SSIM/LPIPS-style comparison.
+- **Proof of honesty** — max-token compliance, explicit seed compliance,
+  dimension and duration compliance, usable outputs, signed receipts, and honest
+  failure reporting.
 
-```solidity
-contract ValidatorRegistryFacet {
-    function registerValidator(bytes32 p2pPeerId, string endpoint) external;
-    function attestJob(bytes32 jobId, bytes32 resultHash, bool isValid) external;
-    function slashValidator(address validator, uint256 amount, string reason) external;
-    function getActiveValidators() external view returns (address[] memory);
-}
-```
+For text, the Grid should care about measured capability more than whether a
+worker runs a specific quantization. For deterministic media workflows, the
+Grid can be stricter because fixed parameters and reference outputs make
+fidelity measurable.
 
-The facet integrates with:
-- **`JobAnchor`** — validators submit attestations against the same jobIds workers commit
-- **P2P network** — validators run bootstrap and relay nodes for the libp2p mesh
-- **Reward system** — fees from paid users are split between workers and validators
+---
+
+## Base Integration
+
+The Grid uses Base for public, auditable economic state. Validator evidence
+should not put every probe or raw response on-chain. The practical on-chain
+surface is:
+
+- validator registry and stake
+- worker bond and future slash events
+- epoch attestation roots
+- deterministic workflow certificate roots
+- validator reward roots
 
 ---
 
 ## What You'll Need (When Live)
 
-- **10,000 AIPG** for the bond (slashable)
-- **A Base mainnet wallet** to sign attestations
-- **A reliable host** with stable bandwidth (validator software is light — no GPU required for sampling, optional GPU for re-execution)
-- **A libp2p endpoint** the network can dial for relay traffic
+- **A Base mainnet wallet** to sign attestations and, later, hold validator stake
+- **A reliable host** with stable bandwidth
+- **CPU resources** for V0 text canaries and signed evidence
+- **Optional GPU resources** for future reference or re-execution lanes
 
-We'll publish the operator runbook, slashing conditions, and reward economics
-when the facet ships.
+Final stake size, reward schedule, and slashing conditions will be published
+with the staking and reward contracts.
+
+---
+
+## Current Operator Shape
+
+The planned operator flow mirrors the worker quickstarts:
+
+```bash
+curl -fsSL https://get.aipowergrid.io/validator | bash
+cd ~/.aipg-validator
+aipg-validator init
+aipg-validator check --no-probe
+aipg-validator dashboard
+aipg-validator run
+```
+
+The first release should be easy to run and honest about its power:
+
+- V0 evidence is useful for dashboards and engineering feedback.
+- V0 does not prove exact model weights.
+- V0 does not slash workers or pay validators.
+- V0 does not assign probes to a specific worker unless Grid core explicitly
+  enables targeted probing.
+
+---
+
+## Future Economic Path
+
+The later validator economy is straightforward in shape, but it should not be
+enabled until the evidence path is hard to game:
+
+1. Grid issues short-lived assignments with a nonce and target worker.
+2. Validators run the assigned probe and sign an evidence hash.
+3. Grid aggregates attestations into scorecards and quorum outcomes.
+4. Routing uses reputation cautiously before money is attached.
+5. Accepted attestations earn rewards.
+6. Objective fraud may become slashable only after dispute tooling exists.
 
 ---
 
@@ -114,6 +178,6 @@ The fastest way to hear about launch is the AIPG Discord:
 
 **[discord.gg/W9D8j6HCtC](https://discord.gg/W9D8j6HCtC)**
 
-If you want to dig into the design today, the on-chain economics proposal at
-[Autonomous Network](/autonomous-network) covers verification sampling,
-reward math, and dispute resolution in more depth.
+If you want to dig into the broader network design, see
+[Proof of Intelligence](/proof-of-quality), [Architecture Overview](/grid-overview),
+and [Autonomous Network](/autonomous-network).

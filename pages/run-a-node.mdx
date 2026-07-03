@@ -1,27 +1,27 @@
 ---
 title: Run a Node
-description: Two ways to contribute to The Grid — AI worker nodes (live) and validator nodes (coming soon).
+description: Two ways to contribute to The Grid — AI worker nodes are live, and validator nodes are in active development.
 ---
 
 import { Callout, Cards } from 'nextra/components'
 
 # Run a Node
 
-Two roles, two stake levels, two ways to earn USDC + AIPG by doing real work for the network.
+Two roles, two ways to earn USDC + AIPG by doing real work for the network.
 
 | | AI Worker Node | Validator Node |
 |---|---|---|
-| **Status** | Live | Coming soon |
-| **Stake** | Not required yet (planned ~1,000 AIPG) | 10,000 AIPG minimum |
+| **Status** | Live | V0 preview in development |
+| **Stake** | Not required yet (planned ~1,000 AIPG) | Not live; final validator stake TBD |
 | **What you do** | Serve inference jobs (chat, image generation) | Verify that workers' results are honest |
 | **Hardware** | GPU required (4 GB VRAM minimum, 12+ GB recommended) | Modest CPU + bandwidth; GPU optional for re-execution |
-| **Earnings** | Per-request fees from users | Verification fees + slashed bonds of dishonest workers |
-| **Risk** | None today (planned: stake slashed if you serve bad results) | Stake slashed for false attestations |
+| **Earnings** | Per-request fees from users | Future accepted-attestation rewards |
+| **Risk** | None today; future bond risk for objective fraud | No live validator stake; future slashing only after quorum and disputes |
 
 <Callout type="info">
-  Both roles use the same on-chain bonding pattern — your stake is held by the
-  `WorkerRegistry` or `ValidatorRegistry` facet on the [Grid Diamond](/autonomous-network)
-  contract on Base. There's no admin function over your stake — only you can withdraw it.
+  Worker bonding and validator staking are part of the Base-backed roadmap.
+  The current worker path does not require stake, and the first validator
+  release is evidence-only.
 </Callout>
 
 ---
@@ -50,10 +50,9 @@ start serving. A bonding mechanism is in development: workers will stake to the
 As long as you serve honest results, your stake stays untouched and you can
 withdraw it whenever you stop running the worker.
 
-Once the bond ships, if a [validator](/validator-node) catches you returning bad
-results (wrong model, truncated output, fabricated response), your stake is
-slashed. This is what will make the network trustworthy without a central
-authority.
+Once the bond ships, validator evidence can first lower routing trust and caps.
+Slashing should come later, only for objective fraud with assignment-bound
+evidence, quorum, and a dispute path.
 
 ### What you earn
 
@@ -70,21 +69,22 @@ Live rates are visible on [console.aipowergrid.io](https://console.aipowergrid.i
 ## Validator Nodes (Coming Soon)
 
 If you want to help secure the network rather than provide compute, validator
-nodes are the higher-stake role. Validators sample inference jobs at random,
-re-execute or cross-check the result, and submit on-chain attestations. They
-earn a share of network fees and a cut of any slashed worker bonds.
+nodes are the audit role. The first release is intentionally low-authority:
+validators run unpredictable probes, sign evidence, and feed dashboards while
+the Grid hardens targeted assignments, reference checks, and quorum.
 
-**Stake:** 10,000 AIPG. The higher stake reflects the higher trust position —
-validators have more economic weight in the slashing mechanism.
+**Stake:** not live yet. Validator stake size, rewards, and slashing rules will
+be published with the staking and reward contracts.
 
 **Hardware:** Modest. Validators don't need to serve every job, so they don't
 need worker-grade GPUs. A reliable server with stable bandwidth is enough for
 sampling. Validators who want to re-execute jobs themselves (rather than rely
 on cross-validation) can add GPU capacity.
 
-Full details and the operator runbook will publish when the
-`ValidatorRegistryFacet` ships. Follow the [Discord](https://discord.gg/W9D8j6HCtC)
-to be notified.
+The operator shape is being built to mirror the worker quickstarts: install a
+binary, run `aipg-validator init`, check the Grid connection, open the local
+dashboard, then run the validator loop. Follow the
+[Discord](https://discord.gg/W9D8j6HCtC) to be notified.
 
 → **[Validator Node details](/validator-node)**
 

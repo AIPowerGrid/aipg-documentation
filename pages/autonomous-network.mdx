@@ -20,8 +20,9 @@ centralized services.
 
 AIPG is being built so that no single entity can stop the inference. Workers
 register themselves on-chain. Jobs route through cryptographic commitments.
-Payments settle in smart contracts. Validators police results with their own
-stakes on the line. The team builds the protocol. The protocol runs itself.
+Payments settle in smart contracts. Validators add independent evidence, then
+eventually stake-backed enforcement once quorum and disputes are live. The team
+builds the protocol. The protocol runs itself.
 
 ---
 
@@ -57,9 +58,9 @@ Validators take a cut. No invoices, no payouts CSV, no team in the middle.
 
 ### Bonded validators
 
-The big trust upgrade. Validators stake 10K AIPG, sample jobs at random,
-re-execute on their own hardware, and attest results on-chain. False
-attestations get slashed. See [Validator Nodes](/validator-node).
+The big trust upgrade. Validators start as an evidence-only audit layer, then
+move toward stake-backed assignments once targeted probes, reference checks,
+quorum, and dispute tooling exist. See [Validator Nodes](/validator-node).
 
 ### Dispute resolution
 
@@ -83,7 +84,7 @@ shape of the network:
 |---|---|---|
 | **Job assignment** | API node picks a worker | Workers self-claim via deterministic on-chain rule |
 | **Payment settlement** | Off-chain payment processor | Smart-contract escrow + release |
-| **Result verification** | "Trust the worker" | Validator sampling + slashing |
+| **Result verification** | "Trust the worker" | Validator evidence, quorum, and eventual objective-fraud slashing |
 | **Disputes** | Email the team | Fraud-proof in contract, deterministic outcome |
 | **Failure mode** | Provider can turn it off | Network keeps running while workers exist |
 
