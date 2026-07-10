@@ -37,7 +37,7 @@ concrete detail in children. Delete stale notes instead of explaining history.
 ## Purpose
 
 The user-facing documentation for AI Power Grid, served at `aipowergrid.io/docs`. A Nextra
-docs site (Next.js 14, Pages router) that publishes `.mdx` from `pages/`. This repo ALSO
+docs site (Next.js 15, Pages router) that publishes `.mdx` from `pages/`. This repo ALSO
 hosts the org-wide **engineering-standards/** — the internal rail every AIPG repo inherits,
 which is intentionally NOT published.
 
@@ -94,6 +94,7 @@ which is intentionally NOT published.
 
 - `npm install` then `npm run dev` → http://localhost:3000/docs to preview.
 - `npm run build` must succeed (Nextra/Next build is the gate before deploy).
+- `npm audit` must report zero known vulnerabilities before deploy.
 
 ## Child DOX Index
 
