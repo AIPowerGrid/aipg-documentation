@@ -28,12 +28,16 @@ The Grid is what happens when you combine:
 
 ### The Infrastructure
 
-**Smart contracts on Base** - Model registry, workflow storage, job anchoring, worker bonding, staking rewards. On-chain settlement and registries are live; full on-chain job verification is part of the roadmap as the network decentralizes.
+**Smart contracts on Base** - Deployed model/workflow registries, job anchoring,
+worker and reward modules, plus the ended StakingVault program. The current
+worker payout rail is custodial and publishes verifiable ERC-20 transfers on
+Base; self-serve Merkle claims and full on-chain job verification remain roadmap
+work.
 
 - **ModelVault** - Registry of AI models
 - **RecipeVault** - Stored workflows for reproducible generation
-- **JobAnchor** - On-chain proofs for completed work
-- **StakingVault** - Staking contract (rewards program is winding down; withdrawals open)
+- **JobAnchor** - Deployed anchoring module; production batch publisher is not live
+- **StakingVault** - Deployed staking contract; rewards program ended and withdrawals remain open
 
 ### The Token
 
@@ -71,10 +75,10 @@ AI Power Grid is built by a distributed team of developers, AI researchers, and 
 - Build with the [API](/developers)
 
 ### Run a Worker
-- Contribute your GPU and earn USDC + AIPG: [LLM Worker](/worker-llm) or [Media Worker](/worker-media)
+- Contribute your GPU and earn AIPG from the current worker payout rail: [LLM Worker](/worker-llm) or [Media Worker](/worker-media)
 
-### Staking (Wind-Down)
-- The staking rewards program is winding down — existing stakers can [withdraw](/staking) anytime
+### Staking (Ended Program)
+- The staking rewards program has ended; existing stakers can [withdraw](/staking) anytime
 
 ### Build
 - Launch a token with the [Token Factory](/arc20_token_network)
@@ -95,8 +99,8 @@ Run locally:
 ```bash
 git clone https://github.com/aipowergrid/aipg-documentation.git
 cd aipg-documentation
-pnpm install
-pnpm dev
+npm install
+npm run dev
 ```
 
 Docs are auto-deployed on merge to main.

@@ -1,0 +1,131 @@
+---
+title: Why Crypto Needs an AI Generation Layer
+description: Why onchain apps need a crypto-native generation layer for text, image, video, agents, and workflows.
+---
+
+import { Callout, Cards } from 'nextra/components'
+
+# Why Crypto Needs an AI Generation Layer
+
+Onchain apps are starting to use AI everywhere: agents, games, wallets, social
+apps, NFT tools, creator markets, DAO operations, trading assistants, and
+autonomous services. Those apps do not just need text completions. They need
+text, image, video, tool use, and reproducible workflows.
+
+If every onchain app depends on one closed AI vendor account, the stack is
+decentralized only until the first generation request.
+
+AI Power Grid exists to provide the missing provider layer: a crypto-native
+generation network with familiar APIs at the edge, distributed GPU supply
+underneath, transparent worker payments, and a path toward validator-backed
+quality.
+
+<Callout type="info">
+  The Grid is live for text, image, and video generation through `/v1` APIs.
+  Validator-backed quality, trustless reward claims, and deeper onchain
+  settlement are rolling out in stages.
+</Callout>
+
+---
+
+## The Current Choices Are Awkward
+
+Crypto projects that need generative AI usually have three options.
+
+### 1. Use a closed AI vendor
+
+This is fast and convenient, but the app depends on one centralized vendor
+account, one billing relationship, one API key, one policy surface, and one
+availability profile. A decentralized product can still have a centralized AI
+choke point.
+
+### 2. Self-host models
+
+This gives more control, but it turns every app team into a GPU operations
+team. Most builders do not want to manage model downloads, routing, scaling,
+monitoring, abuse handling, billing, and uptime.
+
+### 3. Stitch together random hosted open-model providers
+
+This can be more open than closed labs, but it is still not a network. There is
+no native worker market, no transparent payout trail, no shared model/workflow
+registry, and no path for stake, reputation, and validator evidence to improve
+the system over time.
+
+---
+
+## What the Grid Provides
+
+AI Power Grid is designed as a generation layer for onchain builders.
+
+| Layer | What it means |
+| --- | --- |
+| **Generation API** | OpenAI-compatible `/v1` endpoints for text, images, video, and model discovery |
+| **Distributed supply** | GPU workers run models and workflows, then earn for completed jobs |
+| **Transparent economics** | Worker payouts and settlement state are built to become publicly auditable on Base |
+| **Model and workflow registry** | Onchain contracts can anchor models, recipes, and reproducible creative flows |
+| **Validator roadmap** | Validators gather evidence about quality, honesty, and provenance before that evidence gains economic authority |
+
+The goal is not "AI on the blockchain" for its own sake. Hot generation stays
+off-chain where it belongs. Base is used for what public settlement is good at:
+bonds, registries, reward roots, audit anchors, and dispute outcomes.
+
+---
+
+## Why It Matters for Onchain Apps
+
+### Apps get a usable API
+
+Builders can point familiar SDKs at the Grid and ship. They do not have to run
+GPU infrastructure just to add AI to a wallet, game, NFT tool, agent, or social
+app.
+
+### Workers get a market
+
+GPU owners can serve real jobs instead of arbitrary proof work. The network
+routes text, image, and video jobs to workers that advertise the right
+capabilities.
+
+### Users get portability
+
+The same account, credits, and usage surface can follow a user across apps built
+on the Grid instead of being trapped inside one product.
+
+### The network gets better over time
+
+Grid-issued text assignments, targeted probes, and non-economic quorum state now
+feed preview scorecards and engineering feedback. Later, after independent
+operators, self-validation exclusion, dispute tooling, and adversarial quorum
+testing are proven, that evidence can inform routing reputation, rewards, and
+objective fraud handling.
+
+---
+
+## Live Now vs Roadmap
+
+| Area | Status |
+| --- | --- |
+| Text generation | Live through OpenAI/Anthropic-compatible `/v1` endpoints |
+| Image generation | Live through `/v1/images/generations` and [aipg.art](https://aipg.art) |
+| Video generation | Live through `/v1/videos/generations` where workers are online |
+| Worker payments | Live bootstrap rail with transparent payout reporting |
+| Validator nodes | Assignment-bound text evidence live in core; public operator release remains preview and non-economic |
+| Trustless reward claims | Future onchain claim rail; not the current live payout system |
+| Onchain workflow certification | Roadmap for reproducible media and marketplace use cases |
+
+<Callout type="warning">
+  Be precise about the trust model. The Grid is progressively decentralizing.
+  It should not be described as fully trustless until validator authority,
+  dispute tooling, and onchain claim settlement are actually live.
+</Callout>
+
+---
+
+## Start Building
+
+<Cards>
+  <Cards.Card title="Generation API" href="/streaming-api" />
+  <Cards.Card title="Generate Images and Chat" href="/generate" />
+  <Cards.Card title="Run a Worker" href="/run-a-node" />
+  <Cards.Card title="Validator Nodes" href="/validator-node" />
+</Cards>

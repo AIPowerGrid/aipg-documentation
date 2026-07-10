@@ -43,8 +43,9 @@ which is intentionally NOT published.
 
 ## Ownership
 
-- **`pages/`** — the published docs: `.mdx` content + `_meta.tsx` navigation. Owned in its
-  own AGENTS.md. Everything routable lives here (Nextra only routes `pages/`).
+- **`pages/`** — the published docs: `.mdx` content + `_meta.tsx` navigation.
+  Governed directly by this root file because Nextra turns any nested
+  `AGENTS.md` into a public page. Everything routable lives here.
 - **`engineering-standards/`** — internal org engineering standards (core + per-language +
   git). Outside `pages/`, so unpublished. Owned in its own AGENTS.md.
 - **`theme.config.tsx`** — Nextra theme: logo, navbar links, SEO/OG `head`, footer, forced
@@ -66,13 +67,26 @@ which is intentionally NOT published.
 - **`basePath` is `/docs`.** Internal links and asset paths must account for it; absolute
   asset refs use `/docs/...`.
 - Deploy target is Vercel (`vercel.json`), which builds with **npm** (`npm install` /
-  `npm run build`); `package-lock.json` is the committed lockfile. The README's `pnpm`
-  note is stale — use npm to match CI/deploy.
+  `npm run build`); `package-lock.json` is the committed lockfile.
 
 ## Work Guidance
 
-- New doc page → add the `.mdx` under `pages/` AND register it in the nearest `_meta.tsx`
-  (otherwise it is unlisted in the sidebar). See `pages/AGENTS.md`.
+- New doc page → add the `.mdx` under `pages/` AND register it in the nearest
+  `_meta.tsx` (otherwise it is unlisted in the sidebar).
+- Published current-state claims must be checked against owning sources:
+  `grid-core` for API/charging/worker/validator/payout behavior;
+  `aipg-smart-contracts/docs/ADDRESSES.md` plus Base for deployed contracts;
+  and released worker repos for install commands. A deployed contract is not
+  proof that its operational publisher, claim, or reward workflow is live.
+- Keep customer account credits (USD-denominated usage balance) separate from
+  worker den (non-transferable completed-work units). The current worker rail
+  pays an hourly AIPG budget pro-rata to den; multi-asset preferences are stored
+  but are not active payout routing.
+- Label roadmap concepts and default-off prototypes explicitly. Do not publish
+  exact economics, stake sizes, deterministic guarantees, model availability,
+  or security authority as current without runtime/on-chain evidence.
+- Do not place `AGENTS.md` anywhere under `pages/`: Nextra compiles Markdown in
+  that tree into public routes. Keep the page-content contract here.
 - Changing nav order/labels/separators → edit `_meta.tsx`, not the page frontmatter.
 - Do not edit generated/vendored dirs: `.next/`, `node_modules/`, `.vercel/`, `.fallow/`.
 
@@ -83,5 +97,4 @@ which is intentionally NOT published.
 
 ## Child DOX Index
 
-- [pages/AGENTS.md](pages/AGENTS.md) — published Nextra `.mdx` content + `_meta.tsx` nav.
 - [engineering-standards/AGENTS.md](engineering-standards/AGENTS.md) — internal org standards (unpublished).

@@ -1,6 +1,10 @@
 # AI Power Grid Whitepaper
 
-> **Note:** This whitepaper was written during AIPG's original Ravencoin-fork era. The project has since migrated to **Base L2** with a new architecture. The vision and principles remain the same, but the technical implementation has evolved. See [The Grid](/grid-overview) for current architecture.
+> **Historical archive:** This whitepaper was written during AIPG's original
+> Ravencoin-fork era. It is preserved as project history, not as a description
+> of the current network, economics, validator requirements, or roadmap. AIPG
+> now runs on **Base L2** with a different architecture. See [The Grid](/grid-overview)
+> and [Validators](/validators) for current behavior.
 
 ## Abstract
 
@@ -24,7 +28,10 @@ The AI Power Grid protocol is an innovative system designed to democratize open-
 
 A significant evolution in the protocol is the transition to the PoUW system. In this setup, miners' computational resources are devoted to tangible tasks, predominantly hosting local LLM and other predominant AI workloads like Stable Diffusion XL. With expansion to other AI workloads as the network matures. Integral to the PoUW system is the role of "validator" nodes. These specialized nodes employ a consensus algorithm to authenticate the accuracy and integrity of LLM inference and other tasks conducted by nodes. Utilizing cryptographic verification and cross-referencing, the validators mitigate the risk of data manipulation and ensure honest reporting of computational contributions.
 
-To strengthen the trustworthiness and commitment of these validators, a Proof-of-Stake (PoS) mechanism is in place. Validator nodes are required to hold a minimum of approximately 10,000 AIPG coins, ensuring their vested interest in the network's success and integrity.
+The original proposal paired validators with a Proof-of-Stake (PoS) mechanism
+and contemplated an approximately 10,000 AIPG requirement. That mechanism and
+amount are **not current network policy**; validator staking and economic
+authority are not live, and any future requirement remains to be finalized.
 
 ## The AI Power Grid Economic Model
 
@@ -57,7 +64,10 @@ Here's a glimpse of our envisioned milestones:
 The foundation of our roadmap revolves around the transition from PoW to PoUW, emphasizing local LLM hosting. This shift aims to bridge blockchain with tangible, real-world AI applications, rewarding node operators for hosting and inferencing on LLMs and other workloads.
 
 ### Validator Nodes Integration
-With the integration of validator nodes, we seek to ensure the authenticity of LLM inference or Stable Diffusion image generation. These nodes, backed by a PoS mechanism requiring approximately 10,000 AIPG coins, will use consensus algorithms to validate and verify AI tasks, ensuring the integrity of the system and discouraging false reporting.
+The original roadmap proposed validator consensus backed by an approximately
+10,000 AIPG stake. The current validator system instead begins with
+assignment-bound evidence and no economic authority; staking, rewards,
+slashing, and final consensus policy remain future work.
 
 ### Broadening AI Workload Support
 As AIPG matures, we anticipate diversifying beyond LLMs, allowing nodes to host and be rewarded for a broader spectrum of AI workloads. This expansion is a nod to our commitment to a dynamic and multifaceted AI ecosystem.

@@ -3,10 +3,11 @@ import { Callout } from 'nextra/components'
 # Proof of Intelligence
 
 <Callout type="warning">
-  🚧 **In active development — not yet live.** Proof of Intelligence depends on
-  the validator layer, which is V0 code that is not yet deployed or running. This
-  page describes the design and goals of the system, not its current state.
-  Follow the [Discord](https://discord.gg/W9D8j6HCtC) for launch news.
+  **Evidence preview, not an economic proof system.** Production core can issue
+  assignment-bound text probes and aggregate scorecards/quorum state, but the
+  public validator distribution, richer capability batteries, media lanes,
+  routing effects, rewards, stake, and slashing are not live. Current evidence
+  has no economic authority.
 </Callout>
 
 Centralized AI APIs ask you to **trust** the model behind the endpoint. The AI
@@ -27,10 +28,11 @@ So the design has the grid stop trusting the label and **measure the model
 itself.** A great quantized model that passes is welcome; a "full-precision"
 model that fails is not. The grid will rank by delivered intelligence.
 
-## How it will work
+## How it is being built
 
-Once live, **validator nodes** will continuously and unpredictably send **probe
-batteries** to every model on the network and grade the answers automatically:
+The current text lane can target a Grid-issued assignment and record evidence.
+The broader design expands that into unpredictable **probe batteries** graded
+automatically:
 
 - **Structured generation** — render a chess position to SVG, emit JSON to a
   schema, write code that has to compile. Quantization damage shows up first in
@@ -42,11 +44,12 @@ batteries** to every model on the network and grade the answers automatically:
 - **Instruction following & perplexity** — format adherence and a low-level
   signal of degradation.
 
-The probes are **mixed into real traffic, procedurally generated, and randomly
-timed**, so they can't be detected or pre-answered. There's no static benchmark
-to game.
+Production-grade probes should be procedurally generated, randomly timed, and
+indistinguishable from ordinary work where practical. The current preview does
+not yet prove that every challenge is unfingerprintable or that every model is
+continuously covered.
 
-## What it will produce
+## What it should produce
 
 - A live **quality score and capability tier** for every model on the grid —
   effective context length, structured-output reliability, reasoning accuracy.
@@ -66,7 +69,7 @@ to game.
 - **Honest hardware.** Declared GPUs will be cross-checked against measured
   throughput, so capacity is real, not advertised.
 
-> The last revolution was metered in kilowatt-hours. This one is metered in
-> tokens — and on the grid, every token is proven.
+The goal is measurable capability with explicit confidence and evidence, not a
+claim that every token or model weight can be cryptographically proven.
 
 See also: [Validator Node](/validator-node) · [Architecture Overview](/grid-overview)

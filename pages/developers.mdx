@@ -1,13 +1,13 @@
 # For Developers
 
-Build on The Grid. Access decentralized AI inference, launch tokens, and integrate with the AIPG ecosystem.
+Build on The Grid. Access decentralized AI generation across text, image, and video, launch tokens, and integrate with the AIPG ecosystem.
 
 ---
 
 ## Quick Start
 
 1. **Get an API key** at [console.aipowergrid.io](https://console.aipowergrid.io)
-2. **Call the streaming API** — it's OpenAI compatible
+2. **Call the generation API** — it's OpenAI compatible
 
 ```python
 from openai import OpenAI
@@ -32,9 +32,9 @@ That's it. Any tool that works with OpenAI works with The Grid.
 
 ## API Endpoints
 
-### Streaming API (New)
+### Generation API
 
-Real token-by-token streaming. **[Full docs →](/streaming-api)**
+Text streams token-by-token; image and video jobs return generated media. **[Full docs →](/streaming-api)**
 
 | Endpoint | Format | Description |
 |----------|--------|-------------|
@@ -52,7 +52,7 @@ Real token-by-token streaming. **[Full docs →](/streaming-api)**
 The poll-based `/api/v2/` horde endpoints have been **retired**. Use the
 OpenAI-compatible `/v1/` endpoints above for all integrations.
 
-**API reference:** OpenAI-compatible API at `https://api.aipowergrid.io/v1` — see [docs.aipowergrid.io](https://docs.aipowergrid.io)
+**API reference:** OpenAI-compatible generation API at `https://api.aipowergrid.io/v1` — see [docs.aipowergrid.io](https://docs.aipowergrid.io)
 
 ---
 
@@ -95,15 +95,14 @@ curl -N https://api.aipowergrid.io/v1/chat/completions \
 
 ---
 
-## Discord Bots
+## Discord Agents
 
-Pre-built bots powered by The Grid.
+Current Discord agents powered by The Grid.
 
 | Bot | Purpose | Repo |
 |-----|---------|------|
-| **Image Bot** | Generate images in Discord | [grid-discord-image-bot](https://github.com/AIPowerGrid/grid-discord-image-bot) |
 | **News Bot** | AI-powered news summaries | [grid-discord-news-bot](https://github.com/AIPowerGrid/grid-discord-news-bot) |
-| **Aigarth** | Chat with AI in Discord | [aigarth-chatbot](https://github.com/AIPowerGrid/aigarth-chatbot) |
+| **Aigarth** | Natural chat, Grid tools, and image generation | [grid-discord-agent](https://github.com/AIPowerGrid/grid-discord-agent) |
 
 ---
 
@@ -157,9 +156,10 @@ All contracts on **Base Mainnet** (Chain ID: 8453).
 
 | Repo | Purpose |
 |------|---------|
-| [system-core](https://github.com/AIPowerGrid/system-core) | Grid API server (Flask + FastAPI) |
-| [grid-inference-worker](https://github.com/AIPowerGrid/grid-inference-worker) | Text/LLM worker |
-| [comfy-bridge](https://github.com/AIPowerGrid/comfy-bridge) | Image worker (ComfyUI) |
+| [grid-core](https://github.com/AIPowerGrid/grid-core) | Grid API server and coordinator |
+| [grid-text-worker](https://github.com/AIPowerGrid/grid-text-worker) | Text/LLM worker |
+| [grid-media-worker](https://github.com/AIPowerGrid/grid-media-worker) | Image/video worker (ComfyUI) |
+| [grid-validator](https://github.com/AIPowerGrid/grid-validator) | Evidence-only validator preview |
 | [aipg-documentation](https://github.com/AIPowerGrid/aipg-documentation) | These docs |
 
 ---

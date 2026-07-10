@@ -6,10 +6,11 @@ P2P mode is designed to let AI Power Grid run in a **decentralized mode** using
 libp2p gossipsub, with no central server required.
 
 <Callout type="info">
-  **P2P mode is in beta.** The primary, default path today is the hosted API at
-  `https://api.aipowergrid.io/v1` — the coordinator is centralized. The
-  decentralized mode described below is the goal P2P is building toward, not the
-  current default.
+  **P2P mode is a default-off prototype, not a supported beta network.** The
+  production path today is the hosted coordinator at
+  `https://api.aipowergrid.io/v1` using Redis and authenticated worker
+  WebSockets. The source prototype does not yet provide persistent peer
+  identity, signed claims, replay protection, or production multi-node tests.
 </Callout>
 
 ## Why P2P?
@@ -66,17 +67,17 @@ These are the design goals of P2P mode, not guarantees of the current beta:
 - **Trustless**: Deterministic claim resolution, aiming to avoid voting
 - **Self-Healing**: Nodes join and leave, network adapts
 
-## Quick Start
+## Design and Readiness
 
 import { Cards } from 'nextra/components'
 
 <Cards>
-  <Cards.Card title="Run an API Node" href="/p2p/setup-api-node" />
-  <Cards.Card title="Run a P2P Worker" href="/p2p/setup-worker" />
+  <Cards.Card title="API Node Readiness" href="/p2p/setup-api-node" />
+  <Cards.Card title="Worker Readiness" href="/p2p/setup-worker" />
   <Cards.Card title="How It Works" href="/p2p/how-it-works" />
 </Cards>
 
-## Requirements
+## Prototype Requirements
 
 - Python 3.11+
 - `libp2p` and `trio` packages
@@ -88,4 +89,7 @@ pip install libp2p trio
 
 ## Status
 
-P2P mode is currently in **beta**. The hybrid queue allows running both Redis and P2P simultaneously during transition.
+P2P code exists in `grid-core/grid_api/services/p2p`, but the production queue
+does not dispatch through it. The hybrid queue is experimental and must not
+carry billed jobs until the trust, identity, replay, accounting, and multi-node
+verification gates in the readiness pages are closed.

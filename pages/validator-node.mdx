@@ -9,9 +9,9 @@ import { Callout } from 'nextra/components'
 
 <Callout type="info">
   **Status: in active development.** The first validator release is an
-  evidence-only audit runner. Validator rewards, staking, routing weight, and
-  slashing come later, after Grid-issued assignments, targeted probes, quorum,
-  and dispute tooling are live.
+  evidence-only audit runner. Grid-issued text assignments, targeted probes,
+  scorecards, and a non-economic quorum lifecycle are live in core. Validator
+  rewards, staking, routing weight, and slashing remain disabled.
 </Callout>
 
 Validators are the Grid's quality, honesty, and provenance layer. They do not
@@ -25,7 +25,7 @@ parameters, and deserve more trust.
 
 | | |
 |---|---|
-| **Status** | V0 preview in progress; evidence-only |
+| **Status** | Assignment-bound text evidence live; operator release still preview |
 | **What validators do** | Run unpredictable probes and submit signed attestations |
 | **Current authority** | Informational evidence for dashboards and engineering feedback |
 | **Later authority** | Routing reputation, rewards, and objective-fraud slashing after quorum |
@@ -36,11 +36,12 @@ parameters, and deserve more trust.
 
 ## Validator Data Flow
 
-The target architecture is staged. V0 validators can run model-routed text
-canaries and submit evidence, but that evidence does not move money or slash
-stake. Economic meaning starts only after the Grid can assign a validator to
-probe a specific worker and compare the result against quorum or trusted
-reference output.
+The architecture is staged. Production core can issue a short-lived text
+assignment, hard-target its worker, verify the nonce and evidence hash, store the
+attestation, and aggregate non-economic quorum state. The validator falls back
+to model-routed canaries when those capabilities are unavailable. Neither path
+moves money, changes routing, or slashes stake; media reference lanes and Base
+roots remain future work.
 
 ```mermaid
 flowchart TD
@@ -137,7 +138,9 @@ with the staking and reward contracts.
 
 ## Current Operator Shape
 
-The planned operator flow mirrors the worker quickstarts:
+Source and local Docker installs are available now. The command shape mirrors
+the worker quickstarts; the stable hosted installer and downloadable binaries
+are not published yet:
 
 ```bash
 curl -fsSL https://get.aipowergrid.io/validator | bash
@@ -153,8 +156,8 @@ The first release should be easy to run and honest about its power:
 - V0 evidence is useful for dashboards and engineering feedback.
 - V0 does not prove exact model weights.
 - V0 does not slash workers or pay validators.
-- V0 does not assign probes to a specific worker unless Grid core explicitly
-  enables targeted probing.
+- Production core currently enables targeted text probing only through a
+  Grid-issued assignment. Arbitrary worker targeting is not supported.
 
 ---
 

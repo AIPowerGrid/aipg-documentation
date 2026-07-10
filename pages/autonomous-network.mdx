@@ -1,6 +1,6 @@
 ---
 title: Autonomous Network
-description: AIPG is becoming a fully on-chain, self-routing inference network. No central coordinator. No corporate kill switch.
+description: AIPG is becoming a fully on-chain, self-routing AI generation network. No central coordinator. No corporate kill switch.
 ---
 
 import { Callout } from 'nextra/components'
@@ -18,24 +18,28 @@ can suspend your inference endpoint. OpenAI can deprecate a model out from under
 your product. That's not a flaw in their operations — it's the shape of
 centralized services.
 
-AIPG is being built so that no single entity can stop the inference. Workers
-register themselves on-chain. Jobs route through cryptographic commitments.
-Payments settle in smart contracts. Validators add independent evidence, then
-eventually stake-backed enforcement once quorum and disputes are live. The team
-builds the protocol. The protocol runs itself.
+AIPG is working toward a generation layer without a permanent central
+coordinator. Today, workers authenticate to one hosted core, jobs route through
+Redis/WebSockets, den is recorded off-chain, and a treasury sender pays workers
+AIPG on Base. Deployed contracts and assignment-bound validator evidence provide
+building blocks for a more distributed system; they do not yet remove the core
+or its operational trust.
 
 ---
 
 ## What's Already On-Chain
 
-These pieces live on Base today as facets of the [Grid Diamond](https://eips.ethereum.org/EIPS/eip-2535) contract:
+These implementations are deployed on Base today as facets of the
+[Grid Diamond](https://eips.ethereum.org/EIPS/eip-2535) contract. Deployment is
+not the same as an active production workflow:
 
-- **`WorkerRegistry`** — workers bond AIPG and publish their endpoints on-chain
-- **`JobAnchor`** — every completed job commits a result hash on-chain, creating an audit trail
-- **`ModelVault`** — the canonical list of supported models and their reference hashes
-- **`RecipeVault`** — image-generation recipes (prompts, samplers, seeds) anchored for reproducibility
-- **`StakingVault`** — non-custodial bonds, no admin keys over user funds
-- **`RoleManager`** — on-chain permissions (no off-chain ACLs)
+- **`WorkerRegistry`** — registry implementation; production workers currently authenticate in core and the new bonding facet still has a gated deploy path
+- **`JobAnchor`** — anchoring implementation; no production batch publisher currently anchors every job
+- **`ModelVault`** — deployed model records and reference hashes; live model availability still comes from connected workers
+- **`RecipeVault`** — workflow registry primitive; current core primarily loads reviewed local recipes unless chain sync is configured
+- **`RewardPool`, `DenReporter`, `PaymentRouter`** — deployed claim primitives; the live payout rail is still custodial AIPG transfers
+- **`StakingVault`** — deployed passive-staking vault; that rewards program has ended
+- **`RoleManager`** — on-chain contract roles; core still has its own authenticated application roles and keys
 
 Look them up in [Developers](/developers) for live addresses.
 
@@ -52,7 +56,7 @@ the work was honest. The routing layer disappears into the contract.
 
 ### Smart-contract payments
 
-Inference fees flow through the contract instead of an off-chain settlement
+Generation fees flow through the contract instead of an off-chain settlement
 service. Workers receive payment as soon as a job's attestation window closes.
 Validators take a cut. No invoices, no payouts CSV, no team in the middle.
 
@@ -108,7 +112,7 @@ ran in a secure enclave, and no one — not the operator, not the protocol team
 — can read your data.
 
 That's the full picture: autonomous routing, on-chain settlement, validator
-verification, hardware-isolated privacy. An inference network that nobody can
+verification, hardware-isolated privacy. A generation network that nobody can
 shut down and nobody can spy on.
 
 ---
@@ -117,8 +121,9 @@ shut down and nobody can spy on.
 
 The full on-chain economics proposal — sampling rates, slashing math, dispute
 resolution, fee splits — lives at **[Future On-Chain Architecture](/p2p/future-onchain)**.
-It's the source-of-truth for what's being built and how the pieces fit
-together.
+It is a design proposal, not the source of truth for currently deployed
+behavior. Current behavior lives in the Grid core, contract address inventory,
+and operator runbooks.
 
 For day-to-day operator and developer docs while the autonomous layer rolls
 out, see [P2P Mode](/p2p) and [For Developers](/developers).

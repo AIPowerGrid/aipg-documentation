@@ -6,7 +6,7 @@ export default {
     "title": "Use the Grid"
   },
   "generate": "Generate Images & Chat",
-  "streaming-api": "API (OpenAI / Anthropic compatible)",
+  "streaming-api": "Generation API",
   "developers": "For Developers",
   "-- run --": {
     "type": "separator",
@@ -21,6 +21,7 @@ export default {
     "type": "separator",
     "title": "The Grid"
   },
+  "why-crypto-needs-ai": "Why Crypto Needs AI",
   "grid-overview": "Architecture Overview",
   "proof-of-quality": "Proof of Intelligence",
   "autonomous-network": "Autonomous Network",

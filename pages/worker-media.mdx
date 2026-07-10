@@ -1,13 +1,14 @@
 ---
 title: Image Worker (ComfyUI)
-description: Run an image worker on AIPG. No bond required today — serve image generation jobs through ComfyUI.
+description: Run an image/video worker on AIPG through ComfyUI; no bond is required today.
 ---
 
 import { Callout } from 'nextra/components'
 
 # Image Worker
 
-Generate images on The Grid using ComfyUI. Earn USDC + AIPG for powering AI art.
+Generate images and video on The Grid using ComfyUI. Earn AIPG through the
+current worker payout rail.
 
 <Callout type="info">
   **No bond required to run a worker today.** Image workers can connect and start
@@ -26,7 +27,7 @@ The **Comfy Bridge** connects your ComfyUI installation to The Grid:
 1. You run ComfyUI locally with your models
 2. The bridge holds a persistent WebSocket to The Grid, which pushes jobs to it
 3. Your GPU renders images
-4. You upload results and earn USDC + AIPG
+4. You upload results and the job records den for the hourly AIPG payout split
 
 Your existing ComfyUI setup works as-is. The bridge just connects it to the network.
 
@@ -70,13 +71,14 @@ ComfyUI should be running at `http://127.0.0.1:8188`.
 
 ### 2. Get an API Key
 
-Register at [console.aipowergrid.io](https://console.aipowergrid.io)
+Sign in with Google, GitHub, or a wallet at
+[console.aipowergrid.io](https://console.aipowergrid.io) and create a key.
 
 ### 3. Install the Bridge
 
 ```bash
-git clone https://github.com/AIPowerGrid/comfy-bridge
-cd comfy-bridge
+git clone https://github.com/AIPowerGrid/grid-media-worker
+cd grid-media-worker
 pip install -e .
 ```
 
@@ -91,6 +93,7 @@ Edit `.env`:
 ```ini
 GRID_API_KEY=your-api-key-here
 COMFYUI_URL=http://127.0.0.1:8188
+GRID_WS=true
 ```
 
 ### 5. Run
@@ -178,7 +181,7 @@ The bridge uses your workflow as a template for incoming jobs.
 2. The Grid routes the job to your worker
 3. Your GPU generates the image via ComfyUI
 4. You upload the result
-5. You earn USDC + AIPG
+5. The job contributes den to your share of the current hourly AIPG payout
 
 ### What Earns Most
 
@@ -212,7 +215,7 @@ The bridge uses your workflow as a template for incoming jobs.
 
 | Resource | URL |
 |----------|-----|
-| **Repository** | [github.com/AIPowerGrid/comfy-bridge](https://github.com/AIPowerGrid/comfy-bridge) |
+| **Repository** | [github.com/AIPowerGrid/grid-media-worker](https://github.com/AIPowerGrid/grid-media-worker) |
 | **Get API Key** | [console.aipowergrid.io](https://console.aipowergrid.io) |
 | **ComfyUI** | [github.com/comfyanonymous/ComfyUI](https://github.com/comfyanonymous/ComfyUI) |
 | **Discord** | [discord.gg/W9D8j6HCtC](https://discord.gg/W9D8j6HCtC) |

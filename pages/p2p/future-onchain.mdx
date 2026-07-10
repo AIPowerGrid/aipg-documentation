@@ -3,7 +3,9 @@
 import { Callout } from 'nextra/components'
 
 <Callout type="info">
-This page describes the **future vision** for a fully decentralized, on-chain AI Power Grid. Current P2P mode is a stepping stone toward this goal.
+This page describes the **future vision** for a fully decentralized, on-chain
+AI Power Grid. The current default-off P2P source prototype is exploratory work
+toward that goal, not an operating network or supported beta.
 </Callout>
 
 ## The Challenge
@@ -54,6 +56,9 @@ Moving fully on-chain introduces hard problems:
 ## Worker Registry
 
 Workers must register on-chain to participate:
+
+The values and interfaces below are illustrative design sketches, not deployed
+policy. In particular, `MIN_STAKE` has not been finalized.
 
 ```solidity
 contract WorkerRegistry {
@@ -483,6 +488,9 @@ Preventing one entity from running many fake workers:
 
 ### Economic Sybil Resistance
 
+The following uses 1,000 AIPG only to demonstrate how a per-worker bond scales;
+it is not a proposed or active minimum:
+
 ```
 Cost to run N workers = N × MIN_STAKE
 
@@ -580,16 +588,15 @@ Different strategies for different modalities:
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│  IMAGE GENERATION (Easy to verify)                              │
+│  CERTIFIED DETERMINISTIC IMAGE WORKFLOW                         │
 │                                                                 │
-│  ✅ Deterministic with seed                                     │
-│  ✅ Pixel-perfect comparison possible                           │
-│  ✅ Perceptual hash as backup                                   │
-│  ✅ Same model + seed + prompt = identical output               │
+│  • Pin model, workflow, dependencies, params, seed, and version │
+│  • Re-execute on a compatible reference implementation         │
+│  • Compare exact bytes only when certification promises them   │
+│  • Otherwise use an approved perceptual/feature tolerance      │
 │                                                                 │
-│  Verification: Run same job, compare SHA256 of output           │
-│  Cost: 2x compute for verified jobs                             │
-│  Confidence: 100% - either matches or doesn't                   │
+│  General image/video generation is not automatically           │
+│  deterministic or objectively correct.                         │
 │                                                                 │
 └─────────────────────────────────────────────────────────────────┘
 

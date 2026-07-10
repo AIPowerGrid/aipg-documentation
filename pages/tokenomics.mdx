@@ -20,7 +20,7 @@ All 150M AIPG have been minted. No more tokens can be created.
 | Allocation | Approximate Amount | Purpose |
 |------------|-------------------|---------|
 | **Circulating (users)** | ~40M AIPG | Held by wallets, traded on Uniswap |
-| **Staking rewards** | Funded from treasury | StakingVault distributions |
+| **Former staking rewards** | Historical treasury funding | Ended StakingVault program |
 | **Worker rewards** | Funded from treasury | GPU operators earn for compute |
 | **Operations** | Treasury held | Development, infrastructure, growth |
 
@@ -32,15 +32,17 @@ AIPG is the native token of The Grid. It has three core uses:
 
 ### 1. Worker Rewards
 
-GPU operators earn USDC + AIPG (~50/50 target) for running AI inference on The Grid. Rewards scale with:
+GPU operators currently receive AIPG from an hourly budget distributed pro-rata
+to recorded den work units. A future multi-asset rail targets USD-valued worker
+payouts, but it is not the live settlement path. Worker share scales with:
 - Model size (bigger models = more AIPG per job)
 - Output tokens generated
 - Context length processed
 - Uptime and reliability
 
-### 2. Staking (Wind-Down)
+### 2. Staking (Ended Program)
 
-The [StakingVault](/staking) rewards program is winding down — new stakes are
+The [StakingVault](/staking) rewards program has ended — new stakes are
 disabled and rewards no longer accrue. Existing stakers can withdraw anytime with
 no lockup. AIPG rewards are shifting to active network participants (workers)
 rather than passive holders.
@@ -58,21 +60,21 @@ Bonding is not required to earn — it's a signal of commitment.
 
 ---
 
-## Den (電) — Platform Credits
+## Customer Credits and Worker Den
 
-Den is a separate priority system used for queuing AI generation requests.
+The Grid has two separate off-chain accounting concepts:
 
 | Property | Value |
 |----------|-------|
-| **Purpose** | Request priority in the generation queue |
-| **Earned by** | Running workers, signing up |
-| **Spent on** | Image, text, and media generation |
-| **Monetary value** | None — den is not a currency |
-| **Transferable** | No — den is an internal usage credit, not transferable between accounts |
+| | Customer account credits | Worker den |
+|---|---|---|
+| **Purpose** | Meter and reserve generation usage | Measure completed worker contribution |
+| **Unit** | Integer micro-USD, displayed in USD | Internal work units |
+| **Changes through** | Idempotent grants, deposits, reservations, settlement, and refunds | Accepted completed jobs |
+| **Transferable** | No | No |
+| **Economic role** | Spendable only as reported by `/v1/account/credits` | Determines pro-rata payout-period share; not a fixed exchange promise |
 
-Users with more den get served faster. Workers accrue den for completed jobs proportional to the compute provided.
-
-Den is **not** AIPG. It's an internal credit system for fair resource allocation.
+Worker den is **not** AIPG and must not be shown as a customer's balance.
 
 ---
 

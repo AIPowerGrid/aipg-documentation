@@ -4,6 +4,7 @@ This is the documentation for the AI Power Grid project.
 
 ## Local Development
 
-First, run `pnpm i` to install the dependencies.
+First, run `npm install` to install the dependencies. The committed
+`package-lock.json` and Vercel build both use npm.
 
-Then, run `pnpm dev` to start the development server and visit localhost:3000.
+Then, run `npm run dev` and visit `http://localhost:3000/docs`.

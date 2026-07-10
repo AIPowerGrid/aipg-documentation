@@ -4,16 +4,15 @@ Create images, chat with LLMs, and generate media using The Grid's decentralized
 
 ---
 
-## Den (電) - Your Credits
+## Account Credits
 
-Den is the usage-credit system for AI generation — it meters your requests and
-sets your queue priority. It is **not** a currency and has no monetary value.
+The Grid meters generation against a USD-denominated internal account balance.
+Check `/v1/account/credits` for paid balance, any free allowance, and
+`total_spendable_usd`; a displayed free allowance is spendable only when
+`free.active` is true.
 
-- **New users** get Den when signing up
-- **Workers** accrue more Den for contributing GPU power
-- **Spend Den** to generate images, text, and media — users with more den get served faster
-
-We're currently giving generous amounts of Den so you can explore freely.
+Workers separately accrue **den work units** for completed jobs. Worker den is
+not a customer's usage balance and cannot be transferred or spent.
 
 ---
 
@@ -53,17 +52,20 @@ Available models track what workers are currently serving — check the [art gal
 - Dimensions
 - Seed (for reproducibility)
 
-### NFTs (Coming Soon)
+### NFT Provenance (Roadmap)
 
-Mint your generations as on-chain NFTs with **full reproducibility**.
+The proposed GridNFT flow is limited to approved deterministic media workflows.
+It is not deployed on Base mainnet and there is no live minting API today.
 
-Unlike typical NFT JPEGs with IPFS links that can rot, Grid NFTs store all generation parameters on the blockchain:
+The design records the inputs needed to identify and re-execute a supported generation:
 - Model hash
 - Prompt and negative prompt
 - Seed, steps, CFG, sampler
 - Workflow recipe
 
-Anyone with the model can regenerate the exact image from chain data alone. Future-proof, verifiable, truly ownable AI art.
+Validators can compare a trusted re-execution with the committed artifact under
+the workflow's evidence policy. Exact bytes are not promised across arbitrary
+models, software versions, quantizations, or hardware.
 
 ---
 
@@ -95,13 +97,13 @@ For programmatic access, use The Grid API directly.
 
 ### Get Your API Key
 
-1. Sign in at [console.aipowergrid.io](https://console.aipowergrid.io) — OAuth, wallet connect, or a username
+1. Sign in at [console.aipowergrid.io](https://console.aipowergrid.io) with Google, GitHub, or a wallet
 2. Create an API key (shown once)
 3. Check your usage anytime in the console
 
-### Streaming API (OpenAI Compatible)
+### Generation API (OpenAI Compatible)
 
-The Grid supports OpenAI-compatible streaming. Use any OpenAI SDK:
+The Grid supports OpenAI-compatible text, image, and video generation. Use any OpenAI SDK:
 
 ```python
 from openai import OpenAI
@@ -158,24 +160,19 @@ for chunk in stream:
 
 ---
 
-## Discord Bots
+## Discord Agents
 
-The Grid powers several Discord bots you can add to your server:
-
-### Image Bot
-Generate images directly in Discord.
-
-**Repository:** [github.com/AIPowerGrid/grid-discord-image-bot](https://github.com/AIPowerGrid/grid-discord-image-bot)
+The Grid powers Discord agents and automations:
 
 ### News Bot
 AI-powered news summaries and updates.
 
 **Repository:** [github.com/AIPowerGrid/grid-discord-news-bot](https://github.com/AIPowerGrid/grid-discord-news-bot)
 
-### Aigarth Chatbot
-Chat with an AI personality in Discord.
+### Aigarth
+Natural chat, Grid tools, and image generation in Discord.
 
-**Repository:** [github.com/AIPowerGrid/aigarth-chatbot](https://github.com/AIPowerGrid/aigarth-chatbot)
+**Repository:** [github.com/AIPowerGrid/grid-discord-agent](https://github.com/AIPowerGrid/grid-discord-agent)
 
 ---
 

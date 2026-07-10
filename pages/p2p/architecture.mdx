@@ -1,8 +1,13 @@
 # P2P Architecture
 
+> **Proposed architecture, not current production topology.** Production uses a
+> centralized FastAPI coordinator, Redis queue, and authenticated worker
+> WebSockets. The default-off libp2p code is an unaudited prototype and is not a
+> distributable partner-node release.
+
 ## System Overview
 
-The AI Power Grid P2P network consists of two types of nodes:
+The proposed AI Power Grid P2P network consists of two types of nodes:
 
 1. **API Nodes** - Accept HTTP requests from users, publish jobs to the mesh
 2. **Workers** - Subscribe to job topics, process inference, stream results back

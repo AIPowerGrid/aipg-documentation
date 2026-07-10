@@ -1,6 +1,6 @@
 # The Grid
 
-The Grid is a GPU-powered AI inference network, built to decentralize. GPU owners run workers, users generate AI content, and everything is powered by AIPG tokens on Base.
+The Grid is a GPU-powered AI generation network, built to decentralize. GPU owners run workers, users generate text, images, video, and workflows, and the economy is powered by AIPG tokens on Base.
 
 ---
 
@@ -16,18 +16,18 @@ The Grid is a GPU-powered AI inference network, built to decentralize. GPU owner
 │                                                                     │
 │   "a robot                   GPU nodes                 Your image   │
 │    painting"  ──────────►    running AI   ──────────►  or text      │
-│                              models                    response     │
+│                              models                    media        │
 │                                                                     │
-│   Pay with Den (電)          Earn USDC + AIPG          On-chain     │
-│   platform credits           rewards                   (planned)    │
+│   Account credits           Earn AIPG today            On-chain     │
+│   (USD-denominated)         for verified work          (planned)    │
 │                                                                     │
 └─────────────────────────────────────────────────────────────────────┘
 ```
 
 1. **You request** - Submit a prompt via aipg.art, aipg.chat, or the API
-2. **Workers generate** - GPU nodes run AI models
-3. **You receive** - Get your image, text, or other AI output
-4. **Workers earn** - GPU operators earn USDC + AIPG for their compute
+2. **Workers generate** - GPU nodes run text, image, video, or workflow jobs
+3. **You receive** - Get your text, image, video, or other AI output
+4. **Workers earn** - GPU operators share the current AIPG worker budget according to recorded work
 
 ---
 
@@ -37,7 +37,11 @@ The Grid is a GPU-powered AI inference network, built to decentralize. GPU owner
 
 Create AI art at [aipg.art](https://aipg.art) using models like z-image-turbo, FLUX.2 Klein 4B, and Krea 2 Turbo. Choose from curated workflows, adjust parameters, and generate.
 
-Coming soon: **Mint your generations as NFTs** with full on-chain reproducibility. Every parameter stored on the blockchain—the image can be regenerated from chain data alone.
+Roadmap: optional NFT provenance for approved deterministic media workflows.
+The design commits model/recipe identifiers, seed, parameters, and artifact
+metadata so a validator can re-execute and compare supported generations. It is
+not a live mint flow and does not promise pixel-identical output across arbitrary
+hardware or workflows.
 
 ### Chat with AI
 
@@ -49,11 +53,13 @@ Get an API key at [console.aipowergrid.io](https://console.aipowergrid.io) and i
 
 ### Run a Worker
 
-Contribute your GPU to The Grid. Run inference (text) or media (image/video/audio) workers and earn USDC + AIPG rewards based on the work you complete.
+Contribute your GPU to The Grid. Run text or media workers and earn AIPG from
+the current hourly payout rail based on the work you complete. USDC and other
+payout assets are planned but are not active payout choices yet.
 
-### Staking (Wind-Down)
+### Staking (Ended Program)
 
-The AIPG staking rewards program is winding down — new stakes are disabled and
+The AIPG staking rewards program has ended — new stakes are disabled and
 rewards no longer accrue. Existing stakers can [withdraw](/staking) anytime, with
 no lockup. Going forward, AIPG rewards flow to active participants (workers) rather
 than passive holders.
@@ -62,15 +68,18 @@ than passive holders.
 
 ## The Economy
 
-### Den (電) - Platform Credits
+### Customer Credits and Worker Den
 
-Den is your balance for AI generation on The Grid.
+Customer usage and worker contribution are separate ledgers:
 
-- **Sign up** → Get Den to start generating
-- **Run a worker** → Accrue more Den
-- **Spend Den** → Pay for generations
+- **Account credits** are a USD-denominated internal balance used to meter and
+  reserve generation requests. `/v1/account/credits` is the source of truth for
+  paid balance, any free allowance, and what is currently spendable.
+- **Worker den** is a non-transferable work unit recorded for completed jobs.
+  It is used to calculate each worker's share of a payout period; it is not a
+  customer balance, token, or fixed promise of monetary value.
 
-Right now we're giving generous amounts of Den so you can explore and create freely.
+Do not use “den” to mean both concepts in integrations or product copy.
 
 ### AIPG Token
 
@@ -87,13 +96,15 @@ AIPG is the native token of AI Power Grid on Base L2.
 AIPG is used for:
 - **Worker rewards** → Earn for running GPU nodes
 - **Worker bonding** → Become a trusted worker (planned, not yet required)
-- **Staking** → Rewards program is winding down; withdrawals open
+- **Staking** → Rewards program ended; withdrawals open
 
 ---
 
 ## The Architecture
 
-The Grid runs on smart contracts deployed to Base mainnet. The system is modular—new capabilities can be added without redeploying everything.
+The Grid has modular smart-contract infrastructure deployed to Base mainnet.
+Hot generation, dispatch, metering, and the current den ledger remain off-chain;
+deployed modules provide registries and future commitment/claim primitives.
 
 ### Core Components
 
@@ -101,9 +112,9 @@ The Grid runs on smart contracts deployed to Base mainnet. The system is modular
 |-----------|---------|
 | **ModelVault** | Registry of AI models (image, video, LLMs, etc.) |
 | **RecipeVault** | Stored workflows for reproducible generation |
-| **JobAnchor** | On-chain verification of completed jobs |
+| **JobAnchor** | Deployed module for future completed-job roots; publisher not live |
 | **WorkerRegistry** | Worker registration and bonding |
-| **StakingVault** | Staking contract (rewards winding down; withdrawals open) |
+| **StakingVault** | Deployed staking contract (rewards ended; withdrawals open) |
 
 ### Why Base?
 
@@ -131,7 +142,7 @@ The Grid runs on smart contracts deployed to Base mainnet. The system is modular
 
 ## What's Next
 
-- **NFT Minting** - Mint generations with full on-chain reproducibility
+- **NFT Provenance** - Optional commitments for approved deterministic media workflows
 - **Audio Generation** - Sound and music on The Grid
 - **Token Factory** - Launch your own AI-powered token with Grid access
 - **More Models** - Continuous expansion of available AI models

@@ -1,4 +1,14 @@
+import { Callout } from 'nextra/components'
+
 # AIPG Token Factory: Build Your Own AI Network on Base
+
+<Callout type="warning">
+  **Concept and roadmap, not a live product.** There is no production Token
+  Factory, arbitrary-token payment adapter, automatic revenue-share rail, or
+  per-generation JobAnchor publisher today. The capabilities below describe a
+  proposed network built on existing Grid and contract primitives; do not use
+  this page as a deployment or investment claim.
+</Callout>
 
 The AIPG Token Factory is a toolkit for **developers who want to launch their own
 networks and tokens on top of AIPG**. Instead of building AI infrastructure from
@@ -31,7 +41,7 @@ When you deploy through AIPG's Token Factory, your token is designed to wire int
 | **Model Registry** | Access a growing set of open models AIPG already serves (image, video, LLMs) |
 | **Recipe Library** | Thousands of ComfyUI workflows ready to use |
 | **Worker Network** | Decentralized GPU workers fulfill jobs |
-| **Job Anchoring** | On-chain Merkle proofs for every generation |
+| **Job Anchoring** | Proposed batched commitments for eligible completed jobs |
 | **Revenue Share** | Earn AIPG when your token is used for compute |
 
 Your token becomes a **compute credit** for real AI services.
@@ -75,7 +85,7 @@ When someone uses your token for AI generation:
 Every job creates value:
 
 - **Your Treasury**: Receives the MAIT spent (or burn reduces supply)
-- **GPU Workers**: Earn USDC + AIPG for compute work
+- **GPU Workers**: Would receive the settlement assets defined by the future rail
 - **AIPG Network**: Protocol fee sustains infrastructure
 - **Your Holders**: Token has real utility = real demand
 
@@ -199,7 +209,7 @@ When a user spends your token for AI compute:
 4. **Token Handling**: Based on config—burned, sent to treasury, or split
 5. **Job Execution**: Grid assigns job to bonded worker
 6. **Completion**: Worker submits result, anchored via Merkle root
-7. **Settlement**: Worker earns USDC + AIPG, your treasury earns revenue share
+7. **Settlement**: The future rail pays the worker and applies the configured revenue split
 
 ### Supported Models
 
@@ -263,7 +273,7 @@ User pays 100 MYTOKEN for an image generation:
 │ → 10 MYTOKEN protocol fee (buys AIPG)   │
 ├─────────────────────────────────────────┤
 │ Meanwhile:                              │
-│ → GPU worker earns USDC + AIPG for job  │
+│ → Future rail settles worker + treasury │
 │ → Job anchored on-chain forever         │
 │ → User gets deterministic image         │
 └─────────────────────────────────────────┘
@@ -314,7 +324,7 @@ const job = await grid.getJob(jobId);
 console.log(job.status, job.merkleProof);
 ```
 
-For generation via the API, users can also call the Grid Streaming API directly:
+For generation via the API, users can also call the Grid Generation API directly:
 
 ```bash
 curl -N https://api.aipowergrid.io/v1/chat/completions \
@@ -422,10 +432,13 @@ A: Base (mainnet) initially. Other L2s may be added based on demand.
 A: Yes. We can add compute hooks to existing ERC-20s via wrapper contracts.
 
 **Q: What's the cost to deploy?**
-A: Gas costs on Base (~$1-5) plus a one-time factory fee (TBD, likely small AIPG amount).
+A: Not defined. There is no deployed factory or approved fee schedule; Base gas
+and any future protocol fee would be shown at transaction time.
 
 **Q: How do workers get paid?**
-A: Workers receive USDC + AIPG (~50/50 target). The payment router handles conversion from your token.
+A: The live Grid currently pays workers through its AIPG payout rail. A Token
+Factory would require a separately audited conversion, reservation, settlement,
+and revenue-share path before arbitrary tokens could fund worker payouts.
 
 **Q: Can I run my own workers?**
 A: Yes. Register your GPUs in WorkerRegistry, bond AIPG, and earn from jobs paid in any factory token.

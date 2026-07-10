@@ -7,15 +7,16 @@ import { Callout, Cards } from 'nextra/components'
 
 # Run a Node
 
-Two roles, two ways to earn USDC + AIPG by doing real work for the network.
+Two roles for contributing useful work to the network. Worker payouts are live;
+validator rewards are not.
 
 | | AI Worker Node | Validator Node |
 |---|---|---|
 | **Status** | Live | V0 preview in development |
-| **Stake** | Not required yet (planned ~1,000 AIPG) | Not live; final validator stake TBD |
-| **What you do** | Serve inference jobs (chat, image generation) | Verify that workers' results are honest |
+| **Stake** | Not required; future bond amount/policy not finalized | Not live; final validator stake TBD |
+| **What you do** | Serve generation jobs (chat, image, video) | Verify that workers' results are honest |
 | **Hardware** | GPU required (4 GB VRAM minimum, 12+ GB recommended) | Modest CPU + bandwidth; GPU optional for re-execution |
-| **Earnings** | Per-request fees from users | Future accepted-attestation rewards |
+| **Earnings** | Current hourly AIPG budget, pro-rata to den | Future accepted-attestation rewards |
 | **Risk** | None today; future bond risk for objective fraud | No live validator stake; future slashing only after quorum and disputes |
 
 <Callout type="info">
@@ -29,8 +30,8 @@ Two roles, two ways to earn USDC + AIPG by doing real work for the network.
 ## AI Worker Nodes (Live)
 
 If you have a GPU sitting idle, you can put it to work. AI worker nodes pick up
-inference jobs from the network, run the model, and return the result. You earn
-USDC + AIPG per request.
+generation jobs from the network, run the model or workflow, and return the
+result. The current hourly rail pays AIPG pro-rata to recorded den work units.
 
 **Two flavors:**
 
@@ -46,7 +47,8 @@ what your hardware does best.
 
 Running a worker today does **not** require a stake — connect with an API key and
 start serving. A bonding mechanism is in development: workers will stake to the
-`WorkerRegistry` Diamond facet (~1,000 AIPG). This is not a fee — it's collateral.
+`WorkerRegistry` Diamond facet. The amount and rollout policy are not finalized.
+This would be collateral, not a fee.
 As long as you serve honest results, your stake stays untouched and you can
 withdraw it whenever you stop running the worker.
 
@@ -56,13 +58,17 @@ evidence, quorum, and a dispute path.
 
 ### What you earn
 
-Per-request fees, paid in USDC + AIPG (~50/50 target). Rates depend on:
+The live rail distributes a fixed AIPG period budget pro-rata to den, so there
+is no guaranteed fixed token amount per request. Your share depends on:
 - Model size (bigger models pay more per token)
 - Throughput (faster workers serve more jobs)
 - Quality (workers with clean attestation history get preference)
 - Confidential workloads pay a premium (see [Confidential Computing](/confidential-computing))
 
-Live rates are visible on [console.aipowergrid.io](https://console.aipowergrid.io).
+Payout history is visible on
+[console.aipowergrid.io/payouts](https://console.aipowergrid.io/payouts). A
+USD-denominated, multi-asset payout rail is designed in core but is not active;
+do not select USDC/ETH/USDS expecting the current payout CLI to honor it.
 
 ---
 

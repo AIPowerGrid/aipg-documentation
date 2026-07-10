@@ -1,15 +1,16 @@
 ---
 title: AI Power Grid Documentation
-description: Free AI for everyone. GPU-powered inference, OpenAI-compatible API, community-funded.
+description: Free AI for everyone. GPU-powered text, image, and video generation, OpenAI-compatible API, community-funded.
 ---
 
 import { Callout, Cards } from 'nextra/components'
 
 # AI Power Grid
 
-**Free AI for everyone.** Build agents, ship products, learn AI — without barriers.
-The Grid is a community GPU network with an OpenAI-compatible API, funded by
-paid users so anyone can build for free.
+**Free AI for everyone.** Build agents, generate images, render video, ship
+products, learn AI — without barriers. The Grid is a community GPU generation
+network with an OpenAI-compatible API, funded by paid users so anyone can build
+for free.
 
 <Callout type="info">
   Free daily access is live — no credit card, no trial that expires.
@@ -26,15 +27,15 @@ the more free AI it can provide.
 ```
    Paid Users  ─funds→  Node Operators  ─compute→  Free Users
        │                       │                        │
-   APIs &                   Earn USDC+AIPG          Learn,
+   APIs &                   Earn AIPG today         Learn,
    integrations             per request             build, ship
 ```
 
 | Role | What you do | What you get |
 |------|-------------|--------------|
-| **Free user** | Sign up, get an API key, start building | Daily free quota, OpenAI-compatible API |
+| **Free user** | Sign up, get an API key, start building | Daily free quota, text/image/video API |
 | **Paid user** | Top up for higher limits | Unlimited access, your usage funds free tier |
-| **Node operator** | Run a GPU worker | Earn USDC + AIPG per request served |
+| **Node operator** | Run a GPU worker | Earn a share of the current AIPG worker budget |
 | **Validator** _(soon)_ | Verify inference results | Earn verification fees, secure the network |
 
 ---
@@ -43,7 +44,8 @@ the more free AI it can provide.
 
 <Cards>
   <Cards.Card title="Quick Start — Hello World" href="/quick-start" />
-  <Cards.Card title="API Reference (OpenAI / Anthropic compatible)" href="/streaming-api" />
+  <Cards.Card title="Generation API (OpenAI / Anthropic compatible)" href="/streaming-api" />
+  <Cards.Card title="Why Crypto Needs an AI Layer" href="/why-crypto-needs-ai" />
   <Cards.Card title="Run an AI Worker Node" href="/run-a-node" />
   <Cards.Card title="Become a Validator (Coming Soon)" href="/validator-node" />
   <Cards.Card title="Confidential Computing on Blackwell" href="/confidential-computing" />
@@ -55,7 +57,7 @@ the more free AI it can provide.
 ## Why AIPG?
 
 - **Free tier that doesn't expire.** Students, hobbyists, devs in emerging markets — everyone gets daily access.
-- **OpenAI-compatible.** Drop-in replacement for `/v1/chat/completions`. Existing SDKs just work.
+- **OpenAI-compatible.** Drop-in text, image, and video generation through `/v1`. Existing SDKs just work.
 - **No gatekeepers.** No corporate API. No usage profiling. No model deprecations on someone else's schedule.
 - **Community-owned compute.** Anyone with a GPU can join the network and earn.
 - **Heading on-chain.** Validators, smart-contract payments, and confidential computing in active development.
@@ -69,14 +71,14 @@ the more free AI it can provide.
 | **Token** | AIPG on Base L2 |
 | **Contract** | `0xa1c0deCaFE3E9Bf06A5F29B7015CD373a9854608` |
 | **Supply** | 150M (fixed, minting disabled) |
-| **Worker stake** | Not required yet (planned ~1,000 AIPG) |
-| **Validator stake** _(soon)_ | 10,000 AIPG minimum |
+| **Worker stake** | Not required today; future bonding policy is not finalized |
+| **Validator stake** _(future)_ | Not finalized |
 | **Apps** | [aipg.art](https://aipg.art) · [aipg.chat](https://aipg.chat) |
 | **Dashboard** | [console.aipowergrid.io](https://console.aipowergrid.io) |
 | **Discord** | [discord.gg/W9D8j6HCtC](https://discord.gg/W9D8j6HCtC) |
 
 <Callout type="warning">
-  **Staking is winding down.** The passive-rewards staking program has ended.
+  **Staking has ended.** The passive-rewards staking program is no longer active.
   Existing stakers can withdraw anytime — see the [staking guide](/staking).
   Going forward, AIPG rewards flow to active participants: workers and validators.
 </Callout>

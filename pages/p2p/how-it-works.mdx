@@ -1,5 +1,9 @@
 # How P2P Mode Works
 
+> **Design flow only.** This is not the path used by production requests today.
+> Claims in the prototype are unsigned and peer identity is not yet durable, so
+> this flow must not be used for billed or reward-bearing work.
+
 This page explains exactly what happens when a user makes a request in P2P mode.
 
 ## Step-by-Step Flow
@@ -10,7 +14,7 @@ User sends a standard OpenAI-compatible request to any API node:
 
 ```bash
 curl https://api.aipowergrid.io/v1/chat/completions \
-  -H "Authorization: Bearer $API_KEY" \
+  -H "apikey: $API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "gpt-oss-120b",
