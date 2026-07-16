@@ -156,6 +156,10 @@ not lose observation of a running generation.
 ## Storage and privacy
 
 - Lyrics and prompts are private by default.
+- Serve new music output links from a product-neutral Grid media hostname such
+  as `media.aipowergrid.io`. The existing `media.aipg.art` hostname is shared
+  object storage, not a Gallery integration, but it should not become the
+  public URL contract for `aipg.music`.
 - Do not put lyrics in client analytics, logs, error tracking breadcrumbs, or
   public metadata.
 - Store only the minimum owned history needed for the Library.
