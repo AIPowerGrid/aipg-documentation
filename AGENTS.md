@@ -48,6 +48,9 @@ which is intentionally NOT published.
   `AGENTS.md` into a public page. Everything routable lives here.
 - **`engineering-standards/`** — internal org engineering standards (core + per-language +
   git). Outside `pages/`, so unpublished. Owned in its own AGENTS.md.
+- **`product-proposals/`** — internal, unpublished product and architecture
+  proposals. These documents may describe planned surfaces but must label live
+  and future behavior distinctly.
 - **`theme.config.tsx`** — Nextra theme: logo, navbar links, SEO/OG `head`, footer, forced
   dark mode, edit-on-GitHub link.
 - **`next.config.mjs`** — Nextra wiring; `basePath: '/docs'`. All asset/links are served
