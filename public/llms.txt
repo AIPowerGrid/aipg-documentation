@@ -1,0 +1,35 @@
+# AI Power Grid Documentation
+
+> AI Power Grid provides OpenAI-compatible text inference and decentralized
+> image, video, and audio generation through independent workers.
+
+For an operational API task, read the Grid agent skill before general product
+documentation. It is the canonical source for the current API origin,
+authentication handoff, endpoint shapes, tested examples, and known limits.
+
+## Agent Skill
+
+- [Grid agent skill](https://aipowergrid.io/.well-known/skills/grid/SKILL.md): Machine-readable instructions for using the live API.
+- [Grid skill source](https://github.com/AIPowerGrid/grid-skill): Version-controlled skill and installation notes.
+
+## Start Here
+
+- [Grid overview](https://aipowergrid.io/docs/grid-overview): What the network provides and how requests flow.
+- [Quick start](https://aipowergrid.io/docs/quick-start): Account setup and first request.
+- [Generate](https://aipowergrid.io/docs/generate): Text, image, video, and audio usage.
+- [Developer API](https://aipowergrid.io/docs/developers): Compatibility and integration reference.
+- [Streaming API](https://aipowergrid.io/docs/streaming-api): Streaming text responses.
+
+## Network Operators
+
+- [Run a node](https://aipowergrid.io/docs/run-a-node): Choose an operator role.
+- [Text worker](https://aipowergrid.io/docs/worker-llm): Text inference worker quick start.
+- [Media worker](https://aipowergrid.io/docs/worker-media): Image and video worker quick start.
+- [Validator node](https://aipowergrid.io/docs/validator-node): Validator architecture, assignments, and current limitations.
+- [Proof of quality](https://aipowergrid.io/docs/proof-of-quality): Quality evidence and trust model.
+
+## Architecture
+
+- [Why crypto needs an AI provider layer](https://aipowergrid.io/docs/why-crypto-needs-ai): Product thesis and trust boundaries.
+- [Autonomous network](https://aipowergrid.io/docs/autonomous-network): Decentralization roadmap.
+- [Confidential computing](https://aipowergrid.io/docs/confidential-computing): Privacy and attestation direction.

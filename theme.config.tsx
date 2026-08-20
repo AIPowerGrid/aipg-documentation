@@ -63,6 +63,18 @@ const config: DocsThemeConfig = {
       <meta name="twitter:card" content="summary_large_image" />
       <meta name="twitter:site" content="@AIPowerGrid" />
       <meta name="twitter:image" content="https://aipowergrid.io/docs/og-image.webp" />
+      <link
+        rel="alternate"
+        type="text/markdown"
+        href="https://aipowergrid.io/docs/llms.txt"
+        title="AI Power Grid documentation for agents"
+      />
+      <link
+        rel="help"
+        type="text/markdown"
+        href="https://aipowergrid.io/.well-known/skills/grid/SKILL.md"
+        title="AI Power Grid agent skill"
+      />
       <link rel="icon" href="/docs/logo.png" />
       <link rel="preconnect" href="https://fonts.googleapis.com" />
       <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />

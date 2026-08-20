@@ -56,8 +56,8 @@ which is intentionally NOT published.
 - **`next.config.mjs`** — Nextra wiring; `basePath: '/docs'`. All asset/links are served
   under `/docs` (e.g. logo at `/docs/logo.png`).
 - **`components/`** — small shared React/MDX components (e.g. `counters.tsx`). `styles/` —
-  `globals.css`. `public/` — static assets (served under `/docs`). `pages/_app.tsx` loads
-  global CSS.
+  `globals.css`. `public/` — static assets plus the curated agent index at `/docs/llms.txt`.
+  `pages/_app.tsx` loads global CSS.
 - **`archive/`** — old, unpublished `DAPI-*` research markdown. Not routed, not maintained;
   do not link from published pages.
 
@@ -69,6 +69,9 @@ which is intentionally NOT published.
   research, internal notes) lives outside `pages/`. Adding a routable page = adding to `pages/`.
 - **`basePath` is `/docs`.** Internal links and asset paths must account for it; absolute
   asset refs use `/docs/...`.
+- `/docs/llms.txt` is a concise discovery index, not a duplicate API reference. It points
+  agents to the canonical `grid-skill` instructions and selected current docs; keep those links
+  valid when pages move.
 - Deploy target is Vercel (`vercel.json`), which builds with **npm** (`npm install` /
   `npm run build`); `package-lock.json` is the committed lockfile.
 
