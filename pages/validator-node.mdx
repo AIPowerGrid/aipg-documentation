@@ -138,12 +138,14 @@ with the staking and reward contracts.
 
 ## Current Operator Shape
 
-Source and local Docker installs are available now. The command shape mirrors
-the worker quickstarts; the stable hosted installer and downloadable binaries
-are not published yet:
+Source and local Docker installs are available now. Downloadable binaries are
+not published yet. When `v0.1.0-preview` passes the production gate, the exact
+release will carry a provenance-attested installer and checksum manifest:
 
 ```bash
-curl -fsSL https://get.aipowergrid.io/validator | bash
+curl -fsSLO https://github.com/AIPowerGrid/grid-validator/releases/download/v0.1.0-preview/install-validator.sh
+gh attestation verify install-validator.sh --repo AIPowerGrid/grid-validator
+AIPG_VALIDATOR_VERSION=v0.1.0-preview bash install-validator.sh
 cd ~/.aipg-validator
 aipg-validator init
 aipg-validator check --no-probe
