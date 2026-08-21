@@ -18,6 +18,23 @@
   scrubbed from history; keep it that way.)
 - Never commit secrets. Pre-commit secret scanning (gitleaks) must pass.
 
+## Secret-history control
+
+- Current-tree scanning is necessary but not sufficient. Before a repository is made public,
+  before its first production-capable release, and during the scheduled security audit, scan
+  the full reachable history of every protected default branch and release tag.
+- Treat a committed credential as burned. Revoke or rotate it before deleting the file,
+  rewriting history, or publishing a cleanup commit. Removing it from `HEAD` is not remediation.
+- Classify findings without copying secret values into issues, logs, PRs, or chat. Record only
+  the rule, affected repository/ref, exposure window, revocation evidence, and cleanup decision.
+- Known public test vectors, deterministic local-only fixture credentials, and scanner false
+  positives may be ignored only by exact fingerprint with a written rationale and review date.
+  Never add a broad path or rule exclusion merely to make the scanner green.
+- Rewriting published history is an owner-approved incident operation: preserve an immutable
+  evidence bundle, coordinate clone/fork invalidation, force-update every affected ref and tag,
+  and run the full-history scan again. Prefer a fresh-history public import when a private repo's
+  accumulated history is not part of the public protocol contract.
+
 ## Pull Requests
 
 - Small and focused; one logical change per PR.
@@ -30,6 +47,25 @@
 
 - **SemVer** tags (`vMAJOR.MINOR.PATCH`).
 - `CHANGELOG.md` in keep-a-changelog style, derivable from Conventional Commits.
+- Production-capable binaries and containers are built from a clean protected commit in CI,
+  never from an operator workstation or an uncommitted tree.
+- Every release publishes a machine-readable manifest binding the version and exact Git SHA to
+  each artifact's platform, architecture, byte size, and SHA-256 digest. Publish an SBOM and a
+  verifiable workflow signature/attestation alongside it.
+- Installers and updaters fail closed unless the artifact, manifest, and signature verify. A
+  checksum shown only on the same mutable download page is not independent provenance.
+
+## Deployment records
+
+- Record every deployment's exact Git SHA, immutable image/artifact digest, database migration
+  revision, config-schema version, target environment, approving operator, start/end time,
+  verification result, and rollback target.
+- Production reports its deployed SHA through an authenticated operator endpoint and a
+  non-sensitive public status surface. The recorded SHA must match the immutable artifact that
+  actually started, not merely the branch head at deployment time.
+- Do not deploy from a dirty worktree, moving branch reference, mutable container tag, or an
+  artifact whose provenance cannot be verified. Rollbacks create a new deployment record rather
+  than editing the failed record.
 
 ## Licensing
 
