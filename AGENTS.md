@@ -60,6 +60,8 @@ which is intentionally NOT published.
   `pages/_app.tsx` loads global CSS.
 - **`archive/`** — old, unpublished `DAPI-*` research markdown. Not routed, not maintained;
   do not link from published pages.
+- **`.github/workflows/secret-scan.yml`, `.gitleaks.toml`, and `.gitleaksignore`** —
+  pinned, checksum-verified complete-history scanning with exact historical fingerprints only.
 
 ## Local Contracts
 
@@ -101,6 +103,8 @@ which is intentionally NOT published.
 - `npm install` then `npm run dev` → http://localhost:3000/docs to preview.
 - `npm run build` must succeed (Nextra/Next build is the gate before deploy).
 - `npm audit` must report zero known vulnerabilities before deploy.
+- `gitleaks git . --log-opts=HEAD --config .gitleaks.toml --redact --verbose`
+  scans the complete history reachable from the candidate commit.
 
 ## Child DOX Index
 
