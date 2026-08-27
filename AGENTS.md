@@ -93,8 +93,8 @@ which is intentionally NOT published.
 - Label roadmap concepts and default-off prototypes explicitly. Do not publish
   exact economics, stake sizes, deterministic guarantees, model availability,
   or security authority as current without runtime/on-chain evidence.
-- Validator onboarding targets the published preview.11 dedicated-account
-  enrollment and persistent Windows menu. It must not request a personal
+- Validator onboarding targets the published preview.12 local operator app,
+  dedicated-account enrollment, and persistent Windows menu. It must not request a personal
   private key or imply existing-account pairing, validator rewards, or media
   assignments are available. Preserve existing operator identities on upgrades.
 - Do not place `AGENTS.md` anywhere under `pages/`: Nextra compiles Markdown in
