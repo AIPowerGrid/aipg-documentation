@@ -140,11 +140,15 @@ with the staking and reward contracts.
 
 The evidence-only operator preview is live against production Core. The exact
 unsigned release is
-[`v0.1.0-preview.8`](https://github.com/AIPowerGrid/grid-validator/releases/tag/v0.1.0-preview.8).
+[`v0.1.0-preview.9`](https://github.com/AIPowerGrid/grid-validator/releases/tag/v0.1.0-preview.9).
 Its installer, four platform archives, checksum manifest, SPDX SBOM, and build
 provenance are published as one immutable payload. Linux x64/ARM64 users may
-also pull `ghcr.io/aipowergrid/validator:v0.1.0-preview.8`; prereleases do not
+also pull `ghcr.io/aipowergrid/validator:v0.1.0-preview.9`; prereleases do not
 publish `latest`.
+
+Preview.9 bundles the bounded image and video decoder dependencies on every
+supported platform. This makes the public artifact media-capable, but Core
+still issues no media assignments and media evidence has no economic effect.
 
 Core `0029` contains the atomic budget and settlement terminal for future
 compensated quality audits, but it is deployed dark. No audit scheduler,
@@ -152,10 +156,11 @@ private corpus, challenge selection, or quality scoring integration is live,
 and current validator assignments remain unpaid and economically inert.
 
 ```bash
-curl -fsSLO https://github.com/AIPowerGrid/grid-validator/releases/download/v0.1.0-preview.8/install-validator.sh
+curl -fsSLO https://github.com/AIPowerGrid/grid-validator/releases/download/v0.1.0-preview.9/install-validator.sh
 gh attestation verify install-validator.sh --repo AIPowerGrid/grid-validator
 bash install-validator.sh
 cd ~/.aipg-validator
+aipg-validator self-test
 aipg-validator prepare-wallet
 # Link the printed public address and create a validator-purpose key at:
 # https://console.aipowergrid.io/dashboard/validators
