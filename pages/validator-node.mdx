@@ -8,10 +8,10 @@ import { Callout } from 'nextra/components'
 # Validator Nodes
 
 <Callout type="info">
-  **Status: in active development.** The first validator release is an
-  evidence-only audit runner. Grid-issued text assignments, targeted probes,
-  scorecards, and a non-economic quorum lifecycle are live in core. Validator
-  rewards, staking, routing weight, and slashing remain disabled.
+  **Status: public evidence-only preview.** Grid-issued text assignments,
+  targeted probes, scorecards, and a non-economic quorum lifecycle are live in
+  core. Validator rewards, staking, routing weight, and slashing remain
+  disabled. [Download and run the verified preview](https://aipowergrid.io/validate).
 </Callout>
 
 Validators are the Grid's quality, honesty, and provenance layer. They do not
@@ -38,10 +38,10 @@ parameters, and deserve more trust.
 
 The architecture is staged. Production core can issue a short-lived text
 assignment, hard-target its worker, verify the nonce and evidence hash, store the
-attestation, and aggregate non-economic quorum state. The validator falls back
-to model-routed canaries when those capabilities are unavailable. Neither path
-used by the current preview moves money, changes routing, or slashes stake;
-media reference lanes and Base roots remain future work.
+attestation, and aggregate non-economic quorum state. Missing assignments fail
+closed; the public preview does not fall back to random production probes.
+Current preview evidence does not move money, change routing, or slash stake;
+media reference lanes and Base roots remain disabled.
 
 ```mermaid
 flowchart TD
@@ -138,8 +138,8 @@ with the staking and reward contracts.
 
 ## Current Operator Preview
 
-The evidence-only operator preview is live on production Core commit
-`df34ffd4` through Alembic `0029`. The exact unsigned release is
+The evidence-only operator preview is live against production Core. The exact
+unsigned release is
 [`v0.1.0-preview.8`](https://github.com/AIPowerGrid/grid-validator/releases/tag/v0.1.0-preview.8).
 Its installer, four platform archives, checksum manifest, SPDX SBOM, and build
 provenance are published as one immutable payload. Linux x64/ARM64 users may
