@@ -1,6 +1,6 @@
 ---
 title: Run a Node
-description: Two ways to contribute to The Grid — AI worker nodes are live, and validator nodes are in active development.
+description: Run a paid GPU worker or join the public, evidence-only validator preview.
 ---
 
 import { Callout, Cards } from 'nextra/components'
@@ -12,12 +12,12 @@ validator rewards are not.
 
 | | AI Worker Node | Validator Node |
 |---|---|---|
-| **Status** | Live | V0 preview in development |
-| **Stake** | Not required; future bond amount/policy not finalized | Not live; final validator stake TBD |
+| **Status** | Live | Public evidence-only preview |
+| **Stake** | Not required; future bond amount/policy not finalized | Not required; validator staking is disabled |
 | **What you do** | Serve generation jobs (chat, image, video) | Verify that workers' results are honest |
 | **Hardware** | GPU required (4 GB VRAM minimum, 12+ GB recommended) | Modest CPU + bandwidth; GPU optional for re-execution |
-| **Earnings** | Current hourly AIPG budget, pro-rata to den | Future accepted-attestation rewards |
-| **Risk** | None today; future bond risk for objective fraud | No live validator stake; future slashing only after quorum and disputes |
+| **Earnings** | Current hourly AIPG budget, pro-rata to den | None in the preview |
+| **Risk** | None today; future bond risk for objective fraud | No routing, reward, strike, stake, or slash authority |
 
 <Callout type="info">
   Worker bonding and validator staking are part of the Base-backed roadmap.
@@ -72,27 +72,30 @@ do not select USDC/ETH/USDS expecting the current payout CLI to honor it.
 
 ---
 
-## Validator Nodes (Coming Soon)
+## Validator Nodes (Public Preview)
 
 If you want to help secure the network rather than provide compute, validator
 nodes are the audit role. The first release is intentionally low-authority:
 validators run unpredictable probes, sign evidence, and feed dashboards while
 the Grid hardens targeted assignments, reference checks, and quorum.
 
-**Stake:** not live yet. Validator stake size, rewards, and slashing rules will
-be published with the staking and reward contracts.
+**Authority:** evidence only. Validator rewards, routing influence, staking,
+strikes, and slashing are disabled. The preview is for proving independent
+operation and hardening the evidence protocol before economics are attached.
 
 **Hardware:** Modest. Validators don't need to serve every job, so they don't
 need worker-grade GPUs. A reliable server with stable bandwidth is enough for
 sampling. Validators who want to re-execute jobs themselves (rather than rely
 on cross-validation) can add GPU capacity.
 
-The operator shape is being built to mirror the worker quickstarts: install a
-binary, run `aipg-validator init`, check the Grid connection, open the local
-dashboard, then run the validator loop. Follow the
-[Discord](https://discord.gg/W9D8j6HCtC) to be notified.
+The operator path mirrors the worker quickstarts: install the verified preview,
+create a local signing wallet, link its public address in Console, create a
+validator-purpose API key, run `aipg-validator init`, check the Grid connection,
+and start the validator loop. The private key remains on the validator host.
 
-→ **[Validator Node details](/validator-node)**
+→ **[Download and run the validator](https://aipowergrid.io/validate)**
+
+→ **[Protocol, threat model, and preview limits](/validator-node)**
 
 ---
 
