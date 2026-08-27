@@ -124,7 +124,7 @@ surface is:
 
 ---
 
-## What You'll Need (When Live)
+## What You'll Need
 
 - **A Base mainnet wallet** to sign attestations and, later, hold validator stake
 - **A reliable host** with stable bandwidth
@@ -136,30 +136,41 @@ with the staking and reward contracts.
 
 ---
 
-## Current Operator Shape
+## Current Operator Preview
 
-Source and local Docker installs are available now. Downloadable binaries are
-not published yet. When `v0.1.0-preview` passes the production gate, the exact
-release will carry a provenance-attested installer and checksum manifest:
+The evidence-only operator preview is live on production Core commit
+`fabb767d` through Alembic `0027`. The exact unsigned release is
+[`v0.1.0-preview.8`](https://github.com/AIPowerGrid/grid-validator/releases/tag/v0.1.0-preview.8).
+Its installer, four platform archives, checksum manifest, SPDX SBOM, and build
+provenance are published as one immutable payload. Linux x64/ARM64 users may
+also pull `ghcr.io/aipowergrid/validator:v0.1.0-preview.8`; prereleases do not
+publish `latest`.
 
 ```bash
-curl -fsSLO https://github.com/AIPowerGrid/grid-validator/releases/download/v0.1.0-preview/install-validator.sh
+curl -fsSLO https://github.com/AIPowerGrid/grid-validator/releases/download/v0.1.0-preview.8/install-validator.sh
 gh attestation verify install-validator.sh --repo AIPowerGrid/grid-validator
-AIPG_VALIDATOR_VERSION=v0.1.0-preview bash install-validator.sh
+bash install-validator.sh
 cd ~/.aipg-validator
+aipg-validator prepare-wallet
+# Link the printed public address and create a validator-purpose key at:
+# https://console.aipowergrid.io/dashboard/validators
 aipg-validator init
 aipg-validator check --no-probe
 aipg-validator dashboard
 aipg-validator run
 ```
 
-The first release should be easy to run and honest about its power:
+The preview is deliberately limited:
 
 - V0 evidence is useful for dashboards and engineering feedback.
 - V0 does not prove exact model weights.
 - V0 does not slash workers or pay validators.
-- Production core currently enables targeted text probing only through a
+- Production Core enables targeted text probing only through a
   Grid-issued assignment. Arbitrary worker targeting is not supported.
+- Three first-party nodes prove the protocol and deployment path, but they
+  share one operator and hypervisor. Independent operation is not yet proven.
+- Validator rewards, stake enforcement, routing influence, slashing, and media
+  assignments remain disabled.
 
 ---
 
