@@ -140,10 +140,10 @@ with the staking and reward contracts.
 
 The evidence-only operator preview is live against production Core. The exact
 unsigned release is
-[`v0.1.0-preview.12`](https://github.com/AIPowerGrid/grid-validator/releases/tag/v0.1.0-preview.12).
+[`v0.1.0-preview.13`](https://github.com/AIPowerGrid/grid-validator/releases/tag/v0.1.0-preview.13).
 Its installer, four platform archives, checksum manifest, SPDX SBOM, and build
 provenance are published as one immutable payload. Linux x64/ARM64 users may
-also pull `ghcr.io/aipowergrid/validator:v0.1.0-preview.12`; prereleases do not
+also pull `ghcr.io/aipowergrid/validator:v0.1.0-preview.13`; prereleases do not
 publish `latest`.
 
 The preview bundles the bounded image and video decoder dependencies on every
@@ -156,7 +156,7 @@ private corpus, challenge selection, or quality scoring integration is live,
 and current validator assignments remain unpaid and economically inert.
 
 ```bash
-curl -fsSLO https://github.com/AIPowerGrid/grid-validator/releases/download/v0.1.0-preview.12/install-validator.sh
+curl -fsSLO https://github.com/AIPowerGrid/grid-validator/releases/download/v0.1.0-preview.13/install-validator.sh
 gh attestation verify install-validator.sh --repo AIPowerGrid/grid-validator
 bash install-validator.sh
 cd ~/.aipg-validator
