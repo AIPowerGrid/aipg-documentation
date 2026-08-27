@@ -1,6 +1,6 @@
 ---
 title: Validator Nodes
-description: Validator nodes submit signed evidence about worker quality, honesty, and provenance across text, image, and video generation.
+description: Run the evidence-only text validator preview and learn the roadmap for independent media and quality validation.
 ---
 
 import { Callout } from 'nextra/components'
@@ -14,10 +14,10 @@ import { Callout } from 'nextra/components'
   disabled. [Download and run the verified preview](https://aipowergrid.io/validate).
 </Callout>
 
-Validators are the Grid's quality, honesty, and provenance layer. They do not
-magically prove a remote machine is running a specific private model stack.
-They measure whether workers deliver the capability they advertise, follow job
-parameters, and deserve more trust.
+Validators are being built as the Grid's independent audit layer. Today's
+preview checks specific text job contracts and submits attributable signed
+evidence. It does not prove a remote machine runs a particular model, establish
+general answer quality, or grant workers more routing trust.
 
 ---
 
@@ -26,48 +26,47 @@ parameters, and deserve more trust.
 | | |
 |---|---|
 | **Status** | Assignment-bound text evidence live; operator release still preview |
-| **What validators do** | Run unpredictable probes and submit signed attestations |
+| **What validators do** | Run randomized, assignment-bound text probes and submit signed attestations |
 | **Current authority** | Informational evidence for dashboards and engineering feedback |
-| **Later authority** | Routing reputation, rewards, and objective-fraud slashing after quorum |
+| **Later authority** | Routing reputation, rewards, and objective-fraud slashing only after independent qualification, adversarial validation, and dispute safeguards |
 | **Hardware** | CPU + bandwidth for V0; optional GPU for future reference/re-execution lanes |
-| **Base role** | Bonds, validator stake, epoch roots, reward roots, and dispute outcomes |
+| **Base role** | Future validator stake, epoch/reward roots, and dispute outcomes; no validator contract writes today |
 
 ---
 
 ## Validator Data Flow
 
-The architecture is staged. Production core can issue a short-lived text
-assignment, hard-target its worker, verify the nonce and evidence hash, store the
-attestation, and aggregate non-economic quorum state. Missing assignments fail
+The architecture is staged. Production Core issues a sealed text assignment:
+the node sees its opaque ID, capability, and commitment before execution, then
+verifies the disclosed worker, challenge, nonce, and result afterward. Core
+hard-targets the worker and verifies submitted signatures and evidence binding
+before aggregating non-economic quorum state. Missing assignments fail
 closed; the public preview does not fall back to random production probes.
 Current preview evidence does not move money, change routing, or slash stake;
 media reference lanes and Base roots remain disabled.
 
 ```mermaid
 flowchart TD
-  A["Grid assignment service"] --> B["Signed assignment<br/>worker, modality, policy, nonce, deadline"]
-  B --> C["Validator node"]
-  C --> D["Challenge engine<br/>text, image, video"]
-  D --> E["Targeted probe endpoint"]
-  E --> F["Assigned worker"]
-  E --> G["Reference worker pool<br/>bonded, highly validated"]
-  F --> H["Candidate output"]
-  G --> I["Reference output(s)"]
-  H --> J["Modality scorer"]
-  I --> J
-  J --> K["Evidence hashes + verdict"]
-  K --> L["Signed attestation"]
-  L --> M["Grid evidence store"]
-  M --> N["Quorum + dispute logic"]
-  N --> O["Worker scorecards<br/>routing reputation"]
-  N --> P["Epoch roots<br/>attestations, rewards, certificates"]
-  P --> Q["Base contracts<br/>bonds, stake, rewards"]
-  N --> R["Future objective-fraud slashing"]
+  A["Core generates and commits assignment"] --> B["Validator receives opaque ID + seal"]
+  B --> C["Validator requests targeted probe"]
+  C --> D["Core dispatches to assigned text worker"]
+  D --> E["Worker completes; Core discloses committed result"]
+  E --> F["Validator verifies bindings and scores locally"]
+  F --> G["Validator signs evidence"]
+  G --> H["Core verifies and stores attestation"]
+  H --> I["Shared 3-of-5 group and informational scorecards"]
+  I --> J["No routing, reward, or slashing effect"]
 ```
 
-The important rule: raw prompts, raw outputs, private thresholds, live challenge
-seeds, answer keys, and golden media hashes stay off-chain. Base gets compact
-commitments, bonds, stake, rewards, and dispute outcomes.
+Distinct registered nodes are not automatically independent operators. Sealing
+limits advance disclosure; it does not make public templates unrecognizable to
+workers. A script can pass simple echo checks, so these checks are not quality
+proofs. Reference-worker comparisons, media issuance, blind quality audits, and
+Base commitments are future lanes with separate rollout gates.
+
+Raw prompts, raw outputs, challenge seeds, answer keys, and golden media hashes
+stay off-chain. Any future Base integration should carry compact commitments
+and reviewed economic state, not private workload content.
 
 ---
 
@@ -141,10 +140,10 @@ with the staking and reward contracts.
 
 The evidence-only operator preview is live against production Core. The exact
 unsigned release is
-[`v0.1.0-preview.11`](https://github.com/AIPowerGrid/grid-validator/releases/tag/v0.1.0-preview.11).
+[`v0.1.0-preview.12`](https://github.com/AIPowerGrid/grid-validator/releases/tag/v0.1.0-preview.12).
 Its installer, four platform archives, checksum manifest, SPDX SBOM, and build
 provenance are published as one immutable payload. Linux x64/ARM64 users may
-also pull `ghcr.io/aipowergrid/validator:v0.1.0-preview.11`; prereleases do not
+also pull `ghcr.io/aipowergrid/validator:v0.1.0-preview.12`; prereleases do not
 publish `latest`.
 
 The preview bundles the bounded image and video decoder dependencies on every
@@ -157,7 +156,7 @@ private corpus, challenge selection, or quality scoring integration is live,
 and current validator assignments remain unpaid and economically inert.
 
 ```bash
-curl -fsSLO https://github.com/AIPowerGrid/grid-validator/releases/download/v0.1.0-preview.11/install-validator.sh
+curl -fsSLO https://github.com/AIPowerGrid/grid-validator/releases/download/v0.1.0-preview.12/install-validator.sh
 gh attestation verify install-validator.sh --repo AIPowerGrid/grid-validator
 bash install-validator.sh
 cd ~/.aipg-validator
@@ -168,9 +167,22 @@ aipg-validator run
 ```
 
 **Windows:** extract the Windows x64 ZIP, then double-click
-`aipg-validator.exe`. Choose **1** for automatic setup and confirm, **4** to
-check registration, then **5** to run. Leave the window open. The preview is
+`aipg-validator.exe`. Choose **8** to open the local operator app, then
+**Set up node**, confirm, and **Start validator**. Existing operators skip
+setup and keep their configuration. The preview is
 unsigned; verify its checksum and GitHub provenance before running.
+
+**macOS/Linux desktops:** `aipg-validator app` opens the same local controls.
+The commands above remain the headless-server path. The app shows registration,
+acknowledged heartbeats, assignment activity, accepted evidence, and redacted
+diagnostics. Registration alone is not completed validation; waiting during
+assignment cooldown is normal. Native offline packaging checks pass on all four
+platforms, but complete live Windows qualification is still outstanding.
+
+**Stop** stops the process the app started, preserving its signing identity and
+recovery journal. Closing only the browser tab leaves it running; **Exit app**
+also closes the local server. Local stop does not revoke a key or suspend its
+registration. Never share the private localhost URL or forward its port.
 
 Automatic setup creates an empty local signing identity, authenticates a
 dedicated node account with the Grid, and saves a validator-only API key. It
