@@ -40,8 +40,8 @@ The architecture is staged. Production core can issue a short-lived text
 assignment, hard-target its worker, verify the nonce and evidence hash, store the
 attestation, and aggregate non-economic quorum state. The validator falls back
 to model-routed canaries when those capabilities are unavailable. Neither path
-moves money, changes routing, or slashes stake; media reference lanes and Base
-roots remain future work.
+used by the current preview moves money, changes routing, or slashes stake;
+media reference lanes and Base roots remain future work.
 
 ```mermaid
 flowchart TD
@@ -139,12 +139,17 @@ with the staking and reward contracts.
 ## Current Operator Preview
 
 The evidence-only operator preview is live on production Core commit
-`fabb767d` through Alembic `0027`. The exact unsigned release is
+`d8a48f2a` through Alembic `0029`. The exact unsigned release is
 [`v0.1.0-preview.8`](https://github.com/AIPowerGrid/grid-validator/releases/tag/v0.1.0-preview.8).
 Its installer, four platform archives, checksum manifest, SPDX SBOM, and build
 provenance are published as one immutable payload. Linux x64/ARM64 users may
 also pull `ghcr.io/aipowergrid/validator:v0.1.0-preview.8`; prereleases do not
 publish `latest`.
+
+Core `0029` contains the atomic budget and settlement terminal for future
+compensated quality audits, but it is deployed dark. No audit scheduler,
+private corpus, challenge selection, or quality scoring integration is live,
+and current validator assignments remain unpaid and economically inert.
 
 ```bash
 curl -fsSLO https://github.com/AIPowerGrid/grid-validator/releases/download/v0.1.0-preview.8/install-validator.sh
@@ -172,6 +177,12 @@ The preview is deliberately limited:
 - Validator rewards, stake enforcement, routing influence, slashing, and media
   assignments remain disabled.
 
+AI Power Grid is recruiting 5-10 independently controlled operators for a
+72-hour, no-reward qualification. One person or organization counts once even
+if it runs several nodes. See the
+[preview cohort runbook](https://github.com/AIPowerGrid/grid-validator/blob/master/PREVIEW_COHORT.md)
+and [volunteer on the tracked cohort issue](https://github.com/AIPowerGrid/grid-validator/issues/5).
+
 ---
 
 ## Future Economic Path
@@ -188,9 +199,14 @@ enabled until the evidence path is hard to game:
 
 ---
 
-## Get Notified
+## Join the Preview
 
-The fastest way to hear about launch is the AIPG Discord:
+Start with the tracked cohort issue so enrollment and the independent-operator
+gate remain visible:
+
+**[Volunteer to run a validator](https://github.com/AIPowerGrid/grid-validator/issues/5)**
+
+For community support, join the AIPG Discord:
 
 **[discord.gg/W9D8j6HCtC](https://discord.gg/W9D8j6HCtC)**
 
