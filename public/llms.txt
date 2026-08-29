@@ -18,7 +18,7 @@ authentication handoff, endpoint shapes, tested examples, and known limits.
 - [Quick start](https://aipowergrid.io/docs/quick-start): Account setup and first request.
 - [Generate](https://aipowergrid.io/docs/generate): Text, image, video, and audio usage.
 - [Developer API](https://aipowergrid.io/docs/developers): Compatibility and integration reference.
-- [Integrations](https://aipowergrid.io/docs/integrations): Tested tool configurations and native-provider publication status.
+- [Use AIPG in 60 seconds](https://aipowergrid.io/docs/integrations): Copy-paste client configurations and native-provider publication status.
 - [Streaming API](https://aipowergrid.io/docs/streaming-api): Streaming text responses.
 
 ## Network Operators

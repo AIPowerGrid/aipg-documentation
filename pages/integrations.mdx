@@ -1,15 +1,26 @@
 ---
-title: Integrations
-description: Tested ways to use AI Power Grid from existing AI developer tools, plus the current status of native provider packages.
+title: Use AIPG in 60 seconds
+description: Copy-paste setup for using AI Power Grid from OpenAI clients, LiteLLM, Open WebUI, Cline, Continue, LangChain, Vercel AI SDK, and n8n.
 ---
 
 import { Callout } from 'nextra/components'
 
-# Integrations
+# Use AIPG in 60 seconds
 
-Use the Grid from tools you already run. Some tools work today through their
-standard OpenAI-compatible connection; native packages remain clearly marked
-until they are published and accepted upstream.
+AI Power Grid exposes one authenticated API for open text, image, video, and
+audio models running across community-operated GPUs. Existing OpenAI-compatible
+clients can use the text API by changing two values:
+
+```text
+Base URL: https://api.aipowergrid.io/v1
+API key:  your scoped Grid key
+```
+
+1. [Create an API key](https://console.aipowergrid.io/dashboard/api-key) with
+   `inference.submit`.
+2. Check [`GET /v1/models`](https://api.aipowergrid.io/v1/models) for the text
+   models currently online. Use `auto` when you want the Grid to choose.
+3. Pick a client below and paste the configuration.
 
 <Callout type="warning">
   Grid requests may be processed by remote community-operated workers. Do not
@@ -17,35 +28,137 @@ until they are published and accepted upstream.
   separately verified confidential-compute deployment meets your requirements.
 </Callout>
 
-## Available today
+## OpenAI SDK
 
-### Open WebUI
+The standard OpenAI SDK needs no AIPG-specific package.
 
-Open WebUI can discover and stream Grid text models through a standard OpenAI
+```bash
+pip install openai
+export AIPG_API_KEY="your-scoped-key"
+```
+
+```python
+import os
+from openai import OpenAI
+
+client = OpenAI(
+    base_url="https://api.aipowergrid.io/v1",
+    api_key=os.environ["AIPG_API_KEY"],
+)
+
+stream = client.chat.completions.create(
+    model="auto",
+    messages=[{"role": "user", "content": "Explain the Grid in one sentence."}],
+    max_tokens=128,
+    stream=True,
+)
+
+for chunk in stream:
+    print(chunk.choices[0].delta.content or "", end="", flush=True)
+```
+
+## LiteLLM
+
+LiteLLM works today through its standard OpenAI-compatible route. Native AIPG
+provider and documentation pull requests are under upstream review.
+
+```bash
+pip install litellm
+export AIPG_API_KEY="your-scoped-key"
+```
+
+```python
+import os
+from litellm import completion
+
+response = completion(
+    model="openai/auto",
+    api_base="https://api.aipowergrid.io/v1",
+    api_key=os.environ["AIPG_API_KEY"],
+    messages=[{"role": "user", "content": "Say hello from the Grid."}],
+    max_tokens=64,
+)
+
+print(response.choices[0].message.content)
+```
+
+The native provider becomes an upstream integration only if
+[the LiteLLM pull request](https://github.com/BerriAI/litellm/pull/38725) is
+accepted and merged.
+
+## Open WebUI
+
+Open WebUI discovers and streams Grid text models through a standard OpenAI
 connection. No custom plugin or AIPG fork is required.
 
-1. Create a Grid API key in the [developer console](https://console.aipowergrid.io/dashboard/api-key)
-   with `inference.submit`.
-2. In Open WebUI, add an OpenAI connection.
-3. Set the base URL to `https://api.aipowergrid.io/v1`.
-4. Enter the scoped key, save, and select one of the discovered models.
+1. Open **Admin settings -> Connections -> OpenAI**.
+2. Add `https://api.aipowergrid.io/v1` as the URL.
+3. Enter the scoped Grid API key and save.
+4. Select one of the discovered models.
 
 For a multi-user deployment, prefer each user's **Direct Connection** over one
 shared server key. Direct Connections keep the key in that user's browser
-profile; the browser profile must therefore be treated as sensitive. A shared
-admin connection spends one Grid account's credits for every permitted user
-and needs your own authentication, rate limits, and abuse controls.
+profile, which must therefore be treated as sensitive. A shared admin
+connection spends one Grid account's credits for every permitted user and
+needs your own authentication, rate limits, and abuse controls.
 
-The standard connection covers text chat and streaming. It does not expose the
-Grid's native image, video, or audio endpoints. The first-party deployment at
+The standard Open WebUI connection covers text chat and streaming. It does not
+expose the Grid's native media endpoints. The first-party deployment at
 [chat.aipowergrid.io](https://chat.aipowergrid.io/) demonstrates compatibility;
 it does not imply Open WebUI endorsement.
 
-### LangChain
+## Cline
 
-LangChain uses the existing `ChatOpenAI` compatibility surface. Model discovery
-is public at [`GET /v1/models`](https://api.aipowergrid.io/v1/models); generation
-requires `inference.submit`.
+Cline has an OpenAI Compatible provider path, so it can use the Grid without a
+custom extension.
+
+1. Open Cline settings and select **OpenAI Compatible**.
+2. Set **Base URL** to `https://api.aipowergrid.io/v1`.
+3. Enter the scoped Grid API key.
+4. Enter a current tool-capable model ID from [`/v1/models`](https://api.aipowergrid.io/v1/models).
+5. Use Cline's connection test before starting a task.
+
+Model discovery proves availability, not tool-call quality. Validate the model
+you select against your workflow before allowing autonomous changes.
+[Cline's OpenAI-compatible guide](https://docs.cline.bot/provider-config/openai-compatible)
+documents the corresponding client controls.
+
+## Continue
+
+Store the key in `~/.continue/.env`; do not commit it inside a project:
+
+```dotenv
+AIPG_API_KEY=your-scoped-key
+```
+
+Add this to `~/.continue/config.yaml`:
+
+```yaml
+name: AI Power Grid
+version: 1.0.0
+schema: v1
+
+models:
+  - name: AIPG Auto
+    provider: openai
+    model: auto
+    apiBase: https://api.aipowergrid.io/v1
+    apiKey: ${{ secrets.AIPG_API_KEY }}
+    roles:
+      - chat
+      - edit
+    defaultCompletionOptions:
+      maxTokens: 512
+```
+
+Restart the IDE after changing Continue's secret file. Choose a concrete model
+instead of `auto` when a workflow depends on a specific context window or tool
+behavior. Continue documents the same custom-base configuration in its
+[OpenAI provider guide](https://docs.continue.dev/customize/model-providers/top-level/openai).
+
+## LangChain
+
+LangChain uses its existing `ChatOpenAI` compatibility surface.
 
 ```bash
 pip install langchain-openai
@@ -57,7 +170,7 @@ import os
 from langchain_openai import ChatOpenAI
 
 model = ChatOpenAI(
-    model="gpt-oss-120b",  # choose a current ID from /v1/models
+    model="auto",
     base_url="https://api.aipowergrid.io/v1",
     api_key=os.environ["AIPG_API_KEY"],
     use_responses_api=False,
@@ -68,25 +181,79 @@ for chunk in model.stream("Explain decentralized inference briefly."):
     print(chunk.text, end="", flush=True)
 ```
 
-Set `use_responses_api=False` so a future model-name heuristic cannot silently
-switch the request away from the tested Chat Completions route. Tool calling
-depends on the selected worker backend; do not infer tool support merely from a
-model appearing in `/v1/models`.
-
-The maintained cookbook and protocol tests live in
+Keep `use_responses_api=False` for the tested Chat Completions route. Tool
+calling depends on the selected worker backend. The maintained cookbook and
+protocol tests live in
 [`grid-provider-integrations/langchain-aipg`](https://github.com/AIPowerGrid/grid-provider-integrations/tree/main/langchain-aipg).
+
+## Vercel AI SDK
+
+Use the AI SDK's standard OpenAI-compatible provider today:
+
+```bash
+npm install ai @ai-sdk/openai-compatible
+```
+
+```typescript
+import { createOpenAICompatible } from '@ai-sdk/openai-compatible';
+import { streamText } from 'ai';
+
+const aipg = createOpenAICompatible({
+  name: 'aipg',
+  baseURL: 'https://api.aipowergrid.io/v1',
+  apiKey: process.env.AIPG_API_KEY!,
+});
+
+const result = streamText({
+  model: aipg('auto'),
+  prompt: 'Explain the Grid in one sentence.',
+  maxOutputTokens: 128,
+});
+
+for await (const chunk of result.textStream) process.stdout.write(chunk);
+```
+
+Keep `AIPG_API_KEY` server-side. The source-ready
+`@aipowergrid/ai-sdk-provider` package adds typed Grid image, video, and music
+helpers, but it is not available until its npm release completes.
+
+## n8n
+
+Use n8n's built-in **HTTP Request** node until the native community node is
+published:
+
+1. Create a reusable **Header Auth** credential.
+2. Set the header name to `Authorization` and value to `Bearer YOUR_GRID_KEY`.
+3. Create a `POST` request to
+   `https://api.aipowergrid.io/v1/chat/completions`.
+4. Send a JSON body:
+
+```json
+{
+  "model": "auto",
+  "messages": [{"role": "user", "content": "Summarize this workflow."}],
+  "max_tokens": 128,
+  "stream": false
+}
+```
+
+Use n8n's encrypted credential store rather than placing the key in node
+parameters. The native `n8n-nodes-aipg` package adds text, image, video, and
+audio operations, but remains unpublished pending its provenance release.
 
 ## Native distribution status
 
 | Tool | Current status | What that means |
 | --- | --- | --- |
-| **LiteLLM** | Provider and docs PRs under upstream review | Current PR checks pass, but AIPG is not a merged LiteLLM provider until maintainers accept it. |
-| **Dify** | Package validated and installed on Dify Community Edition; credentialed Cloud test pending | The plugin is staged, not published in Dify Marketplace. |
-| **ElizaOS** | Source-ready package; npm and registry publication pending | Do not run the documented install command until `@aipowergrid/plugin-aipg` is present on npm. |
-| **Vercel AI SDK** | Source-ready provider; npm publication pending | The exact tarball passes a clean AI SDK consumer install, but `@aipowergrid/ai-sdk-provider` is not published yet. |
-| **n8n** | Source-ready community node; npm and Creator Portal publication pending | The node is tested locally but is not yet an accepted verified community node. |
-| **Open WebUI** | Standard connection tested; upstream documentation scope awaiting maintainer direction | Use the configuration above today; no provider-specific plugin is needed. |
-| **LangChain** | Standard client path and cookbook tested | Use `ChatOpenAI` today; an upstream cookbook contribution remains separate from first-party support. |
+| **LiteLLM** | Provider and docs PRs under upstream review | The compatible configuration above works now; native acceptance still belongs to LiteLLM maintainers. |
+| **Dify** | Package validated and installed on Community Edition; credentialed host tests pending | The plugin is staged, not published in Dify Marketplace. |
+| **ElizaOS** | Source-ready package; npm and registry publication pending | `@aipowergrid/plugin-aipg` is not yet available from npm. |
+| **Vercel AI SDK** | Standard compatible route works; native package publication pending | Use `@ai-sdk/openai-compatible` today. |
+| **n8n** | HTTP Request setup works; native package and Creator Portal publication pending | `n8n-nodes-aipg` is not yet an accepted verified community node. |
+| **Open WebUI** | Standard connection tested | No provider-specific plugin is required. |
+| **Cline** | Standard OpenAI Compatible configuration | No provider-specific plugin is required. |
+| **Continue** | Standard OpenAI provider with a custom API base | Keep the key in Continue's secret storage. |
+| **LangChain** | Standard client path and maintained cookbook tested | Use `ChatOpenAI` today. |
 
 Track source, reproducible tests, release gates, and upstream links in the
 public [provider integrations repository](https://github.com/AIPowerGrid/grid-provider-integrations).
@@ -101,7 +268,8 @@ endorsement, or upstream adoption.
 - Keep keys server-side unless a tool explicitly implements a personal browser
   connection and you accept that storage model.
 - An HTTP `402` means the account lacks enough usable credit for the quoted
-  request. Fund that same account in the [Grid console](https://console.aipowergrid.io/dashboard/funding).
+  request. Fund that account in the
+  [Grid console](https://console.aipowergrid.io/dashboard/funding).
 - Model availability follows connected workers and can change. A discovered
   model is not an uptime guarantee.
 
