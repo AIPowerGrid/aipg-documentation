@@ -1,6 +1,6 @@
 ---
 title: Use AIPG in 60 seconds
-description: Copy-paste setup for using AI Power Grid from OpenAI clients, LiteLLM, Open WebUI, Cline, Continue, LangChain, Vercel AI SDK, and n8n.
+description: Copy-paste setup for using AI Power Grid from OpenAI clients, LiteLLM, Open WebUI, Cline, Continue, LangChain, Vercel AI SDK, n8n, the Grid CLI, and MCP.
 ---
 
 import { Callout } from 'nextra/components'
@@ -241,6 +241,45 @@ Use n8n's encrypted credential store rather than placing the key in node
 parameters. The native `n8n-nodes-aipg` package adds text, image, video, and
 audio operations, but remains unpublished pending its provenance release.
 
+## Grid CLI and local MCP
+
+The maintained [`grid-skill`](https://github.com/AIPowerGrid/grid-skill)
+repository provides a CLI and local stdio MCP server for model discovery,
+quotes, credit inspection, and text, image, video, and audio generation. Until
+the first npm release completes, install it only from a reviewed checkout:
+
+```bash
+git clone https://github.com/AIPowerGrid/grid-skill.git
+cd grid-skill
+npm ci
+npm run build
+npm link
+
+export GRID_API_KEY="your-scoped-key"
+aipg models
+aipg quote --model "Krea 2 Turbo" --modality image
+```
+
+Configure an MCP client to launch the locally installed stdio server:
+
+```json
+{
+  "mcpServers": {
+    "aipowergrid": {
+      "command": "aipg-mcp",
+      "env": {
+        "GRID_API_KEY": "${GRID_API_KEY}"
+      }
+    }
+  }
+}
+```
+
+Use the client's local secret store when available; interpolation syntax varies
+by client. A remote HTTP MCP endpoint is intentionally unavailable until Grid
+OAuth can issue short-lived, audience-bound tokens. The service will not relay
+durable Grid API keys as bearer credentials between systems.
+
 ## Native distribution status
 
 | Tool | Current status | What that means |
@@ -250,6 +289,7 @@ audio operations, but remains unpublished pending its provenance release.
 | **ElizaOS** | Source-ready package; npm and registry publication pending | `@aipowergrid/plugin-aipg` is not yet available from npm. |
 | **Vercel AI SDK** | Standard compatible route works; native package publication pending | Use `@ai-sdk/openai-compatible` today. |
 | **n8n** | HTTP Request setup works; native package and Creator Portal publication pending | `n8n-nodes-aipg` is not yet an accepted verified community node. |
+| **Grid CLI + MCP** | Local source installation available; npm publication pending | The CLI and stdio MCP are implemented and tested; `@aipowergrid/mcp` is not yet available from npm. Remote HTTP MCP requires the planned OAuth foundation. |
 | **Open WebUI** | Standard connection tested | No provider-specific plugin is required. |
 | **Cline** | Standard OpenAI Compatible configuration | No provider-specific plugin is required. |
 | **Continue** | Standard OpenAI provider with a custom API base | Keep the key in Continue's secret storage. |
