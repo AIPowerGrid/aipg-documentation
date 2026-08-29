@@ -8,7 +8,7 @@ export default {
   "generate": "Generate Images & Chat",
   "streaming-api": "Generation API",
   "developers": "For Developers",
-  "integrations": "Integrations",
+  "integrations": "Use AIPG in 60 seconds",
   "-- run --": {
     "type": "separator",
     "title": "Run a Node"
