@@ -8,6 +8,7 @@ export default {
   "generate": "Generate Images & Chat",
   "streaming-api": "Generation API",
   "developers": "For Developers",
+  "integrations": "Integrations",
   "-- run --": {
     "type": "separator",
     "title": "Run a Node"
