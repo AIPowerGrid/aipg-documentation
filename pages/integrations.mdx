@@ -1,0 +1,109 @@
+---
+title: Integrations
+description: Tested ways to use AI Power Grid from existing AI developer tools, plus the current status of native provider packages.
+---
+
+import { Callout } from 'nextra/components'
+
+# Integrations
+
+Use the Grid from tools you already run. Some tools work today through their
+standard OpenAI-compatible connection; native packages remain clearly marked
+until they are published and accepted upstream.
+
+<Callout type="warning">
+  Grid requests may be processed by remote community-operated workers. Do not
+  send secrets, credentials, personal data, or regulated content unless a
+  separately verified confidential-compute deployment meets your requirements.
+</Callout>
+
+## Available today
+
+### Open WebUI
+
+Open WebUI can discover and stream Grid text models through a standard OpenAI
+connection. No custom plugin or AIPG fork is required.
+
+1. Create a Grid API key in the [developer console](https://console.aipowergrid.io/dashboard/api-key)
+   with `inference.submit`.
+2. In Open WebUI, add an OpenAI connection.
+3. Set the base URL to `https://api.aipowergrid.io/v1`.
+4. Enter the scoped key, save, and select one of the discovered models.
+
+For a multi-user deployment, prefer each user's **Direct Connection** over one
+shared server key. Direct Connections keep the key in that user's browser
+profile; the browser profile must therefore be treated as sensitive. A shared
+admin connection spends one Grid account's credits for every permitted user
+and needs your own authentication, rate limits, and abuse controls.
+
+The standard connection covers text chat and streaming. It does not expose the
+Grid's native image, video, or audio endpoints. The first-party deployment at
+[chat.aipowergrid.io](https://chat.aipowergrid.io/) demonstrates compatibility;
+it does not imply Open WebUI endorsement.
+
+### LangChain
+
+LangChain uses the existing `ChatOpenAI` compatibility surface. Model discovery
+is public at [`GET /v1/models`](https://api.aipowergrid.io/v1/models); generation
+requires `inference.submit`.
+
+```bash
+pip install langchain-openai
+export AIPG_API_KEY="your-scoped-key"
+```
+
+```python
+import os
+from langchain_openai import ChatOpenAI
+
+model = ChatOpenAI(
+    model="gpt-oss-120b",  # choose a current ID from /v1/models
+    base_url="https://api.aipowergrid.io/v1",
+    api_key=os.environ["AIPG_API_KEY"],
+    use_responses_api=False,
+    max_tokens=256,
+)
+
+for chunk in model.stream("Explain decentralized inference briefly."):
+    print(chunk.text, end="", flush=True)
+```
+
+Set `use_responses_api=False` so a future model-name heuristic cannot silently
+switch the request away from the tested Chat Completions route. Tool calling
+depends on the selected worker backend; do not infer tool support merely from a
+model appearing in `/v1/models`.
+
+The maintained cookbook and protocol tests live in
+[`grid-provider-integrations/langchain-aipg`](https://github.com/AIPowerGrid/grid-provider-integrations/tree/main/langchain-aipg).
+
+## Native distribution status
+
+| Tool | Current status | What that means |
+| --- | --- | --- |
+| **LiteLLM** | Provider and docs PRs under upstream review | Current PR checks pass, but AIPG is not a merged LiteLLM provider until maintainers accept it. |
+| **Dify** | Package validated and installed on Dify Community Edition; credentialed Cloud test pending | The plugin is staged, not published in Dify Marketplace. |
+| **ElizaOS** | Source-ready package; npm and registry publication pending | Do not run the documented install command until `@aipowergrid/plugin-aipg` is present on npm. |
+| **Vercel AI SDK** | Source-ready provider; npm publication pending | The exact tarball passes a clean AI SDK consumer install, but `@aipowergrid/ai-sdk-provider` is not published yet. |
+| **n8n** | Source-ready community node; npm and Creator Portal publication pending | The node is tested locally but is not yet an accepted verified community node. |
+| **Open WebUI** | Standard connection tested; upstream documentation scope awaiting maintainer direction | Use the configuration above today; no provider-specific plugin is needed. |
+| **LangChain** | Standard client path and cookbook tested | Use `ChatOpenAI` today; an upstream cookbook contribution remains separate from first-party support. |
+
+Track source, reproducible tests, release gates, and upstream links in the
+public [provider integrations repository](https://github.com/AIPowerGrid/grid-provider-integrations).
+An open pull request, staged package, or first-party test is not a partnership,
+endorsement, or upstream adoption.
+
+## Authentication and billing
+
+- `inference.submit` authorizes generation.
+- `account.read` is also required when an integration reads credit status or
+  quotes on behalf of the account.
+- Keep keys server-side unless a tool explicitly implements a personal browser
+  connection and you accept that storage model.
+- An HTTP `402` means the account lacks enough usable credit for the quoted
+  request. Fund that same account in the [Grid console](https://console.aipowergrid.io/dashboard/funding).
+- Model availability follows connected workers and can change. A discovered
+  model is not an uptime guarantee.
+
+For raw endpoint shapes, streaming events, and media contracts, continue to the
+[Generation API reference](/streaming-api).
