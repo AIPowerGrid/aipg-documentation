@@ -82,6 +82,12 @@ which is intentionally NOT published.
   key must carry `inference.submit` plus `account.read`, it must surface the
   canonical funding check before framework setup, and its bounded raw API smoke
   test must remain valid independently of any third-party client.
+- `/docs/pricing` is the public discovery surface for Core's versioned
+  `aipg.pricing.v1` catalog. It may publish only exact configured Grid rates and
+  fresh, same-model comparison workloads from `comparison_evidence`; it must
+  preserve evidence dates, source links, expiry behavior, availability/quality
+  caveats, and the distinction between a non-mutating quote and authoritative
+  request-time charging.
 - `/docs/builder-credits` documents the manually reviewed `$5-$20` public
   builder pilot. It must preserve the 60-day expiry, one-grant-per-account and
   campaign limit, finite budget, service-only value, and private post-selection
