@@ -1,0 +1,99 @@
+---
+title: Pricing and comparisons
+description: Exact AI Power Grid USD rates, quote-before-dispatch guidance, and expiring same-model price comparisons.
+---
+
+import { Callout } from 'nextra/components'
+
+# Pricing and comparisons
+
+AI Power Grid publishes its exact USD price book at
+[`GET /v1/pricing`](https://api.aipowergrid.io/v1/pricing). The endpoint is
+public, versioned, and does not require an API key. It covers text, image,
+video, audio, and 3D rates independently of any frontend.
+
+```bash
+curl --fail-with-body https://api.aipowergrid.io/v1/pricing
+```
+
+Configured price is not proof that a model is online. Check
+[`GET /v1/status/models`](https://api.aipowergrid.io/v1/status/models) before
+dispatching work.
+
+## Current same-model evidence
+
+The price API currently publishes these narrowly matched comparisons. Evidence
+was reviewed on **August 29, 2026** and automatically expires from the API after
+**September 29, 2026** unless it is reviewed again.
+
+| Workload | AI Power Grid | Reference provider | Difference |
+| --- | ---: | ---: | ---: |
+| `gpt-oss-120b`: 1M uncached input + 1M output tokens | **$0.375** | [Groq: $0.75](https://console.groq.com/docs/model/openai/gpt-oss-120b) | **50% lower** |
+| `z-image-turbo`: one 1-megapixel image, no optional prompt expansion | **$0.003** | [fal: $0.005](https://fal.ai/models/fal-ai/z-image/turbo) | **40% lower** |
+
+These are the same named models under the stated workload, not claims that
+every Grid model is cheaper than every hosted model. Price alone does not prove
+equal latency, availability, reliability, tokenizer behavior, configuration,
+or output quality. Compare representative outputs before choosing a provider.
+
+<Callout type="warning">
+  Treat `comparison_evidence.status: "current"` as mandatory for a public
+  comparison claim. When the status becomes `stale`, the API omits comparison
+  items while continuing to publish the Grid's own exact rates.
+</Callout>
+
+## Read the price book
+
+With `jq`, list every configured model and its unit rates:
+
+```bash
+curl --fail-with-body https://api.aipowergrid.io/v1/pricing \
+  | jq '.price_book | {version, models, aliases}'
+```
+
+Extract only currently valid comparison evidence:
+
+```bash
+curl --fail-with-body https://api.aipowergrid.io/v1/pricing \
+  | jq '.comparison_evidence | select(.status == "current")'
+```
+
+Text rates are USD per one million input or output tokens. Media rates use the
+unit named in the response: per image, per second of video, per second of
+generated audio, or per completed 3D generation. The accounting ledger stores
+integer micro-USD, and a positive request rounds up by at most one micro-dollar.
+
+## Quote your request
+
+The authenticated quote endpoint applies the current model price, request
+shape, account discount, and spendable balances without moving credits:
+
+```bash
+export AIPG_API_KEY='your-scoped-key'
+
+curl --fail-with-body https://api.aipowergrid.io/v1/account/credits/quote \
+  -H "Authorization: Bearer $AIPG_API_KEY" \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "model": "gpt-oss-120b",
+    "modality": "text",
+    "prompt_tokens": 1000,
+    "max_tokens": 500
+  }'
+```
+
+Create the key with only `account.read` and `inference.submit`. A quote is a
+non-mutating preflight, not a reserved allowance; the generation route still
+performs authoritative pricing, authorization, and balance enforcement when
+the request is submitted.
+
+## What the price excludes
+
+Requests may run on remote community-operated workers. The public rate does not
+include a privacy or confidential-compute guarantee. Do not send credentials,
+personal data, or regulated content unless a separately verified deployment
+meets that workload's requirements.
+
+Worker rewards are also separate from customer pricing. Customers spend
+USD-denominated service credits; workers earn den accounting units and receive
+the active AIPG reward budget according to the supply-side settlement policy.

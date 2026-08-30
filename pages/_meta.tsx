@@ -9,6 +9,7 @@ export default {
   "streaming-api": "Generation API",
   "developers": "For Developers",
   "integrations": "Use AIPG in 60 seconds",
+  "pricing": "Pricing & Comparisons",
   "web3-starters": "Web3 Starter Projects",
   "builder-credits": "Builder Credits",
   "-- run --": {
