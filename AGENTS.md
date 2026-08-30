@@ -81,8 +81,11 @@ which is intentionally NOT published.
 - `/docs/builder-credits` documents the manually reviewed `$5-$20` public
   builder pilot. It must preserve the 60-day expiry, one-grant-per-account and
   campaign limit, finite budget, service-only value, and private post-selection
-  account handoff. The public application must never request credentials or a
-  Grid account ID.
+  account handoff. Public copy must separate application review from issuance,
+  which is allowed only while the promotional-credit spend rail is active. The
+  application must never request credentials or a Grid account ID and must
+  require non-sensitive test data because community workers may inspect
+  plaintext prompts and outputs.
 - `/docs/web3-starters` is the discovery surface for the five runnable Web3
   examples in `grid-provider-integrations/starters`. It must keep Grid keys
   server-side, quote before dispatch, reject wallet-private-key custody, and
