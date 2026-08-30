@@ -9,6 +9,7 @@ export default {
   "streaming-api": "Generation API",
   "developers": "For Developers",
   "integrations": "Use AIPG in 60 seconds",
+  "builder-credits": "Builder Credits",
   "-- run --": {
     "type": "separator",
     "title": "Run a Node"
