@@ -32,8 +32,13 @@ async function collectMdxFiles(directory) {
   return nested.flat()
 }
 
+const currentProductFiles = [
+  ...(await collectMdxFiles(pagesDirectory)),
+  path.resolve('theme.config.tsx'),
+]
+
 const violations = []
-for (const file of await collectMdxFiles(pagesDirectory)) {
+for (const file of currentProductFiles) {
   if (excludedPages.has(path.relative(pagesDirectory, file))) continue
   const contents = await readFile(file, 'utf8')
   for (const claim of retiredClaims) {

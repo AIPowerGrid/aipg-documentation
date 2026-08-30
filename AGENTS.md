@@ -64,8 +64,8 @@ which is intentionally NOT published.
   pinned, checksum-verified complete-history scanning with exact historical fingerprints only.
 - **`.github/workflows/docs-ci.yml`** - clean-install claim, build, and dependency-audit gate.
 - **`scripts/check-current-claims.mjs`** - rejects a small set of retired
-  current-product claims from routed pages while intentionally excluding the
-  clearly labeled legacy whitepaper.
+  current-product claims from routed pages and global SEO/OG metadata while
+  intentionally excluding the clearly labeled legacy whitepaper.
 
 ## Local Contracts
 

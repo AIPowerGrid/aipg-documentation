@@ -50,12 +50,12 @@ const config: DocsThemeConfig = {
   head: (
     <>
       <title>AI Power Grid Docs</title>
-      <meta name="description" content="Free AI for everyone. Documentation for The Grid — decentralized inference on Base." />
+      <meta name="description" content="One API for open text, image, video, and audio models, powered by community GPUs and settled on Base." />
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       <meta name="theme-color" content="#000000" />
       <meta property="og:type" content="website" />
       <meta property="og:title" content="AI Power Grid Documentation" />
-      <meta property="og:description" content="Free AI for everyone. Documentation for The Grid — decentralized inference on Base." />
+      <meta property="og:description" content="One API for open text, image, video, and audio models, powered by community GPUs and settled on Base." />
       <meta property="og:url" content="https://aipowergrid.io/docs" />
       <meta property="og:image" content="https://aipowergrid.io/docs/og-image.webp" />
       <meta property="og:image:width" content="1200" />
