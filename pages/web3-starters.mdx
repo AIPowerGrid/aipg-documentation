@@ -46,7 +46,9 @@ DAO_PROPOSAL='Fund public GPU onboarding' \
 ### [Telegram agent](https://github.com/AIPowerGrid/grid-provider-integrations/tree/main/starters/telegram-agent)
 
 Relay allowlisted chats while both the Telegram and Grid credentials stay
-server-side.
+server-side. Shared chats can additionally restrict paid requests to explicit
+Telegram sender IDs, and a bounded replay window prevents one update from
+dispatching twice in a running process.
 
 ```bash
 node starters/telegram-agent/index.mjs
@@ -70,10 +72,12 @@ AGENT_TASK='Summarize proposal 42' \
   node starters/wallet-funded-agent/index.mjs
 ```
 
-All examples require Node.js 20 or newer. They quote before dispatch and enforce
-`AIPG_MAX_COST_USD`, which defaults to `$0.02`. Model availability follows
-connected workers; the public model catalog and quote endpoint remain
-authoritative.
+All examples require Node.js 20 or newer. They quote before dispatch and reject
+an estimate above `AIPG_MAX_COST_USD`, which defaults to `$0.02`. The quote is
+non-mutating and is not bound to the later generation request, so this is a
+client preflight guard rather than a transactionally enforced spending
+allowance. Model availability and final authorization follow connected workers,
+the public model catalog, and the Core submission route.
 
 ## The useful blockchain boundary
 
