@@ -79,6 +79,10 @@ which is intentionally NOT published.
   campaign limit, finite budget, service-only value, and private post-selection
   account handoff. The public application must never request credentials or a
   Grid account ID.
+- `/docs/web3-starters` is the discovery surface for the five runnable Web3
+  examples in `grid-provider-integrations/starters`. It must keep Grid keys
+  server-side, quote before dispatch, reject wallet-private-key custody, and
+  distinguish application receipt IDs from verified on-chain JobAnchors.
 - Deploy target is Vercel (`vercel.json`), which builds with **npm** (`npm install` /
   `npm run build`); `package-lock.json` is the committed lockfile.
 

@@ -1,0 +1,102 @@
+---
+title: Web3 AI Starter Projects
+description: Runnable AI Power Grid examples for games, DAOs, Telegram bots, NFT workflows, and wallet-funded agents.
+---
+
+# Web3 AI starter projects
+
+> One API for open text, image, video, and audio models, powered by community
+> GPUs and settled on Base.
+
+These five small, runnable examples show where the Grid belongs in a Web3
+application. Fund one service-credit account through the Console, create a
+scoped API key, and call the Grid from your server. A wallet transaction is not
+required for every inference request.
+
+## Run a starter
+
+```bash
+git clone https://github.com/AIPowerGrid/grid-provider-integrations.git
+cd grid-provider-integrations
+export AIPG_API_KEY='grid_...'
+```
+
+Create the key with only `account.read` and `inference.submit`. Keep it on the
+server and out of browser bundles, repositories, chat messages, and generated
+artifacts.
+
+### [On-chain game NPC](https://github.com/AIPowerGrid/grid-provider-integrations/tree/main/starters/onchain-game-npc)
+
+Buy bounded NPC dialogue and retain an application receipt hash.
+
+```bash
+node starters/onchain-game-npc/index.mjs \
+  'Ask the blacksmith about the ruined bridge'
+```
+
+### [DAO media pipeline](https://github.com/AIPowerGrid/grid-provider-integrations/tree/main/starters/dao-media-pipeline)
+
+Generate proposal image, video, or audio and retain Grid audit metadata.
+
+```bash
+DAO_PROPOSAL='Fund public GPU onboarding' \
+  node starters/dao-media-pipeline/index.mjs
+```
+
+### [Telegram agent](https://github.com/AIPowerGrid/grid-provider-integrations/tree/main/starters/telegram-agent)
+
+Relay allowlisted chats while both the Telegram and Grid credentials stay
+server-side.
+
+```bash
+node starters/telegram-agent/index.mjs
+```
+
+### [NFT media workflow](https://github.com/AIPowerGrid/grid-provider-integrations/tree/main/starters/nft-media-workflow)
+
+Generate reviewable media metadata without giving the generator a minting key.
+
+```bash
+NFT_NAME='Grid Genesis' NFT_PROMPT='Community GPU city' \
+  node starters/nft-media-workflow/index.mjs
+```
+
+### [Wallet-funded agent](https://github.com/AIPowerGrid/grid-provider-integrations/tree/main/starters/wallet-funded-agent)
+
+Quote each step against one bounded service-credit budget.
+
+```bash
+AGENT_TASK='Summarize proposal 42' \
+  node starters/wallet-funded-agent/index.mjs
+```
+
+All examples require Node.js 20 or newer. They quote before dispatch and enforce
+`AIPG_MAX_COST_USD`, which defaults to `$0.02`. Model availability follows
+connected workers; the public model catalog and quote endpoint remain
+authoritative.
+
+## The useful blockchain boundary
+
+Base belongs in funding, settlement, ownership, and optional provenance. It
+does not belong in every model request:
+
+1. A human or application funds the Grid account through the
+   [Console](https://console.aipowergrid.io/).
+2. The server uses a scoped Grid key to quote and run bounded work.
+3. The application stores the returned job or receipt identifier with its own
+   state and performs any wallet action separately.
+
+A returned `grid.job_id` is a Grid receipt identifier. It is not an on-chain
+JobAnchor merely because the application stores it. Describe it as anchored
+only after a contract lookup or proof verifies the corresponding publication.
+
+The wallet-funded agent never accepts a seed phrase or wallet private key. A
+human funds the service balance; the agent receives only the scoped Grid key
+and a finite inference budget.
+
+## Build on one
+
+The complete source, shared quote-first client, and security tests live in the
+[starter directory](https://github.com/AIPowerGrid/grid-provider-integrations/tree/main/starters).
+Builders shipping a public integration or demo may apply for
+[bounded builder credits](/builder-credits).
