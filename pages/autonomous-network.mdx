@@ -1,6 +1,6 @@
 ---
 title: Autonomous Network
-description: AIPG is becoming a fully on-chain, self-routing AI generation network. No central coordinator. No corporate kill switch.
+description: Current trust boundaries and the staged proposal for federated Core operation, on-chain settlement, and stronger validator authority.
 ---
 
 import { Callout } from 'nextra/components'
@@ -8,9 +8,9 @@ import { Callout } from 'nextra/components'
 # The Autonomous Network
 
 <Callout type="info">
-  **In active development.** Pieces are rolling out as Diamond facets on the Grid
-  contract. The vision: no team at the center, no single point of failure, no
-  one who can turn it off.
+  **Roadmap, not current topology.** Production uses one hosted Core and a
+  custodial worker payout rail. The sections below describe staged design
+  directions; deployed contract primitives do not make the workflow autonomous.
 </Callout>
 
 Every AI API you've used can be unplugged. Stripe can freeze your account. AWS
@@ -49,16 +49,16 @@ Look them up in [Developers](/developers) for live addresses.
 
 ### Validator-attested job routing
 
-Today the API node picks which worker handles a job. The next step: workers
-**self-claim** jobs through a deterministic on-chain mechanism (described in
-[Claim Resolution](/p2p/claim-resolution)), and validators attest to whether
-the work was honest. The routing layer disappears into the contract.
+Today the API node picks which worker handles a job. One proposed later stage
+lets workers **self-claim** jobs through a deterministic mechanism (described
+in [Claim Resolution](/p2p/claim-resolution)) while validators attest to
+objective evidence. That design is not implemented as the production router.
 
 ### Smart-contract payments
 
-Generation fees flow through the contract instead of an off-chain settlement
-service. Workers receive payment as soon as a job's attestation window closes.
-Validators take a cut. No invoices, no payouts CSV, no team in the middle.
+A future audited settlement design could move generation fees through a
+contract instead of the current off-chain service. Worker and validator fee
+rules, claim timing, and dispute behavior are not finalized.
 
 ### Bonded validators
 
@@ -68,9 +68,9 @@ quorum, and dispute tooling exist. See [Validator Nodes](/validator-node).
 
 ### Dispute resolution
 
-When attestations disagree, the contract runs a fraud-proof protocol — third
-parties re-execute the disputed job, the loser is slashed, the dispute settles
-deterministically. No human arbitration.
+When attestations disagree, a future dispute protocol could use bounded
+re-execution and objective evidence. No production fraud-proof contract,
+automatic loser slashing, or deterministic no-human dispute path is live.
 
 ---
 
@@ -92,28 +92,27 @@ shape of the network:
 | **Disputes** | Email the team | Fraud-proof in contract, deterministic outcome |
 | **Failure mode** | Provider can turn it off | Network keeps running while workers exist |
 
-This is the same trajectory as Ethereum rollups: start with a centralized
-sequencer for performance, then progressively decentralize sequencing and
-proving until the L1 settlement is what gives you trust. AIPG's "API node" is
-today's sequencer. Validators + on-chain routing are how it goes away.
+The sequencing analogy is useful, but it is not proof of the destination.
+AIPG's hosted Core is today's coordinator. Replacing that trust requires
+partner-operated federation, deterministic state replication, validator
+independence, audited settlement, and observed failover evidence.
 
 ---
 
 ## Confidential Computing as the Final Piece
 
-Once jobs route on-chain, payments settle on-chain, and validators verify
-on-chain, there's still one open question: *who can see the prompts?* The host
-OS of the worker can.
+Even if routing, settlement, and validator commitments move on-chain, one open
+question remains: *who can see the prompts?* On ordinary hardware, the worker
+operator and host OS can.
 
-[Confidential Computing](/confidential-computing) closes that — prompts and
-outputs are encrypted in GPU memory, decrypted only inside an NVIDIA-attested
-TEE on Blackwell hardware. The network can prove that your sensitive workload
-ran in a secure enclave, and no one — not the operator, not the protocol team
-— can read your data.
+[Confidential Computing](/confidential-computing) is the proposed privacy lane:
+prompts and outputs would be decrypted only inside an attested GPU TEE. This is
+not the privacy guarantee of ordinary workers or current production requests.
 
-That's the full picture: autonomous routing, on-chain settlement, validator
-verification, hardware-isolated privacy. A generation network that nobody can
-shut down and nobody can spy on.
+The target architecture combines federated routing, on-chain economic
+commitments, independent validator evidence, and hardware-isolated privacy.
+Each property needs its own implementation and production evidence before the
+network can claim it.
 
 ---
 
