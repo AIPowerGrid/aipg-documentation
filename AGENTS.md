@@ -88,8 +88,10 @@ which is intentionally NOT published.
   plaintext prompts and outputs.
 - `/docs/web3-starters` is the discovery surface for the five runnable Web3
   examples in `grid-provider-integrations/starters`. It must keep Grid keys
-  server-side, quote before dispatch, reject wallet-private-key custody, and
-  distinguish application receipt IDs from verified on-chain JobAnchors.
+  server-side, quote before dispatch, describe the non-mutating quote as a
+  client preflight guard rather than a server allowance, reject
+  wallet-private-key custody, and distinguish application receipt IDs from
+  verified on-chain JobAnchors.
 - Deploy target is Vercel (`vercel.json`), which builds with **npm** (`npm install` /
   `npm run build`); `package-lock.json` is the committed lockfile.
 
