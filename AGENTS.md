@@ -78,6 +78,10 @@ which is intentionally NOT published.
 - `/docs/llms.txt` is a concise discovery index, not a duplicate API reference. It points
   agents to the canonical `grid-skill` instructions and selected current docs; keep those links
   valid when pages move.
+- `/docs/integrations` is the canonical 60-second first-run path. Its initial
+  key must carry `inference.submit` plus `account.read`, it must surface the
+  canonical funding check before framework setup, and its bounded raw API smoke
+  test must remain valid independently of any third-party client.
 - `/docs/builder-credits` documents the manually reviewed `$5-$20` public
   builder pilot. It must preserve the 60-day expiry, one-grant-per-account and
   campaign limit, finite budget, service-only value, and private post-selection
