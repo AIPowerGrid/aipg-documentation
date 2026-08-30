@@ -1,40 +1,42 @@
 ---
 title: AI Power Grid Documentation
-description: Free AI for everyone. GPU-powered text, image, and video generation, OpenAI-compatible API, community-funded.
+description: One API for open text, image, video, and audio models, powered by community GPUs and settled on Base.
 ---
 
 import { Callout, Cards } from 'nextra/components'
 
 # AI Power Grid
 
-**Free AI for everyone.** Build agents, generate images, render video, ship
-products, learn AI — without barriers. The Grid is a community GPU generation
-network with an OpenAI-compatible API, funded by paid users so anyone can build
-for free.
+**One API for open text, image, video, and audio models, powered by community
+GPUs and settled on Base.** Build agents, generate media, and ship products
+without tying your application to one closed model provider.
 
 <Callout type="info">
-  Free daily access is live — no credit card, no trial that expires.
-  [Get your free API key](https://console.aipowergrid.io) to start building.
+  [Create an account and API key](https://console.aipowergrid.io) to start
+  building. Funding, allowances, prices, and charging availability are reported
+  by the Console and API; controlled rollout stages may differ by account or model.
 </Callout>
 
 ---
 
 ## How It Works
 
-Every paid request funds free access for someone else. The more the network grows,
-the more free AI it can provide.
+Applications submit work through one API. Grid Core dispatches it to a compatible
+worker, records completed work, and pays the current worker reward budget in AIPG
+through verifiable transfers on Base.
 
 ```
-   Paid Users  ─funds→  Node Operators  ─compute→  Free Users
-       │                       │                        │
-   APIs &                   Earn AIPG today         Learn,
-   integrations             per request             build, ship
+   Apps and agents  ─requests→  Grid Core  ─dispatches→  GPU workers
+          │                       │                         │
+   Service credits       Metering and routing       Text and media
+                                  │
+                         AIPG payouts on Base
 ```
 
 | Role | What you do | What you get |
 |------|-------------|--------------|
-| **Free user** | Sign up, get an API key, start building | Daily free quota, text/image/video API |
-| **Paid user** | Top up for higher limits | Unlimited access, your usage funds free tier |
+| **API user** | Create a key and submit supported workloads | One account for text and media usage |
+| **Funded user** | Add nontransferable service credits | Usage charged at the current published quote when charging applies |
 | **Node operator** | Run a GPU worker | Earn a share of the current AIPG worker budget |
 | **Validator** _(preview)_ | Submit assignment-bound evidence | Help test and secure the protocol; no rewards yet |
 
@@ -56,11 +58,11 @@ the more free AI it can provide.
 
 ## Why AIPG?
 
-- **Free tier that doesn't expire.** Students, hobbyists, devs in emerging markets — everyone gets daily access.
-- **OpenAI-compatible.** Drop-in text, image, and video generation through `/v1`. Existing SDKs just work.
-- **No gatekeepers.** No corporate API. No usage profiling. No model deprecations on someone else's schedule.
-- **Community-owned compute.** Anyone with a GPU can join the network and earn.
-- **Heading on-chain.** Validators, smart-contract payments, and confidential computing in active development.
+- **Multimodal.** Use open text, image, video, and audio models through one Grid account.
+- **Familiar APIs.** OpenAI-compatible text endpoints plus native media generation routes.
+- **Community compute.** Independent GPU operators can join the network and earn from the current worker budget.
+- **Verifiable payouts.** Completed worker payouts are public ERC-20 transfers on Base.
+- **Honest decentralization roadmap.** Validator evidence is live in preview; rewards, penalties, and federated Core operation remain gated future work.
 
 ---
 

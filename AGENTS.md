@@ -62,6 +62,10 @@ which is intentionally NOT published.
   do not link from published pages.
 - **`.github/workflows/secret-scan.yml`, `.gitleaks.toml`, and `.gitleaksignore`** —
   pinned, checksum-verified complete-history scanning with exact historical fingerprints only.
+- **`.github/workflows/docs-ci.yml`** - clean-install claim, build, and dependency-audit gate.
+- **`scripts/check-current-claims.mjs`** - rejects a small set of retired
+  current-product claims from routed pages while intentionally excluding the
+  clearly labeled legacy whitepaper.
 
 ## Local Contracts
 
@@ -102,6 +106,10 @@ which is intentionally NOT published.
 - Label roadmap concepts and default-off prototypes explicitly. Do not publish
   exact economics, stake sizes, deterministic guarantees, model availability,
   or security authority as current without runtime/on-chain evidence.
+- Do not promise a permanent or universally spendable free tier. Funding,
+  promotions, daily allowances, and charging are independent runtime policies;
+  public copy must defer to the Console/API unless live production evidence
+  proves a narrower claim.
 - Validator onboarding targets the published preview.13 local operator app,
   dedicated-account enrollment, and persistent Windows menu. It must not request a personal
   private key or imply existing-account pairing, validator rewards, or media
@@ -114,6 +122,7 @@ which is intentionally NOT published.
 ## Verification
 
 - `npm install` then `npm run dev` → http://localhost:3000/docs to preview.
+- `npm run check:claims` rejects known retired promises from current pages.
 - `npm run build` must succeed (Nextra/Next build is the gate before deploy).
 - `npm audit` must report zero known vulnerabilities before deploy.
 - `gitleaks git . --log-opts=HEAD --config .gitleaks.toml --redact --verbose`

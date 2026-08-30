@@ -35,12 +35,15 @@ export default {
   },
   "tokenomics": "Tokenomics",
   "staking": "Staking (Wind-Down)",
-  "arc20_token_network": "Token Factory",
+  "arc20_token_network": {
+    "title": "Token Factory (Concept)",
+    "display": "hidden"
+  },
   "-- reference --": {
     "type": "separator",
     "title": "Reference"
   },
-  "whitepaper": "Whitepaper",
+  "whitepaper": "Legacy Whitepaper",
   "about": {
     "title": "About",
     "type": "page"
