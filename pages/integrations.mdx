@@ -17,10 +17,37 @@ API key:  your scoped Grid key
 ```
 
 1. [Create an API key](https://console.aipowergrid.io/dashboard/api-key) with
-   `inference.submit`.
-2. Check [`GET /v1/models`](https://api.aipowergrid.io/v1/models) for the text
+   `inference.submit` and `account.read`. The second scope lets quote-aware
+   clients inspect credit without granting them account-management access.
+2. Check your [credit balance](https://console.aipowergrid.io/dashboard/funding).
+   Add funds only if the Console reports that you do not have enough spendable
+   credit for the request you want to run.
+3. Check [`GET /v1/models`](https://api.aipowergrid.io/v1/models) for the text
    models currently online. Use `auto` when you want the Grid to choose.
-3. Pick a client below and paste the configuration.
+4. Run the smoke test below, then pick a client and paste its configuration.
+
+## Fastest smoke test
+
+This makes one bounded text request. It proves the key, scopes, balance, model
+route, and streaming-independent response path before another framework adds
+its own configuration layer.
+
+```bash
+export AIPG_API_KEY="your-scoped-key"
+
+curl --fail-with-body https://api.aipowergrid.io/v1/chat/completions \
+  -H "Authorization: Bearer $AIPG_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "auto",
+    "messages": [{"role": "user", "content": "Reply with: Grid connected"}],
+    "max_tokens": 32,
+    "stream": false
+  }'
+```
+
+An HTTP `402` means the account needs more currently spendable credit; it does
+not mean the key or client configuration is invalid.
 
 <Callout type="warning">
   Grid requests may be processed by remote community-operated workers. Do not
