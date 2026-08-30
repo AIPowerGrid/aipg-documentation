@@ -306,7 +306,7 @@ the current public release from npm:
 ```bash
 npm install --global @aipowergrid/mcp
 
-export GRID_API_KEY="your-scoped-key"
+aipg login
 aipg models
 aipg quote --model "Krea 2 Turbo" --modality image
 ```
@@ -327,12 +327,16 @@ Configure an MCP client to launch the locally installed stdio server:
 ```
 
 Use the client's local secret store when available; interpolation syntax varies
-by client. `@aipowergrid/mcp@0.1.1` is the current public release and uses a
-durable scoped key only from local secret storage. Source `0.2.0` adds browser
-authorization and a remote HTTP MCP resource, but both remain dark until the
-Core OAuth, Console consent, expiry, denial, revocation, charging, and load
-canaries pass. The remote service accepts only short-lived, audience-bound user
-tokens and will not relay durable Grid API keys between systems.
+by client. The local stdio server accepts a durable scoped key from secret
+storage. MCP clients that support remote Streamable HTTP and OAuth 2.1 can use:
+
+```text
+https://api.aipowergrid.io/v1/mcp
+```
+
+The remote service performs browser consent and accepts only short-lived,
+audience-bound user tokens. It will not relay durable Grid API keys between
+systems. Tokens expire after 15 minutes and have no refresh token.
 
 ## Shipping a public integration?
 
@@ -352,7 +356,7 @@ other credentials.
 | **ElizaOS** | `@aipowergrid/plugin-aipg@0.1.0` published | The registry PR remains under upstream review. |
 | **Vercel AI SDK** | `@aipowergrid/ai-sdk-provider@0.1.0` published | Native text, image, video, and music helpers work; the upstream docs PR remains under review. |
 | **n8n** | `@aipowergrid/n8n-nodes-aipg@0.1.3` published with dedicated-repo provenance; scanner and automated portal review passed | Demo submitted; Creator Portal status is **Under Review**. The HTTP Request fallback also works. |
-| **Grid CLI + MCP** | `@aipowergrid/mcp@0.1.1` published | CLI and local stdio MCP are live. The remote HTTP endpoint is dark-deployed in production, but OAuth remains disabled and public remote-MCP use is not released. |
+| **Grid CLI + MCP** | `@aipowergrid/mcp@0.2.0` published | CLI, local stdio MCP, browser login, and the authenticated remote HTTP MCP resource are live. |
 | **Open WebUI** | Standard connection tested | No provider-specific plugin is required. |
 | **Cline** | Standard OpenAI Compatible configuration | No provider-specific plugin is required. |
 | **Continue** | Standard OpenAI provider with a custom API base | Keep the key in Continue's secret storage. |
