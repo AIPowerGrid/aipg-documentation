@@ -74,6 +74,11 @@ which is intentionally NOT published.
 - `/docs/llms.txt` is a concise discovery index, not a duplicate API reference. It points
   agents to the canonical `grid-skill` instructions and selected current docs; keep those links
   valid when pages move.
+- `/docs/builder-credits` documents the manually reviewed `$5-$20` public
+  builder pilot. It must preserve the 60-day expiry, one-grant-per-account and
+  campaign limit, finite budget, service-only value, and private post-selection
+  account handoff. The public application must never request credentials or a
+  Grid account ID.
 - Deploy target is Vercel (`vercel.json`), which builds with **npm** (`npm install` /
   `npm run build`); `package-lock.json` is the committed lockfile.
 

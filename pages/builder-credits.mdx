@@ -1,0 +1,77 @@
+---
+title: Builder Credits
+description: Apply for $5-$20 of expiring AI Power Grid service credit to ship a public integration or demo.
+---
+
+import { Callout } from 'nextra/components'
+
+# Builder credits
+
+AI Power Grid offers a small, manually reviewed credit pilot for builders who
+will ship a public integration, reusable example, or working demo. The goal is
+simple: turn a bounded amount of Grid generation into something other people
+can inspect and use.
+
+[Apply for builder credits](https://github.com/AIPowerGrid/grid-provider-integrations/issues/new?template=builder-credits.yml)
+
+<Callout type="warning">
+  An application is not a grant. Never put an API key, login token, Grid
+  account ID, seed phrase, wallet private key, private customer data, or other
+  secret in a public GitHub issue.
+</Callout>
+
+## Grant tiers
+
+| Credit | Intended proof |
+| ---: | --- |
+| **$5** | A focused prototype or compatibility proof |
+| **$10** | A public integration or reusable example |
+| **$20** | A working public demo with documented setup |
+
+Choose the smallest tier that can prove the deliverable. Credits are
+USD-denominated Grid service value, not cash or tokens. They cannot be
+transferred, withdrawn, sold, or redeemed.
+
+## What qualifies
+
+Strong applications have:
+
+- a public repository, deployed demo, or other inspectable project evidence;
+- one concrete deliverable that uses Grid text, image, video, audio, model
+  discovery, quotes, or credit inspection;
+- a bounded test plan with approximate request volume;
+- documentation that tells another builder how AIPG is used; and
+- an honest disclosure that requests may reach community-operated workers.
+
+The pilot does not fund anonymous faucets, manufactured traffic, token-price
+promotion, private experiments with no public artifact, or workloads that need
+unverified privacy guarantees.
+
+## How it works
+
+1. Open the public application and describe the project, requested tier,
+   capability, deliverable, and test plan.
+2. A maintainer reviews usefulness, feasibility, public evidence, and whether
+   the requested tier is proportionate.
+3. If selected, receive private instructions for linking the approved project
+   to one canonical Grid account. Do not post the account ID in the issue.
+4. The grant appears as promotional credit in
+   [`GET /v1/account/credits`](https://api.aipowergrid.io/v1/account/credits).
+   It remains separate from purchased balance.
+5. Ship the promised public artifact and add the result to the application
+   issue before the grant expires.
+
+Each selected account can receive at most one grant in a campaign. Grants
+expire 60 days after issuance and are issued only while the finite campaign
+budget and promotional-credit rail are active. Selection is discretionary and
+availability is not guaranteed.
+
+## Keep usage bounded
+
+Use [`POST /v1/account/credits/quote`](https://api.aipowergrid.io/v1/account/credits/quote)
+before generation, cap output and media duration, and reject unpriced requests.
+The [60-second integration guide](/integrations) includes copy-paste setup for
+popular clients. The
+[Web3 starters](https://github.com/AIPowerGrid/grid-provider-integrations/tree/main/starters)
+show quote-before-dispatch, fixed API origins, and hard request limits.
+
