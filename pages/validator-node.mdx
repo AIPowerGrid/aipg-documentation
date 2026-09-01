@@ -177,7 +177,9 @@ The commands above remain the headless-server path. The app shows registration,
 acknowledged heartbeats, assignment activity, accepted evidence, and redacted
 diagnostics. Registration alone is not completed validation; waiting during
 assignment cooldown is normal. Native offline packaging checks pass on all four
-platforms, but complete live Windows qualification is still outstanding.
+platforms, and the published Windows binary completed a first-party hosted live
+runtime qualification. That proves the artifact runs; it does not count as an
+independent operator or replace human desktop feedback.
 
 **Stop** stops the process the app started, preserving its signing identity and
 recovery journal. Closing only the browser tab leaves it running; **Exit app**
@@ -196,6 +198,37 @@ should keep their current configuration when upgrading, not enroll a new
 identity. A successful registration alone is not a validation result: confirm
 a fresh heartbeat and accepted signed evidence after running.
 
+### Linux server persistence
+
+For the 72-hour cohort, use systemd instead of leaving a terminal or browser app
+open. After the install, enrollment, self-test, and `check --no-probe` commands
+above pass, download the service helper from its reviewed immutable commit and
+verify its SHA-256 before running it:
+
+```bash
+cd ~/.aipg-validator
+curl -fsSLo install-systemd.sh \
+  https://raw.githubusercontent.com/AIPowerGrid/grid-validator/778e9a1f2263094918998954c62678dba6b90334/scripts/install-systemd.sh
+printf '%s  %s\n' \
+  32adb391ab0591a55b3cbefce851fb0b9965685dabfc26706d6458e488b5defd \
+  install-systemd.sh | sha256sum -c -
+chmod 700 install-systemd.sh
+sudo AIPG_VALIDATOR_EXEC="$HOME/.local/bin/aipg-validator" \
+  AIPG_VALIDATOR_WORKDIR="$HOME/.aipg-validator" \
+  ./install-systemd.sh --dry-run
+sudo AIPG_VALIDATOR_EXEC="$HOME/.local/bin/aipg-validator" \
+  AIPG_VALIDATOR_WORKDIR="$HOME/.aipg-validator" \
+  ./install-systemd.sh
+sudo systemctl status aipg-validator --no-pager
+sudo journalctl -u aipg-validator -f
+```
+
+The preview.13 executable and service helper are pinned independently. Do not
+replace the helper URL with `master`, pipe it directly into a shell, or put a
+private key/API key in a command. Stop any validator child started by the local
+app before enabling systemd, and keep the same `.env` and validator ID throughout
+qualification.
+
 The preview is deliberately limited:
 
 - V0 evidence is useful for dashboards and engineering feedback.
@@ -208,9 +241,10 @@ The preview is deliberately limited:
 - Validator rewards, stake enforcement, routing influence, slashing, and media
   assignments remain disabled.
 
-AI Power Grid is recruiting 5-10 independently controlled operators for a
-72-hour, no-reward qualification. One person or organization counts once even
-if it runs several nodes. See the
+AI Power Grid currently needs two additional independently controlled Linux
+operators to complete the first three-operator gate. The broader pilot still
+targets 5-10 operators. Qualification runs for 72 hours with no reward, and one
+person or organization counts once even if it runs several nodes. See the
 [preview cohort runbook](https://github.com/AIPowerGrid/grid-validator/blob/master/PREVIEW_COHORT.md)
 and [volunteer on the tracked cohort issue](https://github.com/AIPowerGrid/grid-validator/issues/5).
 

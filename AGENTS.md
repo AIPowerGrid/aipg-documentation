@@ -129,6 +129,10 @@ which is intentionally NOT published.
   dedicated-account enrollment, and persistent Windows menu. It must not request a personal
   private key or imply existing-account pairing, validator rewards, or media
   assignments are available. Preserve existing operator identities on upgrades.
+  The Linux 72-hour cohort path uses systemd and must pin the service helper to
+  a reviewed immutable commit with an explicit SHA-256 check, separately from
+  the frozen preview.13 binary. Never publish a mutable branch download,
+  pipe-to-shell command, or credential-bearing command line.
 - Do not place `AGENTS.md` anywhere under `pages/`: Nextra compiles Markdown in
   that tree into public routes. Keep the page-content contract here.
 - Changing nav order/labels/separators → edit `_meta.tsx`, not the page frontmatter.
