@@ -1,216 +1,189 @@
 ---
 title: Text Worker (LLM)
-description: Run an LLM worker on AIPG. No bond required today; completed work contributes to the hourly AIPG payout split.
+description: Connect an existing Ollama or OpenAI-compatible text backend to AI Power Grid.
 ---
 
 import { Callout } from 'nextra/components'
 
 # Text Worker
 
-Run LLMs on The Grid. Earn AIPG through the current worker payout rail for
-powering chat and text generation.
+The Grid text worker is a sidecar for an inference backend you already run. It
+supports Ollama, vLLM, SGLang, LMDeploy, LM Studio, KoboldCpp, and other
+compatible APIs without taking custody of your model files.
+
+Completed accepted work records den work units used in the current hourly AIPG
+payout split. Den is not currency and there is no guaranteed request volume,
+fixed exchange rate, or earnings amount.
 
 <Callout type="info">
-  **No bond required to run a worker today.** You can connect a worker and start
-  serving with just an API key. A planned on-chain bonding mechanism (the
-  `WorkerRegistry` Diamond facet) is in development and **not yet required**.
-  Its production bond amount and slashing policy are not finalized. See
-  [Run a Node](/run-a-node) for the bigger picture.
+  No worker bond is required today. Worker bonding and slashing remain planned;
+  their production policy is not finalized or active.
 </Callout>
 
----
+## How It Fits
 
-## What You're Running
+1. Your Ollama or OpenAI-compatible backend serves a model.
+2. The worker connects outbound to the Grid over WebSocket.
+3. Core sends only jobs compatible with the advertised model.
+4. The worker calls your backend and streams the result to Core.
+5. Accepted completion contributes to your payout-period share.
 
-The **Grid Inference Worker** connects your local LLM backend to The Grid:
-
-1. You run a backend (Ollama, vLLM, etc.) with your models
-2. The worker connects to The Grid
-3. Users chat at aipg.chat or via API
-4. Your hardware generates responses
-5. The job records den work units used for the current hourly AIPG payout split
-
-No Python required for pre-built binaries. Just download, run, and follow the setup wizard.
-
----
+The worker does not install or control your backend. It may help an Ollama user
+pull a model only after an explicit local action.
 
 ## Requirements
 
-| Component | Minimum | Recommended |
-|-----------|---------|-------------|
-| **GPU VRAM** | 4 GB | 12 GB+ |
-| **RAM** | 8 GB | 16 GB+ |
-| **Storage** | 20 GB | 50 GB+ SSD |
+- A supported operating-system release shown at
+  [aipowergrid.io/run](https://aipowergrid.io/run).
+- A running Ollama or OpenAI-compatible backend.
+- Enough RAM, VRAM, and disk for the model you choose.
+- A Grid account for approving the worker-scoped connection.
 
-CPU-only is possible for small models but significantly slower.
-
-### VRAM by Model Size
-
-| Model | VRAM | Examples |
-|-------|------|----------|
-| 3B | 4 GB | Llama 3.2 3B, Phi-3 Mini |
-| 7-8B | 8 GB | Llama 3 8B, Mistral 7B |
-| 13B | 16 GB | Llama 2 13B |
-| 70B | 48 GB+ | Llama 2 70B |
-
----
+Model memory varies substantially with architecture, context length,
+quantization, and backend settings. Treat model publishers and your backend's
+own memory report as authoritative; a model parameter count alone is not a
+hardware guarantee.
 
 ## Quick Start
 
-### 1. Install Ollama
+### 1. Start Your Backend
+
+For Ollama, install it from the
+[official download page](https://ollama.com/download), start it, and confirm the
+chosen model appears:
 
 ```bash
-curl -fsSL https://ollama.com/install.sh | sh
-ollama pull llama3.2:3b
+ollama list
 ```
 
-### 2. Get an API Key
+For vLLM, SGLang, LMDeploy, LM Studio, or KoboldCpp, start the local API you
+already use and note its endpoint.
 
-Sign in with Google, GitHub, or a wallet at
-[console.aipowergrid.io](https://console.aipowergrid.io) and create a key.
+### 2. Download the Verified Worker
 
-### 3. Download the Worker
+Use [aipowergrid.io/run](https://aipowergrid.io/run). That page exposes only
+platform artifacts that pass the current immutable release-manifest, checksum,
+SBOM, and GitHub asset checks. Follow the exact first-run command shown for the
+selected artifact.
 
-Grab the binary for your platform from [Releases](https://github.com/AIPowerGrid/grid-text-worker/releases):
+### 3. Complete the Local Wizard
 
-| Platform | File |
-|----------|------|
-| Windows | `grid-inference-worker-windows-x64.exe` |
-| macOS | `grid-inference-worker-macos-arm64.zip` |
-| Linux | `grid-inference-worker-linux-x64` |
+The worker opens a token-protected local dashboard at
+`http://localhost:7861`. In the wizard:
 
-**Windows** — Double-click the exe.
+1. Select a detected backend or enter its endpoint.
+2. Test the endpoint and choose a model it actually serves.
+3. Review the Grid model name, context, and output limits.
+4. Open the short-lived Console approval link.
+5. Approve the exact worker name and worker-only credential.
+6. Start the worker and wait for the dashboard to report **Online**.
 
-**macOS** — Unzip, open the app.
+Console authentication and payout-wallet management happen in Console. The
+worker never asks for a payout-wallet private key.
 
-**Linux** — `chmod +x grid-inference-worker-linux-x64 && ./grid-inference-worker-linux-x64`
+### 4. Verify the Connection
 
-### 4. Configure via Web Wizard
+Use the public exact-name check on
+[aipowergrid.io/run](https://aipowergrid.io/run) after the local dashboard
+reports Online. A merely running process is not proof that Core accepted its
+registration.
 
-The worker opens a setup wizard at `http://localhost:7861`:
+## Supported Backends
 
-- Enter your API key
-- Select your backend (Ollama auto-detected)
-- Choose a model
-- Click Start
+| Backend | Local worker path | Notes |
+| --- | --- | --- |
+| Ollama | Auto-detected | Easiest local setup |
+| vLLM | OpenAI-compatible endpoint | High-throughput serving |
+| SGLang | OpenAI-compatible endpoint | High-throughput serving |
+| LMDeploy | OpenAI-compatible endpoint | Detected on its common port |
+| LM Studio | Detected or entered manually | Desktop local server |
+| KoboldCpp | Detected or entered manually | Compatible local API |
+| Other compatible APIs | Entered manually | Advanced; test before saving |
 
-That's it. Jobs come in automatically.
+Backend credentials are stored locally and are not returned by the dashboard
+API after saving.
 
----
+## Capacity Controls
 
-## Alternative: Run from Source
+The worker supports these operator controls:
+
+| Setting | Purpose |
+| --- | --- |
+| `GRID_MAX_THREADS` | Maximum simultaneous Grid jobs for a single backend |
+| `GRID_SCHEDULE` | Optional local-time availability windows and concurrency |
+| `GRID_MAX_LENGTH` | Maximum generated tokens per response |
+| `GRID_MAX_CONTEXT_LENGTH` | Maximum accepted context length |
+| `GRID_BACKENDS` | Advanced multi-backend configuration with per-backend limits |
+
+Example schedule:
+
+```json
+[
+  {"days":"mon-fri","start":"08:00","end":"18:00","concurrency":1},
+  {"days":"sat-sun","concurrency":2}
+]
+```
+
+Outside matching windows, the worker uses `GRID_MAX_THREADS`. A window with
+`"concurrency": 0` pauses Grid work. Schedule changes are reevaluated
+periodically; scaling down drains or cancels worker connections through the
+normal cleanup path.
+
+The local Settings page exposes concurrency. Schedule configuration currently
+uses the environment file; do not assume a jobs-per-hour or token-per-second
+rate limiter exists.
+
+## Run From Source
+
+Pre-built verified releases are the normal operator path. Developers may run a
+reviewed checkout from source:
 
 ```bash
 git clone https://github.com/AIPowerGrid/grid-text-worker
 cd grid-text-worker
+python -m venv .venv
+source .venv/bin/activate
 pip install -e .
 grid-inference-worker
 ```
 
-## Alternative: Docker
+Enter credentials only in the token-protected local wizard or protected env
+file. Do not put a Grid or backend key in a command argument, screenshot,
+public issue, or support log.
 
-```bash
-git clone https://github.com/AIPowerGrid/grid-text-worker
-cd grid-text-worker
-cp .env.example .env
-# Edit .env with your API key
-docker compose up -d
-```
+## Security Boundary
 
----
+<Callout type="warning">
+  Community workers receive plaintext prompts and produce plaintext outputs.
+  Do not send secrets or regulated data unless a separately documented
+  confidential-execution route is live and verified.
+</Callout>
 
-## Configuration
-
-### Via Web Wizard (Recommended)
-
-Everything configurable at `http://localhost:7861`.
-
-### Via CLI
-
-```bash
-grid-inference-worker \
-  --api-key YOUR_KEY \
-  --model llama3.2:3b \
-  --backend-url http://localhost:11434
-```
-
-### Via Environment
-
-```ini
-# .env
-GRID_API_KEY=your-key
-MODEL_NAME=llama3.2:3b
-BACKEND_TYPE=ollama
-OLLAMA_URL=http://127.0.0.1:11434
-GRID_WORKER_NAME=my-worker
-```
-
-### Install as Service
-
-Auto-start on boot:
-
-```bash
-grid-inference-worker --install-service
-```
-
----
-
-## Supported Backends
-
-| Backend | Type | Notes |
-|---------|------|-------|
-| [Ollama](https://ollama.com) | `ollama` | Easiest setup |
-| [LM Studio](https://lmstudio.ai) | `ollama` | GUI-based |
-| [vLLM](https://github.com/vllm-project/vllm) | `openai` | High performance |
-| [SGLang](https://github.com/sgl-project/sglang) | `openai` | Fast inference |
-| [KoboldCpp](https://github.com/LostRuins/koboldcpp) | `openai` | CPU optimized |
-
-Anything with an OpenAI-compatible API works. Set `BACKEND_TYPE=openai` and point `OPENAI_URL` at it.
-
----
-
-## Earning
-
-### How It Works
-
-1. User sends a message at aipg.chat or via API
-2. The Grid routes it to your worker
-3. Your model generates the response
-4. The job contributes den to your share of the current hourly AIPG payout
-
-### What Earns Most
-
-- **Popular models** — gpt-oss-120b, qwen3-27b get the most traffic
-- **Fast responses** — quicker = more jobs/hour
-- **24/7 uptime** — consistent availability
-- **Streaming** — enable for real-time token delivery
-
----
+- The dashboard binds to loopback by default and requires a local token.
+- LAN exposure is an explicit operator choice and remains token-protected.
+- Model weights stay in the operator's backend.
+- The Grid credential is worker-scoped and cannot spend account credits.
+- The payout wallet and its private key do not belong on the worker host.
 
 ## Troubleshooting
 
-**Worker won't start?**
-- Check Python 3.9+ if running from source
-- Verify Ollama is running: `ollama list`
+**No backend detected:** verify the service is running, enter its URL manually,
+and select **Test**. Container networking may require a host-gateway address.
 
-**No jobs?**
-- Normal during low traffic
-- Check worker shows online in dashboard
-- Make sure you're running a popular model
+**No models listed:** confirm the backend's own models endpoint lists or has
+loaded the model.
 
-**Out of memory?**
-- Use smaller model (3B vs 7B)
-- Try quantized versions (q4_0)
-- Close other GPU apps
+**The dashboard says running but not Online:** check the bounded connection
+error and logs. Online requires a valid Core `ready` response.
 
----
+**No jobs arrive:** demand is variable. Check that the advertised model name is
+valid, the worker is visible publicly, and the operating schedule is not
+paused.
 
 ## Links
 
-| Resource | URL |
-|----------|-----|
-| **Repository** | [github.com/AIPowerGrid/grid-text-worker](https://github.com/AIPowerGrid/grid-text-worker) |
-| **Releases** | [github.com/AIPowerGrid/grid-text-worker/releases](https://github.com/AIPowerGrid/grid-text-worker/releases) |
-| **Get API Key** | [console.aipowergrid.io](https://console.aipowergrid.io) |
-| **Ollama** | [ollama.com](https://ollama.com) |
-| **Discord** | [discord.gg/W9D8j6HCtC](https://discord.gg/W9D8j6HCtC) |
+- [Verified worker download and hardware planner](https://aipowergrid.io/run)
+- [Text worker repository](https://github.com/AIPowerGrid/grid-text-worker)
+- [Connect an existing stack](/connect-existing-stack)
+- [Public payout history](https://console.aipowergrid.io/transparency)
+- [Operator support](https://discord.gg/W9D8j6HCtC)

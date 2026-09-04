@@ -12,10 +12,10 @@ validator rewards are not.
 
 | | AI Worker Node | Validator Node |
 |---|---|---|
-| **Status** | Live | Public evidence-only preview |
+| **Status** | Text open; managed media qualification-gated | Public evidence-only preview |
 | **Stake** | Not required; future bond amount/policy not finalized | Not required; validator staking is disabled |
-| **What you do** | Serve generation jobs (chat, image, video) | Verify that workers' results are honest |
-| **Hardware** | GPU required (4 GB VRAM minimum, 12+ GB recommended) | Modest CPU + bandwidth; GPU optional for re-execution |
+| **What you do** | Serve compatible generation jobs from an existing backend | Run assigned worker checks and sign the evidence |
+| **Hardware** | Depends on the model and runtime | Modest CPU + bandwidth; no GPU required in the preview |
 | **Earnings** | Current hourly AIPG budget, pro-rata to den | None in the preview |
 | **Risk** | None today; future bond risk for objective fraud | No routing, reward, strike, stake, or slash authority |
 
@@ -29,24 +29,26 @@ validator rewards are not.
 
 ## AI Worker Nodes (Live)
 
-If you have a GPU sitting idle, you can put it to work. AI worker nodes pick up
-generation jobs from the network, run the model or workflow, and return the
-result. The current hourly rail pays AIPG pro-rata to recorded den work units.
-
-**Two flavors:**
+If you already run an AI backend, a Grid worker can connect its explicitly
+selected capacity to the network. The worker receives compatible jobs, calls
+your runtime, and returns the result. The current hourly rail pays AIPG pro-rata
+to recorded den work units.
 
 <Cards>
-  <Cards.Card title="Text Worker — LLMs via Ollama, vLLM, etc." href="/worker-llm" />
-  <Cards.Card title="Image Worker — ComfyUI" href="/worker-media" />
+  <Cards.Card title="Connect Your Existing AI Stack" href="/connect-existing-stack" />
+  <Cards.Card title="Text Worker — Ollama, vLLM, and more" href="/worker-llm" />
+  <Cards.Card title="Media Worker — qualification and advanced paths" href="/worker-media" />
 </Cards>
 
-You can run both on the same machine if you have the VRAM, or pick one based on
-what your hardware does best.
+The public text worker is open. An existing ComfyUI installation does not make
+arbitrary models or workflows immediately eligible for paid Grid work; media
+capabilities remain bound to supported recipes and the current qualification
+process.
 
 ### The worker bond (planned, not yet required)
 
-Running a worker today does **not** require a stake — connect with an API key and
-start serving. A bonding mechanism is in development: workers will stake to the
+Running a worker today does **not** require a stake. A bonding mechanism is in
+development: workers may later stake to the
 `WorkerRegistry` Diamond facet. The amount and rollout policy are not finalized.
 This would be collateral, not a fee.
 As long as you serve honest results, your stake stays untouched and you can
@@ -59,14 +61,14 @@ evidence, quorum, and a dispute path.
 ### What you earn
 
 The live rail distributes a fixed AIPG period budget pro-rata to den, so there
-is no guaranteed fixed token amount per request. Your share depends on:
-- Model size (bigger models pay more per token)
-- Throughput (faster workers serve more jobs)
-- Quality (workers with clean attestation history get preference)
-- Confidential workloads pay a premium (see [Confidential Computing](/confidential-computing))
+is no guaranteed fixed token amount per request. Your share depends on the den
+accepted for your completed jobs relative to the accepted den of other eligible
+workers in the same payout period. Workload, model availability, routing, and
+the period budget can change. Historical jobs or payouts are not an earnings
+forecast.
 
 Payout history is visible on
-[console.aipowergrid.io/payouts](https://console.aipowergrid.io/payouts). A
+[console.aipowergrid.io/transparency](https://console.aipowergrid.io/transparency). A
 USD-denominated, multi-asset payout rail is designed in core but is not active;
 do not select USDC/ETH/USDS expecting the current payout CLI to honor it.
 
@@ -76,31 +78,23 @@ do not select USDC/ETH/USDS expecting the current payout CLI to honor it.
 
 If you want to help secure the network rather than provide compute, validator
 nodes are the audit role. The first release is intentionally low-authority:
-validators run unpredictable probes, sign evidence, and feed dashboards while
+validators receive short-lived assignments, sign evidence, and feed dashboards while
 the Grid hardens targeted assignments, reference checks, and quorum.
 
 **Authority:** evidence only. Validator rewards, routing influence, staking,
 strikes, and slashing are disabled. The preview is for proving independent
 operation and hardening the evidence protocol before economics are attached.
 
-**Hardware:** Modest. Validators don't need to serve every job, so they don't
-need worker-grade GPUs. A reliable server with stable bandwidth is enough for
-sampling. Validators who want to re-execute jobs themselves (rather than rely
-on cross-validation) can add GPU capacity.
+**Hardware:** Modest. The preview does not re-execute worker models, so it does
+not need a worker-grade GPU. A reliable machine with stable bandwidth is
+enough.
 
-The operator path mirrors the worker quickstarts: install the verified preview,
-create a local signing wallet, link its public address in Console, create a
-validator-purpose API key, run `aipg-validator init`, check the Grid connection,
-and start the validator loop. The private key remains on the validator host.
+The desktop operator path installs the verified preview, opens the local app,
+and uses **Set up node** to create a dedicated validator account and local
+signing identity. Then **Start validator** begins the assignment loop. It does
+not require Google or GitHub login, a funded wallet, or pasted private-key
+material. Existing operators preserve their node identity when upgrading.
 
 → **[Download and run the validator](https://aipowergrid.io/validate)**
 
 → **[Protocol, threat model, and preview limits](/validator-node)**
-
----
-
-## Get AIPG to Stake
-
-**[Buy AIPG on Uniswap](https://app.uniswap.org/swap?outputCurrency=0xa1c0decafe3e9bf06a5f29b7015cd373a9854608)**
-
-Token: `0xa1c0deCaFE3E9Bf06A5F29B7015CD373a9854608` ([BaseScan](https://basescan.org/address/0xa1c0deCaFE3E9Bf06A5F29B7015CD373a9854608))

@@ -29,6 +29,7 @@ authentication handoff, endpoint shapes, tested examples, and known limits.
 - [Run a node](https://aipowergrid.io/docs/run-a-node): Choose an operator role.
 - [Text worker](https://aipowergrid.io/docs/worker-llm): Text inference worker quick start.
 - [Media worker](https://aipowergrid.io/docs/worker-media): Image and video worker quick start.
+- [Connect an existing AI stack](https://aipowergrid.io/docs/connect-existing-stack): Backend compatibility, operator controls, security boundaries, and onboarding.
 - [Validator node](https://aipowergrid.io/docs/validator-node): Validator architecture, assignments, and current limitations.
 - [Proof of quality](https://aipowergrid.io/docs/proof-of-quality): Quality evidence and trust model.
 

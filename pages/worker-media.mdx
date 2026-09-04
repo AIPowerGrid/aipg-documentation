@@ -1,221 +1,139 @@
 ---
-title: Image Worker (ComfyUI)
-description: Run an image/video worker on AIPG through ComfyUI; no bond is required today.
+title: Media Worker
+description: Connect reviewed ComfyUI image, video, and 3D recipes or qualify a managed media runtime for AI Power Grid.
 ---
 
 import { Callout } from 'nextra/components'
 
-# Image Worker
+# Media Worker
 
-Generate images and video on The Grid using ComfyUI. Earn AIPG through the
-current worker payout rail.
+The Grid media worker bridges image, video, 3D, and managed audio runtimes to
+Core. The source bridge can connect an operator-managed ComfyUI installation,
+but public managed-media onboarding remains qualification-gated.
 
-<Callout type="info">
-  **No bond required to run a worker today.** Image workers can connect and start
-  serving with just an API key. A planned on-chain bonding mechanism (stake via
-  `WorkerRegistry`, slashable for bad results) is in development and **not yet
-  required** — same model as text workers. See [Run a Node](/run-a-node) for the
-  bigger picture.
+<Callout type="warning">
+  Running ComfyUI does not make every checkpoint or custom workflow compatible
+  with the Grid. A worker may advertise only models and recipes that it can
+  resolve exactly and that Core currently accepts.
 </Callout>
 
----
+## Current Paths
 
-## What You're Running
+| Path | Runtime | Public status |
+| --- | --- | --- |
+| Operator-managed image, video, and 3D | Existing ComfyUI | Advanced; exact supported recipes only |
+| Managed audio profile | ACE-Step direct API | Qualification; not a public worker release |
+| Unified media-manager download | Signed, pinned profiles | Gated until release requirements pass |
 
-The **Comfy Bridge** connects your ComfyUI installation to The Grid:
+The public `/run` page fails closed: a media-manager download appears only when
+its immutable release, profile gates, checksums, SBOM, provenance, and required
+platform signing state pass.
 
-1. You run ComfyUI locally with your models
-2. The bridge holds a persistent WebSocket to The Grid, which pushes jobs to it
-3. Your GPU renders images
-4. You upload results and the job records den for the hourly AIPG payout split
+## How the ComfyUI Bridge Fits
 
-Your existing ComfyUI setup works as-is. The bridge just connects it to the network.
+1. The operator runs ComfyUI locally with the required checkpoint and nodes.
+2. The bridge resolves approved model names to known workflow recipes.
+3. The bridge connects outbound to Core over WebSocket.
+4. Core sends compatible jobs to the worker.
+5. ComfyUI renders the output.
+6. The worker uploads it through a short-lived presigned URL and submits a
+   signed completion receipt.
 
----
+Workers never receive Grid object-storage credentials. Model files and custom
+nodes remain on the operator's machine.
 
-## Requirements
+## Public Qualification
 
-| Component | Minimum | Recommended |
-|-----------|---------|-------------|
-| **GPU** | NVIDIA 6 GB VRAM | NVIDIA 12 GB+ |
-| **RAM** | 8 GB | 16 GB+ |
-| **Storage** | 50 GB | 100 GB+ SSD |
-| **Software** | Python 3.9+, ComfyUI running | Same |
+Start at [aipowergrid.io/run](https://aipowergrid.io/run#media-qualification).
+The page shows the current hardware classes, accepted evidence counts, and the
+qualification artifact only when its release envelope verifies.
 
-### VRAM by Model
+Qualification is local benchmark work, not paid Grid work. The benchmark tool:
 
-| Model | VRAM | Notes |
-|-------|------|-------|
-| z-image-turbo | 6–8 GB | Fast, high-quality |
-| Krea 2 Turbo | 8–12 GB | Fast, stylized |
-| FLUX.2 Klein 4B FP8 | 12 GB+ | Best quality, photorealism |
+- cannot enroll a worker;
+- cannot advertise a capability;
+- cannot earn den or rewards;
+- emits a privacy-reduced public report separately from the private hardware
+  report.
 
-Check [`/v1/models`](https://api.aipowergrid.io/v1/models) for the models the Grid is currently serving.
+Never post API keys, private keys, wallet signatures, environment files,
+private benchmark reports, or credential-bearing logs.
 
----
+## Advanced ComfyUI Development Path
 
-## Quick Start
-
-### 1. Get ComfyUI Running
-
-If you don't have ComfyUI yet:
-
-```bash
-git clone https://github.com/comfyanonymous/ComfyUI
-cd ComfyUI
-pip install -r requirements.txt
-python main.py
-```
-
-ComfyUI should be running at `http://127.0.0.1:8188`.
-
-### 2. Get an API Key
-
-Sign in with Google, GitHub, or a wallet at
-[console.aipowergrid.io](https://console.aipowergrid.io) and create a key.
-
-### 3. Install the Bridge
+Experienced operators working with a currently supported recipe may inspect
+the source bridge:
 
 ```bash
 git clone https://github.com/AIPowerGrid/grid-media-worker
 cd grid-media-worker
+python -m venv .venv
+source .venv/bin/activate
 pip install -e .
 ```
 
-### 4. Configure
-
-```bash
-cp .env.example .env
-```
-
-Edit `.env`:
+At minimum, the protected local environment identifies the Grid credential,
+worker name, Core endpoint, and local ComfyUI endpoint:
 
 ```ini
-GRID_API_KEY=your-api-key-here
+GRID_API_KEY=REDACTED
+GRID_WORKER_NAME=your-worker-name
+GRID_API_URL=https://api.aipowergrid.io
 COMFYUI_URL=http://127.0.0.1:8188
-GRID_WS=true
 ```
 
-### 5. Run
+The bridge advertises only models it can resolve and serve. `GRID_MODEL` can
+restrict that set; it cannot make a missing checkpoint, node, or recipe valid.
+Do not advertise a model name solely because a similarly named file exists.
 
-```bash
-python -m bridge.cli
-```
+<Callout type="info">
+  The WebSocket execution loop processes one media job at a time. The legacy
+  `GRID_THREADS` environment value is not a functioning concurrency control and
+  is no longer shown in the manager UI.
+</Callout>
 
-The bridge connects to The Grid and starts accepting jobs.
+## Operator Controls
 
----
+| Control | Current behavior |
+| --- | --- |
+| Model advertisement | Restricted to resolvable supported names |
+| Output size | Bounded by `GRID_MAX_PIXELS` and recipe policy |
+| NSFW acceptance | Explicit local setting |
+| Start and stop | Explicit manager or process control |
+| Grid concurrency | Serial execution today |
+| Time schedule | Not implemented in the media worker today |
 
-## Configuration
+## Security Boundary
 
-All settings go in `.env`:
+<Callout type="warning">
+  Media workers receive plaintext prompts and input media. Do not send private
+  images, secrets, regulated data, or confidential assets unless a separately
+  documented confidential-execution route is live and verified.
+</Callout>
 
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `GRID_API_KEY` | *(required)* | Your API key |
-| `COMFYUI_URL` | `http://127.0.0.1:8188` | Your ComfyUI address |
-| `GRID_WORKER_NAME` | `ComfyWorker` | Name shown on the network |
-| `GRID_MODEL` | *(auto-detect)* | Models to advertise (comma-separated) |
-| `GRID_THREADS` | `2` | Concurrent jobs |
-| `GRID_MAX_PIXELS` | `1048576` | Max output resolution |
-| `GRID_NSFW` | `false` | Accept NSFW jobs |
-| `WORKFLOW_FILE` | | Custom workflow JSON |
-
-### Model Auto-Detection
-
-By default, the bridge scans your ComfyUI checkpoints and advertises matching models. Override with:
-
-```ini
-GRID_MODEL=z-image-turbo, krea-2-turbo
-```
-
----
-
-## Docker
-
-### Linux (Host Networking)
-
-```bash
-docker build -t comfy-bridge .
-docker run --rm --network host --env-file .env comfy-bridge
-```
-
-### macOS / Windows
-
-```bash
-docker run --rm \
-  --env-file .env \
-  -e COMFYUI_URL=http://host.docker.internal:8188 \
-  comfy-bridge
-```
-
-### Docker Compose
-
-```bash
-# Linux
-docker-compose -f docker-compose.linux.yml up --build
-
-# macOS/Windows
-docker-compose -f docker-compose.win-macos.yml up --build
-```
-
----
-
-## Custom Workflows
-
-Export a workflow from ComfyUI as JSON, place it in `workflows/`, and set:
-
-```ini
-WORKFLOW_FILE=my_workflow.json
-```
-
-The bridge uses your workflow as a template for incoming jobs.
-
----
-
-## Earning
-
-### How It Works
-
-1. User requests an image at aipg.art or via API
-2. The Grid routes the job to your worker
-3. Your GPU generates the image via ComfyUI
-4. You upload the result
-5. The job contributes den to your share of the current hourly AIPG payout
-
-### What Earns Most
-
-- **In-demand models** (z-image-turbo, FLUX.2 Klein) — high demand, good rewards
-- **Large images** — more compute = more reward
-- **High step counts** — more work = more pay
-- **24/7 uptime** — consistent availability wins
-
----
+- The manager makes final hardware decisions locally.
+- Managed profiles pin source, dependencies, model files, and recipes.
+- An unsigned draft profile cannot advertise or serve managed capabilities.
+- The payout private key never belongs on the worker host.
+- A public benchmark report intentionally omits exact private hardware data.
 
 ## Troubleshooting
 
-**No jobs coming in?**
-- Check `Advertising models:` in logs
-- Make sure `GRID_MODEL` matches what users request
-- Verify ComfyUI is running
+**ComfyUI is reachable but the model is unavailable:** confirm the exact
+checkpoint, custom nodes, and supported recipe are installed. Endpoint health
+alone is not capability proof.
 
-**ComfyUI unreachable?**
-- Confirm `COMFYUI_URL` is correct
-- Check ComfyUI is running on that port
+**A custom workflow works locally but not on the Grid:** arbitrary workflows
+are not a public compatibility contract. Compare it with a currently accepted
+recipe and Core model name.
 
-**400 Bad Request?**
-- Model name mismatch — check `GRID_MODEL` values
-
-**Auth errors?**
-- Verify `GRID_API_KEY` is correct
-
----
+**The qualification tool will not connect:** that is intentional. It benchmarks
+locally and cannot enroll a worker.
 
 ## Links
 
-| Resource | URL |
-|----------|-----|
-| **Repository** | [github.com/AIPowerGrid/grid-media-worker](https://github.com/AIPowerGrid/grid-media-worker) |
-| **Get API Key** | [console.aipowergrid.io](https://console.aipowergrid.io) |
-| **ComfyUI** | [github.com/comfyanonymous/ComfyUI](https://github.com/comfyanonymous/ComfyUI) |
-| **Discord** | [discord.gg/W9D8j6HCtC](https://discord.gg/W9D8j6HCtC) |
+- [Media qualification and verified downloads](https://aipowergrid.io/run#media-qualification)
+- [Media worker repository](https://github.com/AIPowerGrid/grid-media-worker)
+- [Qualification runbook](https://github.com/AIPowerGrid/grid-media-worker/blob/main/docs/MANAGER_QUALIFICATION.md)
+- [Connect an existing stack](/connect-existing-stack)
+- [Operator support](https://discord.gg/W9D8j6HCtC)
