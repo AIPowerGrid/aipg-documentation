@@ -9,7 +9,28 @@ The text worker can use SGLang through its OpenAI-compatible API. It probes the
 common local port `30000` using `/get_model_info` and `/v1/models`; SGLang on a
 different port can be entered manually.
 
-## Setup
+## Install or Start SGLang
+
+Keep your current SGLang server. For a new deployment, follow the
+[official SGLang documentation](https://docs.sglang.ai/) for the accelerator,
+model, context length, and launch options you intend to provide. Start and test
+SGLang independently before opening the Grid worker; the sidecar does not
+manage its runtime or model files.
+
+## Detect the Endpoint
+
+The common endpoint is `http://127.0.0.1:30000`. The worker checks
+`/get_model_info` and `/v1/models`. Confirm one of those endpoints responds, or
+enter your operator-controlled base URL manually.
+
+## Compatible Models
+
+Select one exact model returned by SGLang. The worker uses the
+OpenAI-compatible generation endpoint and requires its local output test to
+succeed before setup is considered ready. Detection alone proves inventory,
+not useful inference.
+
+## Connect and Configure
 
 1. Start SGLang with the model and context settings you intend to serve.
 2. Confirm the API responds locally at the base URL you selected.
@@ -21,12 +42,35 @@ different port can be entered manually.
 6. Set context, output, schedule, and concurrency limits.
 7. Approve the worker-scoped Console connection and wait for **Online**.
 
+## Operator Controls
+
+The selected model has explicit context/output limits, Grid concurrency, and an
+optional local-time schedule. Use concurrency `0` in a schedule window to pause
+new Grid work. Start with one job when local applications share the scheduler.
+
+## Security Boundary
+
 If the backend requires authentication, the credential stays in the protected
 local worker configuration. It is not returned by the dashboard after saving.
+The worker defaults to loopback and connects outbound to the Grid. It never
+needs a wallet private key or uploads model files. Community workers receive
+plaintext prompts and outputs.
 
-Start at one Grid job when local applications share the same SGLang scheduler.
 The worker limits Grid concurrency but does not generally identify unrelated
 local requests and reserve capacity for them automatically.
 
-Use the public exact-name check on `/run` to confirm that Core accepted the
-worker and its selected model.
+## Verify on the Grid
+
+Use the public exact-name check on
+[aipowergrid.io/run](https://aipowergrid.io/run) to confirm that Core accepted
+the worker and its selected model. **Online** requires the Grid registration
+handshake, not merely a running process.
+
+## Troubleshooting
+
+- **No automatic detection:** enter the base URL manually when SGLang uses a
+  non-default port.
+- **Inventory works but generation fails:** send a small request to the same
+  model through SGLang, then inspect the worker's local logs.
+- **Local workload slows down:** lower Grid concurrency or configure pause
+  windows; the worker does not automatically observe SGLang's unrelated queue.

@@ -16,6 +16,28 @@ hardware policy before the worker may advertise audio generation.
   enroll a worker, earn den, or advertise audio capability.
 </Callout>
 
+## Install the Reviewed Runtime
+
+Do not attach an arbitrary ACE-Step checkout to the public Grid. The media
+manager installs and verifies the exact source revision, dependency lock,
+checkpoint tree, model identity, and recipe bound by its reviewed profile. Use
+only the qualification artifact selected by the verified release gate on
+[aipowergrid.io/run](https://aipowergrid.io/run#media-qualification).
+
+## Detect the Endpoint
+
+The managed profile supervises its own loopback ACE-Step API and validates the
+reported model inventory and health. An unrelated reachable audio endpoint is
+not sufficient. The manager must launch the bound runtime and keep its health
+check passing.
+
+## Compatible Models and Recipes
+
+Compatibility is profile-defined, not inferred from a model directory. The
+current qualification path evaluates only the pinned ACE-Step audio model and
+recipe declared by the candidate profile. Other checkpoints, quantizations, or
+audio workflows require their own reviewed profile and evidence.
+
 ## Qualification Flow
 
 1. Open the current media qualification status on
@@ -29,10 +51,45 @@ hardware policy before the worker may advertise audio generation.
 5. Wait for a reviewed signed profile and supervised staging before treating
    the machine as a Grid worker.
 
+## Operator Controls
+
+The manager exposes always available, paused, or one bounded maintenance-window
+schedule. Media capacity remains one job at a time. A pause drains an active
+generation before the Grid connection closes. The manager does not infer spare
+capacity from unrelated local activity automatically.
+
+## Security Boundary
+
 The managed runtime remains offline from model hubs while serving and must keep
 its exact source, dependencies, model files, recipe, and local health checks
 valid. The worker uses a funds-less signer and a separate payout-wallet
 delegation; it never asks for a payout-wallet private key.
+
+Prompts, lyrics, and generated audio are plaintext to the community worker.
+Runtime logs stay at warning level so those inputs are not deliberately written
+to service journals. Output uploads use Grid-issued short-lived URLs rather
+than standing storage credentials.
+
+## Verify Qualification
+
+Check the exact candidate version, checksums, manifest restrictions, and public
+evidence counts on `/run`. A successful local benchmark proves only that the
+candidate ran on that machine; it does not create a worker registration. Public
+verification in the worker registry becomes relevant only after a signed
+serving profile and supervised release exist.
+
+## Troubleshooting
+
+- **Manager refuses enrollment:** that is expected for the unsigned public
+  qualification artifact.
+- **Hardware check fails:** compare the sanitized result with the published
+  minimum, midrange, and datacenter classes; do not bypass the profile.
+- **Install or canary fails:** rerun the manager's local verification and keep
+  the machine off the Grid. Share only the requested sanitized report, never
+  credentials or full private hardware evidence.
+- **Runtime later loses health:** the supervisor withdraws the capability and
+  restarts the complete runtime/worker pair rather than leaving a dead route
+  advertised.
 
 Use the [full media-worker guide](/worker-media) for current evidence classes,
 availability controls, and troubleshooting.

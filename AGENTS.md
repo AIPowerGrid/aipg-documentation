@@ -109,7 +109,13 @@ which is intentionally NOT published.
 - `/docs/backends/*` contains backend-specific operator quickstarts. Text pages
   route through the verified worker release and identify the real local probe
   endpoint; media pages remain qualification guides and never turn local
-  detection or compatibility into permission to advertise.
+  detection or compatibility into permission to advertise. Each named backend
+  guide covers runtime installation or launch ownership, endpoint detection,
+  compatible model/workflow selection, actual operator controls, the plaintext
+  security boundary, authoritative Grid or qualification verification, and
+  troubleshooting. Shared-capacity guides must say that schedules and
+  concurrency limit Grid work but do not automatically observe another local
+  client's queue or yield to it.
 - Worker quickstarts must route ordinary operators through the verified `/run`
   release gate, never expose credentials in command arguments, and never claim
   concurrency, schedules, model support, or managed-media availability that the

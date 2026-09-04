@@ -11,6 +11,19 @@ The media bridge runs beside ComfyUI and can execute exact Grid image or video
 recipes. Having ComfyUI installed is only the first state; it does not make an
 arbitrary checkpoint or custom graph a public Grid capability.
 
+## Install or Start ComfyUI
+
+Keep the ComfyUI installation and custom nodes you already operate. New users
+should follow the [official ComfyUI installation guide](https://docs.comfy.org/installation/desktop)
+for their platform. Start ComfyUI independently; the Grid's browser UI does not
+run remote shell installers or accept a browser-selected executable.
+
+## Detect the Endpoint
+
+The common local API is `http://127.0.0.1:8188`. The media bridge checks the
+running API and inventories local weight filenames. Detection is descriptive
+only and never enrolls the machine.
+
 ## Capability States
 
 | State | Meaning |
@@ -23,7 +36,14 @@ arbitrary checkpoint or custom graph a public Grid capability.
 These states are intentionally separate. Compatibility never grants
 qualification or silently advertises a model.
 
-## Inspect a Candidate
+## Compatible Models and Recipes
+
+A capability is compatible only when a known Grid workflow resolves and every
+weight referenced by that graph exists locally. Similar filenames and arbitrary
+custom workflows do not qualify. Recipe-executor jobs use the exact recipe Core
+resolves; local mapping remains a restricted fallback.
+
+## Inspect and Configure a Candidate
 
 1. Start ComfyUI. Its common loopback endpoint is
    `http://127.0.0.1:8188`.
@@ -45,6 +65,31 @@ maintenance windows, and drain-before-disconnect. Grid work and local ComfyUI
 work still share the same queue; a configured schedule is not universal idle
 queue detection.
 
+## Security Boundary
+
 Input images, prompts, and outputs are plaintext to the community worker. Model
 files remain local, and uploads use short-lived Grid URLs rather than storage
 credentials.
+
+The bridge connects outbound to the Grid and defaults its ComfyUI and management
+surfaces to loopback. It never requests a payout-wallet private key. Remote
+management should use an SSH tunnel rather than exposing the local UI.
+
+## Verify Qualification
+
+Run the exact downloaded qualification artifact and submit the documented
+privacy-reduced evidence pair. The public status on
+[aipowergrid.io/run](https://aipowergrid.io/run#media-qualification) is the
+authoritative release and evidence gate. Until a signed profile is published,
+there is no public worker-registry entry to verify and no reward eligibility.
+
+## Troubleshooting
+
+- **ComfyUI not detected:** confirm its API is listening on loopback port `8188`
+  or enter the operator-controlled URL in the local bridge UI.
+- **Detected but no compatible capability:** compare the exact required weight
+  names and workflow dependencies; do not force a model name override.
+- **Canary fails:** keep the machine offline from Grid serving and attach only
+  the sanitized qualification report requested by the cohort instructions.
+- **Local renders queue behind Grid work:** use pause or maintenance windows.
+  Automatic ComfyUI queue-idle yielding is not implemented.
