@@ -30,6 +30,7 @@
     "typescript": "^5.4.0"
   },
   "overrides": {
+    "@xmldom/xmldom": "0.9.12",
     "dompurify": "3.4.14",
     "js-yaml": "3.15.1",
     "mermaid": "11.17.0",

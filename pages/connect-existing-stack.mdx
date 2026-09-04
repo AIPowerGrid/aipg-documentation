@@ -132,7 +132,9 @@ An existing ComfyUI installation is useful, but it does not make every model or
 workflow Grid-compatible. The bridge must resolve an approved model name to the
 exact checkpoint, nodes, and workflow recipe required by Core. Follow the
 [media qualification guide](/worker-media) rather than advertising arbitrary
-custom workflows.
+custom workflows. Media workers currently serve one job at a time and support
+local-time windows that pause new Grid claims without interrupting the active
+render.
 
 ### ACE-Step
 
