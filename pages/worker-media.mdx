@@ -92,11 +92,17 @@ Do not advertise a model name solely because a similarly named file exists.
   multiple claim slots for one signed worker identity.
 </Callout>
 
-The local setup and Settings pages expose an optional availability schedule.
-Windows use the operator machine's local time. A matching `concurrency: 0`
-window stops new claims and lets an active render finish before the worker
-disconnects; `concurrency: 1` makes it available. Outside matching windows,
-the worker uses `GRID_THREADS`.
+The standalone manager has a **Capacity** panel with three bounded modes:
+always available, paused until resumed, or paused during one maintenance
+window. Changes apply to a running worker within a few seconds. Pausing stops
+new claims and lets an active render finish before the worker disconnects.
+The policy is stored in a private local file beside the managed installation;
+it is not sent to or selected by the website.
+
+Advanced source operators can express the same policy with a local-time
+schedule. A matching `concurrency: 0` window pauses new claims;
+`concurrency: 1` makes the worker available. Outside matching windows, the
+worker uses `GRID_THREADS`.
 
 ```ini
 GRID_THREADS=1
@@ -116,7 +122,8 @@ support overnight ranges such as `22:00` to `02:00`.
 | NSFW acceptance | Explicit local setting |
 | Start and stop | Explicit manager or process control |
 | Grid concurrency | One simultaneous job; larger values fail closed |
-| Time schedule | Local-time windows; pause drains the active job before disconnecting |
+| Availability | Always available, paused, or one maintenance window in the manager |
+| Time schedule | Advanced local-time windows; pause drains the active job before disconnecting |
 
 ## Security Boundary
 
