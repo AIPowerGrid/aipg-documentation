@@ -1,0 +1,30 @@
+---
+title: Connect LMDeploy
+description: Connect an existing LMDeploy OpenAI-compatible server to AI Power Grid.
+---
+
+# Connect LMDeploy
+
+The text worker can run beside an LMDeploy API server. It probes the common
+local port `23333` through `/v1/models`; an operator-selected port can be
+entered manually.
+
+## Setup
+
+1. Start LMDeploy with the exact model and context settings you intend to
+   serve.
+2. Confirm its OpenAI-compatible models endpoint responds locally.
+3. Download the verified text worker from
+   [aipowergrid.io/run](https://aipowergrid.io/run).
+4. Select detected **LMDeploy**, or enter its base URL without an extra `/v1`.
+5. Select the exact model returned by the backend and run the local generation
+   test.
+6. Set output, context, schedule, and concurrency limits.
+7. Approve the worker-scoped Console connection and wait for **Online**.
+
+Start with one Grid job when other applications share the LMDeploy scheduler.
+The worker limits Grid concurrency, but it does not promise to identify and
+yield to every unrelated request automatically.
+
+Keep backend credentials in the local worker configuration. Verify the exact
+worker name or ID using the public check on `/run`.

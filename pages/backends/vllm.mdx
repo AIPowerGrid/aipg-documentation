@@ -1,0 +1,48 @@
+---
+title: Connect vLLM
+description: Connect an existing vLLM OpenAI-compatible server to AI Power Grid.
+---
+
+import { Callout } from 'nextra/components'
+
+# Connect vLLM
+
+Use the public text worker as a sidecar for a vLLM server you already operate.
+The common local base endpoint is `http://127.0.0.1:8000`; vLLM exposes its
+models through `/v1/models`.
+
+## 1. Verify the API
+
+Start vLLM using its own reviewed deployment configuration. Confirm that its
+OpenAI-compatible models endpoint responds locally:
+
+```bash
+curl --fail http://127.0.0.1:8000/v1/models
+```
+
+Do not place a backend credential in a public command, screenshot, or issue.
+
+## 2. Connect the Worker
+
+1. Download the verified text worker from
+   [aipowergrid.io/run](https://aipowergrid.io/run).
+2. Select detected **vLLM**, or enter `http://127.0.0.1:8000` as the backend
+   base URL. The wizard adds the OpenAI `/v1` API prefix when it saves setup.
+3. If your server requires a key, enter it only in the local worker UI.
+4. Select the exact model returned by vLLM and run the local generation test.
+5. Set conservative context, output, concurrency, and schedule limits.
+6. Approve the worker in Console, start it, and wait for **Online**.
+
+## Capacity
+
+Begin with one Grid job. Raise concurrency only when the backend has measured
+headroom and the credential path supports parallel worker slots. vLLM's model
+memory allocation is not proof that its request queue is idle.
+
+<Callout type="warning">
+  The current worker does not reserve vLLM scheduler slots for unrelated local
+  clients automatically. Configure Grid concurrency below the backend's tested
+  capacity if other applications share it.
+</Callout>
+
+Verify the exact worker name or ID using the public check on `/run`.

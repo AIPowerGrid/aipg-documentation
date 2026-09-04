@@ -1,0 +1,47 @@
+---
+title: Backend Quickstarts
+description: Connect an AI backend you already run to AI Power Grid.
+---
+
+import { Callout, Cards } from 'nextra/components'
+
+# Connect the Stack You Already Run
+
+The Grid worker is a sidecar. Keep your existing runtime and model files, then
+choose exactly which compatible capacity the worker may expose.
+
+<Callout type="warning">
+  "Available capacity" currently means the schedule and concurrency you
+  configure. Automatic detection of unrelated local workload is not a general
+  worker feature yet.
+</Callout>
+
+<Cards>
+  <Cards.Card title="Ollama" href="/backends/ollama" />
+  <Cards.Card title="vLLM" href="/backends/vllm" />
+  <Cards.Card title="SGLang" href="/backends/sglang" />
+  <Cards.Card title="LMDeploy" href="/backends/lmdeploy" />
+  <Cards.Card title="LM Studio" href="/backends/lm-studio" />
+  <Cards.Card title="KoboldCpp" href="/backends/koboldcpp" />
+  <Cards.Card title="Other OpenAI-compatible API" href="/backends/openai-compatible" />
+  <Cards.Card title="ComfyUI" href="/backends/comfyui" />
+  <Cards.Card title="ACE-Step" href="/backends/ace-step" />
+</Cards>
+
+## Availability
+
+| Backend | Workload | Operator path |
+| --- | --- | --- |
+| Ollama | Text | Open public worker |
+| vLLM | Text | Open public worker |
+| SGLang | Text | Open public worker |
+| LMDeploy | Text | Open public worker |
+| LM Studio | Text | Open public worker |
+| KoboldCpp | Text | Open public worker |
+| Other OpenAI-compatible API | Text | Advanced public worker |
+| ComfyUI | Image and video | Reviewed recipes; qualification path |
+| ACE-Step | Audio | Signed managed profile; qualification path |
+
+Start with the [verified worker downloads](https://aipowergrid.io/run). The
+download page is authoritative for available operating systems and release
+status.

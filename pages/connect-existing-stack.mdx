@@ -27,6 +27,7 @@ your GPU
 
 <Cards>
   <Cards.Card title="Connect a text backend" href="/worker-llm" />
+  <Cards.Card title="Choose your backend" href="/backends" />
   <Cards.Card title="Qualify a media backend" href="/worker-media" />
   <Cards.Card title="Choose a path from your hardware" href="https://aipowergrid.io/run" />
 </Cards>
@@ -35,15 +36,15 @@ your GPU
 
 | Runtime | Workload | Connection | Public status |
 | --- | --- | --- | --- |
-| Ollama | Text | Automatically detected local API | Open |
-| vLLM | Text | OpenAI-compatible API | Open |
-| SGLang | Text | OpenAI-compatible API | Open |
-| LMDeploy | Text | OpenAI-compatible API | Open |
-| LM Studio | Text | Detected or manually entered API | Open |
-| KoboldCpp | Text | Detected or manually entered API | Open |
-| Other OpenAI-compatible APIs | Text | Manually entered endpoint | Advanced |
-| ComfyUI | Image, video, and 3D | Reviewed model and workflow recipes | Qualification |
-| ACE-Step | Audio | Reviewed direct-runtime profile | Qualification |
+| [Ollama](/backends/ollama) | Text | Automatically detected local API | Open |
+| [vLLM](/backends/vllm) | Text | OpenAI-compatible API | Open |
+| [SGLang](/backends/sglang) | Text | OpenAI-compatible API | Open |
+| [LMDeploy](/backends/lmdeploy) | Text | OpenAI-compatible API | Open |
+| [LM Studio](/backends/lm-studio) | Text | Detected or manually entered API | Open |
+| [KoboldCpp](/backends/koboldcpp) | Text | Detected or manually entered API | Open |
+| [Other OpenAI-compatible APIs](/backends/openai-compatible) | Text | Manually entered endpoint | Advanced |
+| [ComfyUI](/backends/comfyui) | Image, video, and 3D | Reviewed model and workflow recipes | Qualification |
+| [ACE-Step](/backends/ace-step) | Audio | Reviewed direct-runtime profile | Qualification |
 
 **Open** means the current public text worker can connect. **Qualification**
 means owning the runtime is not enough: the exact model, recipe, dependencies,
@@ -115,6 +116,8 @@ The worker detects the default loopback endpoint and lists available models in
 its setup wizard. Install Ollama only from its
 [official download page](https://ollama.com/download).
 
+[Open the Ollama quickstart](/backends/ollama).
+
 ### vLLM, SGLang, and LMDeploy
 
 Start the runtime's OpenAI-compatible server, then enter its base endpoint in
@@ -122,16 +125,24 @@ the worker. The worker probes the models endpoint before saving it. If the
 backend requires authentication, enter that backend credential only in the
 local worker UI.
 
+[Open the vLLM quickstart](/backends/vllm) or
+[SGLang quickstart](/backends/sglang). LMDeploy operators can use the
+[LMDeploy quickstart](/backends/lmdeploy).
+
 ### LM Studio
 
 Enable LM Studio's local server, load a model, and leave the server running.
 The worker normally detects the default local endpoint; otherwise enter the
 endpoint shown by LM Studio.
 
+[Open the LM Studio quickstart](/backends/lm-studio).
+
 ### KoboldCpp
 
 Start KoboldCpp with its API enabled. The worker probes its model endpoint and
 bridges compatible text jobs through the same local setup flow.
+
+[Open the KoboldCpp quickstart](/backends/koboldcpp).
 
 ### ComfyUI
 
@@ -143,11 +154,15 @@ custom workflows. Media workers currently serve one job at a time and support
 local-time windows that pause new Grid claims without interrupting the active
 render.
 
+[Open the ComfyUI qualification guide](/backends/comfyui).
+
 ### ACE-Step
 
 ACE-Step uses the media manager's pinned direct-runtime profile. That public
 profile remains qualification-gated until its required hardware evidence,
 recipe commitment, signed release, and supervised staging are complete.
+
+[Open the ACE-Step qualification guide](/backends/ace-step).
 
 ## Troubleshooting
 

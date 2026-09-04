@@ -129,9 +129,9 @@ Outside matching windows, the worker uses `GRID_MAX_THREADS`. A window with
 periodically; scaling down drains or cancels worker connections through the
 normal cleanup path.
 
-The local Settings page exposes concurrency. Schedule configuration currently
-uses the environment file; do not assume a jobs-per-hour or token-per-second
-rate limiter exists.
+The local setup wizard and Settings page expose concurrency and the validated
+local-time schedule. Do not assume a jobs-per-hour, token-per-second, or
+automatic local-workload-aware rate limiter exists.
 
 ## Run From Source
 

@@ -1,0 +1,30 @@
+---
+title: Connect LM Studio
+description: Connect LM Studio's local server to the AI Power Grid text worker.
+---
+
+# Connect LM Studio
+
+LM Studio can remain your desktop model manager. AI Power Grid connects only to
+its local OpenAI-compatible server; the worker does not import or upload the
+model.
+
+## Setup
+
+1. Load the model in LM Studio.
+2. Enable LM Studio's local server.
+3. Confirm the server shows a local endpoint. The common base endpoint is
+   `http://127.0.0.1:1234` and the worker probes `/v1/models`.
+4. Download and start the verified text worker from
+   [aipowergrid.io/run](https://aipowergrid.io/run).
+5. Select detected **LM Studio**, or enter the displayed base endpoint.
+6. Choose the exact model, run the local generation test, and review its
+   context and output limits.
+7. Approve the worker-scoped Console connection and wait for **Online**.
+
+Use one simultaneous Grid job initially. Desktop sleep, unloading the model, or
+stopping LM Studio makes the backend unavailable; the worker cannot keep that
+runtime alive for you.
+
+Schedules and pause windows limit when the Grid may use the selected capacity.
+They do not inspect every unrelated request made by another local application.

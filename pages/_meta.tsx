@@ -18,6 +18,7 @@ export default {
   },
   "run-a-node": "Overview",
   "connect-existing-stack": "Connect Existing Stack",
+  "backends": "Backend Quickstarts",
   "worker-llm": "Text Worker",
   "worker-media": "Media Worker",
   "validator-node": "Validator Node",

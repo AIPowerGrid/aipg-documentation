@@ -1,0 +1,28 @@
+---
+title: Connect KoboldCpp
+description: Connect a running KoboldCpp API to the AI Power Grid text worker.
+---
+
+# Connect KoboldCpp
+
+The text worker can bridge a KoboldCpp server you already run. Its common local
+endpoint is `http://127.0.0.1:5001`; the worker detects the loaded model through
+`/api/v1/model` and uses the compatible generation API.
+
+## Setup
+
+1. Start KoboldCpp with its API enabled and a model loaded.
+2. Download the verified text worker from
+   [aipowergrid.io/run](https://aipowergrid.io/run).
+3. Select detected **KoboldCpp**, or enter its operator-controlled base URL.
+4. Choose the model reported by the backend and run the local generation test.
+5. Set conservative context, output, schedule, and concurrency limits.
+6. Approve the worker-scoped connection in Console.
+7. Start the worker, wait for **Online**, and verify its exact name on `/run`.
+
+If detection succeeds but generation fails, test the backend from its own UI
+and confirm its compatible API is enabled. Detection proves endpoint inventory,
+not that a full generation will complete.
+
+Model files and any backend credentials remain local. Do not put Grid keys or
+wallet secrets in command arguments or public support logs.
