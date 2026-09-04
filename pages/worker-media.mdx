@@ -87,10 +87,25 @@ restrict that set; it cannot make a missing checkpoint, node, or recipe valid.
 Do not advertise a model name solely because a similarly named file exists.
 
 <Callout type="info">
-  The WebSocket execution loop processes one media job at a time. The legacy
-  `GRID_THREADS` environment value is not a functioning concurrency control and
-  is no longer shown in the manager UI.
+  The WebSocket execution loop processes one media job at a time. The worker
+  now validates `GRID_THREADS=1` and rejects larger values until Core supports
+  multiple claim slots for one signed worker identity.
 </Callout>
+
+The local setup and Settings pages expose an optional availability schedule.
+Windows use the operator machine's local time. A matching `concurrency: 0`
+window stops new claims and lets an active render finish before the worker
+disconnects; `concurrency: 1` makes it available. Outside matching windows,
+the worker uses `GRID_THREADS`.
+
+```ini
+GRID_THREADS=1
+GRID_SCHEDULE=[{"days":"mon-fri","start":"08:00","end":"18:00","concurrency":0}]
+```
+
+This example reserves weekday business hours for local ComfyUI use and makes
+the worker available at other times. Schedules accept at most 32 windows and
+support overnight ranges such as `22:00` to `02:00`.
 
 ## Operator Controls
 
@@ -100,8 +115,8 @@ Do not advertise a model name solely because a similarly named file exists.
 | Output size | Bounded by `GRID_MAX_PIXELS` and recipe policy |
 | NSFW acceptance | Explicit local setting |
 | Start and stop | Explicit manager or process control |
-| Grid concurrency | Serial execution today |
-| Time schedule | Not implemented in the media worker today |
+| Grid concurrency | One simultaneous job; larger values fail closed |
+| Time schedule | Local-time windows; pause drains the active job before disconnecting |
 
 ## Security Boundary
 

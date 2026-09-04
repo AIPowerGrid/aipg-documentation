@@ -110,6 +110,9 @@ which is intentionally NOT published.
   release gate, never expose credentials in command arguments, and never claim
   concurrency, schedules, model support, or managed-media availability that the
   released runtime does not enforce.
+- The source ComfyUI bridge enforces one media job per signed worker identity.
+  Its bounded local-time schedule may pause new claims and drains an active job
+  before disconnecting; values above one are not supported media concurrency.
 - Deploy target is Vercel (`vercel.json`), which builds with **npm** (`npm install` /
   `npm run build`); `package-lock.json` is the committed lockfile.
 
