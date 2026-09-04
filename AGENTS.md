@@ -106,6 +106,9 @@ which is intentionally NOT published.
   explanation. It distinguishes the open text-worker path from advanced and
   qualification-gated media paths, documents actual operator controls, and
   states the plaintext community-worker boundary before setup instructions.
+  Keep local backend/profile health tests distinct from Core's exact-worker
+  Grid canary; neither is a quality score or validator verdict, and the Grid
+  canary has no customer or worker economic effect.
 - `/docs/backends/*` contains backend-specific operator quickstarts. Text pages
   route through the verified worker release and identify the real local probe
   endpoint; media pages remain qualification guides and never turn local
