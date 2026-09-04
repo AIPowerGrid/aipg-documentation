@@ -9,7 +9,27 @@ The text worker can bridge a KoboldCpp server you already run. Its common local
 endpoint is `http://127.0.0.1:5001`; the worker detects the loaded model through
 `/api/v1/model` and uses the compatible generation API.
 
-## Setup
+## Install or Start KoboldCpp
+
+Keep your existing KoboldCpp binary and launch settings. New operators should
+download a release from the
+[official KoboldCpp repository](https://github.com/LostRuins/koboldcpp/releases),
+load a model, and enable its API before starting the Grid sidecar. The worker
+does not download or manage the model.
+
+## Detect the Endpoint
+
+The common endpoint is `http://127.0.0.1:5001`. The worker reads
+`/api/v1/model`; enter a different operator-controlled base URL manually when
+you changed the port or host.
+
+## Compatible Models
+
+Select the exact loaded model reported by KoboldCpp. The worker requires a
+successful local generation test; endpoint detection alone does not prove that
+the compatible generation path returns useful output.
+
+## Connect and Configure
 
 1. Start KoboldCpp with its API enabled and a model loaded.
 2. Download the verified text worker from
@@ -20,9 +40,34 @@ endpoint is `http://127.0.0.1:5001`; the worker detects the loaded model through
 6. Approve the worker-scoped connection in Console.
 7. Start the worker, wait for **Online**, and verify its exact name on `/run`.
 
+## Operator Controls
+
+Configure the selected model's context/output limits, maximum Grid concurrency,
+and optional local-time schedule. Start with one Grid job. Pause windows stop
+new claims and allow active work to drain; they do not monitor unrelated local
+requests automatically.
+
+## Security Boundary
+
+Model files and any backend credentials remain local. The management endpoint
+defaults to loopback and the worker connects outbound to the Grid. Do not put
+Grid keys, backend keys, or wallet secrets in command arguments or public
+support logs. Community workers receive plaintext prompts and outputs.
+
+## Verify on the Grid
+
+Wait for **Online**, then use the exact-name or worker-ID check on
+[aipowergrid.io/run](https://aipowergrid.io/run). Confirm that Core reports the
+same model you selected locally.
+
+## Troubleshooting
+
 If detection succeeds but generation fails, test the backend from its own UI
 and confirm its compatible API is enabled. Detection proves endpoint inventory,
 not that a full generation will complete.
 
-Model files and any backend credentials remain local. Do not put Grid keys or
-wallet secrets in command arguments or public support logs.
+- **Not detected:** confirm the API is enabled and the base URL reaches
+  `/api/v1/model`.
+- **Wrong model shown:** unload the stale model, load the intended one, and
+  re-scan before saving setup.
+- **Local clients slow down:** lower Grid concurrency or add pause windows.

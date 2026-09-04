@@ -11,7 +11,14 @@ Ollama is the shortest path for an operator who already runs a local model. The
 text worker detects the standard loopback API, lists its models, and lets you
 choose one explicitly.
 
-## 1. Verify Ollama
+## Install or Start Ollama
+
+Keep your existing Ollama installation. If you are starting fresh, install it
+from [ollama.com/download](https://ollama.com/download), then pull and test the
+model using Ollama's own tools. AI Power Grid does not install, import, or
+upload the model.
+
+## Detect the Endpoint
 
 Start Ollama and confirm the intended model is installed:
 
@@ -22,7 +29,15 @@ ollama list
 The standard endpoint is `http://127.0.0.1:11434`. The worker probes
 `/api/tags`; it does not infer availability from a model directory.
 
-## 2. Open the Worker
+## Compatible Models
+
+The wizard lists the model identifiers returned by Ollama. Select one exact
+identifier to advertise. Detection means the model is installed; the local
+generation test must also succeed before you connect it. Vision input is
+advertised only when the worker's capability check or an explicit advanced
+operator declaration supports it.
+
+## Connect and Configure
 
 Download the verified text worker from
 [aipowergrid.io/run](https://aipowergrid.io/run), start it using the exact
@@ -35,7 +50,22 @@ platform instructions, and open its token-protected local wizard.
 5. Approve the worker-scoped connection in Console.
 6. Start the worker and wait for **Online**.
 
-## 3. Verify Publicly
+The selected model has its own response, context, concurrency, and schedule
+limits in this single-backend setup. Use a pause window or stop the worker to
+drain and withdraw it from new Grid work.
+
+## Security Boundary
+
+The worker connects outbound to the Grid and defaults both its backend and
+management UI to loopback. Model files remain in Ollama. Any optional Ollama
+credential stays in the protected local worker configuration and is not
+returned by the dashboard after saving. The worker never needs a wallet private
+key.
+
+Community workers receive plaintext prompts and outputs. Do not advertise a
+machine for private workloads until confidential execution is available.
+
+## Verify on the Grid
 
 Enter the exact worker name or ID in the public check on
 [the worker page](https://aipowergrid.io/run). A process that merely started is
@@ -47,5 +77,11 @@ not proof that Core accepted its registration.
   yield to every unrelated local request automatically.
 </Callout>
 
-Model files remain in Ollama. Community workers receive plaintext prompts and
-outputs, and the Grid worker never needs a wallet private key.
+## Troubleshooting
+
+- **Not detected:** confirm `ollama list` works and Ollama is listening on
+  `127.0.0.1:11434`, then select **Re-scan**.
+- **Detected but the test fails:** run the model once in Ollama so it is loaded,
+  then retry the local generation test.
+- **Online but no jobs arrive:** confirm the exact advertised model on `/run`.
+  Demand is variable and registration does not guarantee traffic.

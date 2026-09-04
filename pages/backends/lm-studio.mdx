@@ -9,18 +9,37 @@ LM Studio can remain your desktop model manager. AI Power Grid connects only to
 its local OpenAI-compatible server; the worker does not import or upload the
 model.
 
-## Setup
+## Install or Start LM Studio
 
-1. Load the model in LM Studio.
-2. Enable LM Studio's local server.
-3. Confirm the server shows a local endpoint. The common base endpoint is
-   `http://127.0.0.1:1234` and the worker probes `/v1/models`.
-4. Download and start the verified text worker from
+Keep the desktop installation you already use. New operators can install LM
+Studio from [lmstudio.ai/download](https://lmstudio.ai/download), download a
+model inside LM Studio, and load it before enabling the local server. The Grid
+worker does not import, copy, or keep that model loaded.
+
+## Detect the Endpoint
+
+Enable LM Studio's local server. Its common base endpoint is
+`http://127.0.0.1:1234`; the worker discovers models through `/v1/models`. If
+you chose another port, enter the endpoint shown in LM Studio manually.
+
+## Compatible Models
+
+The wizard lists the identifiers reported by LM Studio. Select one exact model
+and require the local generation test to complete. Detection proves that the
+server reports a model, not that its prompt template, context limit, or output
+path works.
+
+## Connect and Configure
+
+1. Download and start the verified text worker from
    [aipowergrid.io/run](https://aipowergrid.io/run).
-5. Select detected **LM Studio**, or enter the displayed base endpoint.
-6. Choose the exact model, run the local generation test, and review its
+2. Select detected **LM Studio**, or enter the displayed base endpoint.
+3. Choose the exact model, run the local generation test, and review its
    context and output limits.
-7. Approve the worker-scoped Console connection and wait for **Online**.
+4. Set concurrency and an optional local-time pause schedule.
+5. Approve the worker-scoped Console connection and wait for **Online**.
+
+## Operator Controls
 
 Use one simultaneous Grid job initially. Desktop sleep, unloading the model, or
 stopping LM Studio makes the backend unavailable; the worker cannot keep that
@@ -28,3 +47,25 @@ runtime alive for you.
 
 Schedules and pause windows limit when the Grid may use the selected capacity.
 They do not inspect every unrelated request made by another local application.
+
+## Security Boundary
+
+Keep the LM Studio server on loopback unless you intentionally secure an
+operator-controlled LAN endpoint. The worker connects outbound to the Grid,
+does not upload model files, and never requests a wallet private key. Community
+workers receive plaintext prompts and outputs.
+
+## Verify on the Grid
+
+After the dashboard shows **Online**, verify the exact worker name or ID and
+advertised model on [aipowergrid.io/run](https://aipowergrid.io/run). A loaded
+model and local server do not prove that Core accepted the worker.
+
+## Troubleshooting
+
+- **Not detected:** confirm the local server is enabled and enter its displayed
+  base URL manually.
+- **Empty or malformed output:** test the selected model in LM Studio and check
+  its prompt template before retrying the worker test.
+- **Worker drops offline:** prevent sleep, keep the model loaded, and inspect
+  the local worker logs for the bounded connection error.
