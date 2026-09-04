@@ -1,0 +1,158 @@
+---
+title: Connect Your Existing AI Stack
+description: Connect an existing Ollama, vLLM, SGLang, LM Studio, KoboldCpp, ComfyUI, or reviewed media runtime to AI Power Grid.
+---
+
+import { Callout, Cards } from 'nextra/components'
+
+# Connect Your Existing AI Stack
+
+Keep the models and runtime you already operate. An AI Power Grid worker runs
+beside that service, receives compatible jobs, and returns the result. It does
+not replace your inference engine or upload your model files.
+
+```text
+Grid applications
+       |
+AI Power Grid Core
+       |
+outbound worker connection
+       |
+Grid worker sidecar
+       |
+your Ollama / vLLM / SGLang / ComfyUI runtime
+       |
+your GPU
+```
+
+<Cards>
+  <Cards.Card title="Connect a text backend" href="/worker-llm" />
+  <Cards.Card title="Qualify a media backend" href="/worker-media" />
+  <Cards.Card title="Choose a path from your hardware" href="https://aipowergrid.io/run" />
+</Cards>
+
+## Current Compatibility
+
+| Runtime | Workload | Connection | Public status |
+| --- | --- | --- | --- |
+| Ollama | Text | Automatically detected local API | Open |
+| vLLM | Text | OpenAI-compatible API | Open |
+| SGLang | Text | OpenAI-compatible API | Open |
+| LMDeploy | Text | OpenAI-compatible API | Open |
+| LM Studio | Text | Detected or manually entered API | Open |
+| KoboldCpp | Text | Detected or manually entered API | Open |
+| Other OpenAI-compatible APIs | Text | Manually entered endpoint | Advanced |
+| ComfyUI | Image, video, and 3D | Reviewed model and workflow recipes | Qualification |
+| ACE-Step | Audio | Reviewed direct-runtime profile | Qualification |
+
+**Open** means the current public text worker can connect. **Qualification**
+means owning the runtime is not enough: the exact model, recipe, dependencies,
+and local canary must pass the media release process before the capability may
+be advertised.
+
+## What You Control
+
+For the public text worker, the operator chooses:
+
+- which backend endpoint the worker may call;
+- which local model is advertised to the Grid;
+- the maximum output and context length;
+- maximum simultaneous Grid jobs;
+- optional local-time operating windows, including paused windows;
+- when the worker starts, drains, stops, or reconnects.
+
+The worker uses an outbound WebSocket connection to receive jobs. Backend URLs
+default to loopback but may point at an operator-controlled LAN or remote API.
+Remote API credentials remain on the worker host.
+
+## Security Boundary
+
+<Callout type="warning">
+  Community workers process plaintext prompts, inputs, and outputs. Do not send
+  passwords, private keys, regulated data, confidential source code, or other
+  secrets unless a separately documented confidential-execution route is live
+  and independently verified.
+</Callout>
+
+- Model files remain inside the operator's runtime.
+- The worker needs a worker-scoped Grid credential, never a wallet private key.
+- The payout wallet is configured or delegated separately through Console.
+- Discovered models are not authority to invent unsupported Grid model names.
+- Media workers receive only short-lived upload URLs, not Grid storage keys.
+
+## Existing Stack Path
+
+1. Start the backend you already use.
+2. Download the verified worker from [aipowergrid.io/run](https://aipowergrid.io/run).
+3. Let the local wizard detect the endpoint, or enter it manually.
+4. Choose the exact model and limits you want to advertise.
+5. Run the local backend test.
+6. Approve the worker-scoped Grid connection in Console.
+7. Wait for the local dashboard to report **Online**.
+8. Confirm the worker by exact name or ID using the public check on `/run`.
+
+## Starting Fresh
+
+Use the browser-only hardware planner at
+[aipowergrid.io/run](https://aipowergrid.io/run#hardware-planner) for an initial
+path. The downloaded worker remains authoritative for local compatibility. A
+browser guess cannot approve hardware, advertise a model, or qualify a media
+profile.
+
+## Backend Guides
+
+### Ollama
+
+Start Ollama and make sure `ollama list` shows the model you intend to serve.
+The worker detects the default loopback endpoint and lists available models in
+its setup wizard. Install Ollama only from its
+[official download page](https://ollama.com/download).
+
+### vLLM, SGLang, and LMDeploy
+
+Start the runtime's OpenAI-compatible server, then enter its base endpoint in
+the worker. The worker probes the models endpoint before saving it. If the
+backend requires authentication, enter that backend credential only in the
+local worker UI.
+
+### LM Studio
+
+Enable LM Studio's local server, load a model, and leave the server running.
+The worker normally detects the default local endpoint; otherwise enter the
+endpoint shown by LM Studio.
+
+### KoboldCpp
+
+Start KoboldCpp with its API enabled. The worker probes its model endpoint and
+bridges compatible text jobs through the same local setup flow.
+
+### ComfyUI
+
+An existing ComfyUI installation is useful, but it does not make every model or
+workflow Grid-compatible. The bridge must resolve an approved model name to the
+exact checkpoint, nodes, and workflow recipe required by Core. Follow the
+[media qualification guide](/worker-media) rather than advertising arbitrary
+custom workflows.
+
+### ACE-Step
+
+ACE-Step uses the media manager's pinned direct-runtime profile. That public
+profile remains qualification-gated until its required hardware evidence,
+recipe commitment, signed release, and supervised staging are complete.
+
+## Troubleshooting
+
+**The backend is not detected:** confirm it is running, then enter its endpoint
+manually and use **Test**. Containerized workers may need the host gateway
+instead of `127.0.0.1`.
+
+**The model is missing:** confirm the backend itself lists or has loaded the
+model. The Grid worker does not make an unavailable model appear.
+
+**The worker runs but is not online:** a running process is not proof of Grid
+registration. Check the dashboard connection state and redacted logs, then use
+the exact-name public worker check.
+
+**No jobs arrive:** traffic and model demand vary. Confirm that the advertised
+Grid model name matches a currently supported route and that the operating
+schedule is not paused.

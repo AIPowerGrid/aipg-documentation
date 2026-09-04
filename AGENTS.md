@@ -102,6 +102,14 @@ which is intentionally NOT published.
   client preflight guard rather than a server allowance, reject
   wallet-private-key custody, and distinguish application receipt IDs from
   verified on-chain JobAnchors.
+- `/docs/connect-existing-stack` is the canonical sidecar-first worker
+  explanation. It distinguishes the open text-worker path from advanced and
+  qualification-gated media paths, documents actual operator controls, and
+  states the plaintext community-worker boundary before setup instructions.
+- Worker quickstarts must route ordinary operators through the verified `/run`
+  release gate, never expose credentials in command arguments, and never claim
+  concurrency, schedules, model support, or managed-media availability that the
+  released runtime does not enforce.
 - Deploy target is Vercel (`vercel.json`), which builds with **npm** (`npm install` /
   `npm run build`); `package-lock.json` is the committed lockfile.
 

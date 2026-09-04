@@ -17,8 +17,9 @@ export default {
     "title": "Run a Node"
   },
   "run-a-node": "Overview",
+  "connect-existing-stack": "Connect Existing Stack",
   "worker-llm": "Text Worker",
-  "worker-media": "Image Worker",
+  "worker-media": "Media Worker",
   "validator-node": "Validator Node",
   "p2p": "P2P Mode (Beta)",
   "-- grid --": {
