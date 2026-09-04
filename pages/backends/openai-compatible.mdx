@@ -1,0 +1,33 @@
+---
+title: Connect Another OpenAI-Compatible API
+description: Connect an operator-controlled OpenAI-compatible inference endpoint to AI Power Grid.
+---
+
+import { Callout } from 'nextra/components'
+
+# Connect Another OpenAI-Compatible API
+
+An unlisted runtime can use the advanced text-worker path when it exposes the
+OpenAI models and chat-completions contract the worker tests locally. A similar
+URL shape is not enough; the setup canary must complete successfully.
+
+## Setup
+
+1. Start the backend and confirm its `/v1/models` endpoint reports the model.
+2. Download the verified text worker from
+   [aipowergrid.io/run](https://aipowergrid.io/run).
+3. Choose the manual OpenAI-compatible path and enter the backend base URL.
+4. Enter any backend credential only in the protected local worker UI.
+5. Select the exact model and run the local generation test.
+6. Set conservative output, context, schedule, and concurrency limits.
+7. Approve the worker in Console, wait for **Online**, and verify it on `/run`.
+
+<Callout type="warning">
+  Use only an endpoint you control or are authorized to resell. Connecting a
+  third-party hosted API can violate its terms and exposes Grid workloads to an
+  additional provider.
+</Callout>
+
+Operator-entered endpoints may be loopback, LAN, or public HTTPS services, but
+the worker rejects malformed URLs, embedded credentials, and known metadata
+service targets. Public backend credentials remain on the worker host.

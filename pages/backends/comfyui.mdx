@@ -1,0 +1,50 @@
+---
+title: Connect ComfyUI
+description: Inspect an existing ComfyUI installation for AI Power Grid media compatibility.
+---
+
+import { Callout } from 'nextra/components'
+
+# Connect ComfyUI
+
+The media bridge runs beside ComfyUI and can execute exact Grid image or video
+recipes. Having ComfyUI installed is only the first state; it does not make an
+arbitrary checkpoint or custom graph a public Grid capability.
+
+## Capability States
+
+| State | Meaning |
+| --- | --- |
+| Detected | The local ComfyUI API reports model-weight files |
+| Compatible | A bundled Grid workflow resolves every required local weight |
+| Qualified | The approved profile or review gate and canary have passed |
+| Advertised | The running worker registered that capability with Core |
+
+These states are intentionally separate. Compatibility never grants
+qualification or silently advertises a model.
+
+## Inspect a Candidate
+
+1. Start ComfyUI. Its common loopback endpoint is
+   `http://127.0.0.1:8188`.
+2. Follow the current media path on
+   [aipowergrid.io/run](https://aipowergrid.io/run#media-qualification).
+3. In the local bridge UI, test the endpoint and refresh the capability
+   inventory.
+4. Review detected weights and known compatible recipes.
+5. Select only the capabilities you intend to expose.
+6. Complete the required qualification and canary before advertising.
+
+<Callout type="warning">
+  Public managed-media onboarding is qualification-gated. Do not work around
+  that gate by entering a model name manually or setting a trust override.
+</Callout>
+
+Media workers currently accept one Grid render at a time. They support pause,
+maintenance windows, and drain-before-disconnect. Grid work and local ComfyUI
+work still share the same queue; a configured schedule is not universal idle
+queue detection.
+
+Input images, prompts, and outputs are plaintext to the community worker. Model
+files remain local, and uploads use short-lived Grid URLs rather than storage
+credentials.

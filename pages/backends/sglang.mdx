@@ -1,0 +1,32 @@
+---
+title: Connect SGLang
+description: Connect an existing SGLang OpenAI-compatible server to AI Power Grid.
+---
+
+# Connect SGLang
+
+The text worker can use SGLang through its OpenAI-compatible API. It probes the
+common local port `30000` using `/get_model_info` and `/v1/models`; SGLang on a
+different port can be entered manually.
+
+## Setup
+
+1. Start SGLang with the model and context settings you intend to serve.
+2. Confirm the API responds locally at the base URL you selected.
+3. Download the verified text worker from
+   [aipowergrid.io/run](https://aipowergrid.io/run).
+4. Select detected **SGLang**, or enter its base URL without duplicating the
+   `/v1` suffix.
+5. Select the exact reported model and run the local generation test.
+6. Set context, output, schedule, and concurrency limits.
+7. Approve the worker-scoped Console connection and wait for **Online**.
+
+If the backend requires authentication, the credential stays in the protected
+local worker configuration. It is not returned by the dashboard after saving.
+
+Start at one Grid job when local applications share the same SGLang scheduler.
+The worker limits Grid concurrency but does not generally identify unrelated
+local requests and reserve capacity for them automatically.
+
+Use the public exact-name check on `/run` to confirm that Core accepted the
+worker and its selected model.

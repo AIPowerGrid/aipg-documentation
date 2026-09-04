@@ -1,0 +1,38 @@
+---
+title: Qualify ACE-Step
+description: Understand the qualification path for an ACE-Step audio worker.
+---
+
+import { Callout } from 'nextra/components'
+
+# Qualify ACE-Step
+
+ACE-Step is a managed media profile, not an open generic API connection. The
+profile pins the runtime source, checkpoint tree, model identity, recipe, and
+hardware policy before the worker may advertise audio generation.
+
+<Callout type="warning">
+  The public qualification artifact is a local benchmark only. It cannot
+  enroll a worker, earn den, or advertise audio capability.
+</Callout>
+
+## Qualification Flow
+
+1. Open the current media qualification status on
+   [aipowergrid.io/run](https://aipowergrid.io/run#media-qualification).
+2. Download a qualification artifact only when that page verifies its manifest,
+   checksums, SBOM, and immutable release identity.
+3. Run the local hardware inspection, installation verification, and audio
+   canary.
+4. Submit only the privacy-reduced public report through the documented cohort
+   path. Keep the private hardware report and all credentials out of GitHub.
+5. Wait for a reviewed signed profile and supervised staging before treating
+   the machine as a Grid worker.
+
+The managed runtime remains offline from model hubs while serving and must keep
+its exact source, dependencies, model files, recipe, and local health checks
+valid. The worker uses a funds-less signer and a separate payout-wallet
+delegation; it never asks for a payout-wallet private key.
+
+Use the [full media-worker guide](/worker-media) for current evidence classes,
+availability controls, and troubleshooting.

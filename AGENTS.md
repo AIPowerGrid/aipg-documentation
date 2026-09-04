@@ -106,6 +106,10 @@ which is intentionally NOT published.
   explanation. It distinguishes the open text-worker path from advanced and
   qualification-gated media paths, documents actual operator controls, and
   states the plaintext community-worker boundary before setup instructions.
+- `/docs/backends/*` contains backend-specific operator quickstarts. Text pages
+  route through the verified worker release and identify the real local probe
+  endpoint; media pages remain qualification guides and never turn local
+  detection or compatibility into permission to advertise.
 - Worker quickstarts must route ordinary operators through the verified `/run`
   release gate, never expose credentials in command arguments, and never claim
   concurrency, schedules, model support, or managed-media availability that the
