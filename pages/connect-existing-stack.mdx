@@ -97,7 +97,10 @@ Remote API credentials remain on the worker host.
 6. Approve the worker-scoped Grid connection in Console.
 7. Choose the availability and concurrency you are willing to provide.
 8. Wait for the local dashboard to report **Online**.
-9. Confirm the worker by exact name or ID using the public check on `/run`.
+9. Run the parameter-free **Grid test**. Core chooses the payload and routes it
+   only to that exact worker; the result is connectivity evidence, not a model
+   quality score, charge, reward, or validator vote.
+10. Confirm the worker by exact name or ID using the public check on `/run`.
 
 ## Starting Fresh
 
