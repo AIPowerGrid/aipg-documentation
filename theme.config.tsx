@@ -57,12 +57,15 @@ const config: DocsThemeConfig = {
       <meta property="og:title" content="AI Power Grid Documentation" />
       <meta property="og:description" content="One API for open text, image, video, and audio models, powered by community GPUs and settled on Base." />
       <meta property="og:url" content="https://aipowergrid.io/docs" />
-      <meta property="og:image" content="https://aipowergrid.io/docs/og-image.webp" />
-      <meta property="og:image:width" content="1200" />
-      <meta property="og:image:height" content="630" />
+      <meta property="og:image" content="https://aipowergrid.io/docs/social/developers-v1.png" />
+      <meta property="og:image:width" content="1730" />
+      <meta property="og:image:height" content="909" />
+      <meta property="og:image:type" content="image/png" />
+      <meta property="og:image:alt" content="Your next app. Powered by the Grid. Open models. One API. Text, image, video and music." />
       <meta name="twitter:card" content="summary_large_image" />
       <meta name="twitter:site" content="@AIPowerGrid" />
-      <meta name="twitter:image" content="https://aipowergrid.io/docs/og-image.webp" />
+      <meta name="twitter:image" content="https://aipowergrid.io/docs/social/developers-v1.png" />
+      <meta name="twitter:image:alt" content="Your next app. Powered by the Grid. Open models. One API. Text, image, video and music." />
       <link
         rel="alternate"
         type="text/markdown"
