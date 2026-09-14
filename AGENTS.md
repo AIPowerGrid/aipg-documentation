@@ -53,6 +53,12 @@ which is intentionally NOT published.
   and future behavior distinctly.
 - **`theme.config.tsx`** — Nextra theme: logo, navbar links, SEO/OG `head`, footer, forced
   dark mode, edit-on-GitHub link.
+  OG and X use the approved Developer B artwork at
+  `/docs/social/developers-v1.png`, with actual dimensions and alt text.
+  This includes `/docs/integrations`, the destination of the website's `/use`
+  redirect. Keep versioned artwork URLs; do not modify the redirect for previews.
+- **`tests/social-preview.test.mjs`** checks the social asset/metadata contract
+  before builds, including basePath, dimensions and matching OG/X images.
 - **`next.config.mjs`** — Nextra wiring; `basePath: '/docs'`. All asset/links are served
   under `/docs` (e.g. logo at `/docs/logo.png`).
 - **`components/`** — small shared React/MDX components (e.g. `counters.tsx`). `styles/` —

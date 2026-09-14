@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "description": "AI Power Grid Documentation",
   "scripts": {
+    "prebuild": "node --test tests/social-preview.test.mjs",
     "check:claims": "node scripts/check-current-claims.mjs",
     "dev": "next dev",
     "build": "next build",
@@ -19,7 +20,7 @@
   },
   "homepage": "https://github.com/AIPowerGrid/aipg-documentation#readme",
   "dependencies": {
-    "next": "15.5.23",
+    "next": "15.5.25",
     "nextra": "3.3.1",
     "nextra-theme-docs": "3.3.1",
     "react": "^18.3.1",
@@ -32,9 +33,9 @@
   "overrides": {
     "@xmldom/xmldom": "0.9.12",
     "dompurify": "3.4.14",
-    "js-yaml": "3.15.1",
+    "js-yaml": "3.15.2",
     "mermaid": "11.17.0",
     "postcss": "8.5.26",
-    "sharp": "0.35.3"
+    "sharp": "0.35.4"
   }
 }
