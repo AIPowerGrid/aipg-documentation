@@ -42,6 +42,29 @@ platform signing state pass.
 Workers never receive Grid object-storage credentials. Model files and custom
 nodes remain on the operator's machine.
 
+## Supported Models and Listing Your Own
+
+Serving a model and selling it are separate gates. The Grid dispatches media
+jobs only for models in the public price book —
+[`GET /v1/pricing`](https://api.aipowergrid.io/v1/pricing) is the source of
+truth. A worker advertising a model outside that list registers and shows as
+online, but receives no jobs and earns nothing; requests for it are rejected
+before dispatch.
+
+The catalog is governed, not closed. An image or video model becomes sellable
+when its reviewed ComfyUI workflow is published to the on-chain RecipeVault
+and its metadata to the ModelVault (Base mainnet), and a price is added to the
+price book. To list a model that is not yet supported, contact the AI Power
+Grid admins on [Discord](https://discord.gg/W9D8j6HCtC) so the recipe can be
+reviewed, registered, and priced.
+
+<Callout type="info">
+  Discovery: `/v1/pricing` lists what is sellable and `/v1/status/models`
+  what is online now. `/v1/models` contains text models only. To verify your
+  own rig end to end, submit a generation with the optional `worker` field —
+  it accepts only a worker owned by your account and routes the job to it.
+</Callout>
+
 ## Public Qualification
 
 Start at [aipowergrid.io/run](https://aipowergrid.io/run#media-qualification).
