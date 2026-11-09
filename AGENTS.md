@@ -59,6 +59,8 @@ which is intentionally NOT published.
   redirect. Keep versioned artwork URLs; do not modify the redirect for previews.
 - **`tests/social-preview.test.mjs`** checks the social asset/metadata contract
   before builds, including basePath, dimensions and matching OG/X images.
+- **`tests/api-client-reference.test.mjs`** checks schema/model/balance discovery,
+  the bounded billable image example and honest runtime/migration caveats.
 - **`next.config.mjs`** — Nextra wiring; `basePath: '/docs'`. All asset/links are served
   under `/docs` (e.g. logo at `/docs/logo.png`).
 - **`components/`** — small shared React/MDX components (e.g. `counters.tsx`). `styles/` —
