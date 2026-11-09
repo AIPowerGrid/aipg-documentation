@@ -71,7 +71,7 @@ which is intentionally NOT published.
   scoped ts-morph/glob API, patched math rendering and content isolation.
 - **`tests/e2e/docs.spec.mjs`** and **`playwright.config.mjs`** exercise every
   document route, private-path 404s, real search navigation, Mermaid, metadata,
-  mobile navigation and six viewport widths. `DOCS_TEST_URL` selects a reviewed
+  first-run API/funding discovery, mobile navigation and six viewport widths. `DOCS_TEST_URL` selects a reviewed
   preview/live base URL; otherwise the runner owns a loopback production server.
 - **`decisions/`** holds internal architectural decisions, never routed content.
 - **`patches/`** holds the reviewed, version-pinned Nextra layout compatibility
@@ -168,6 +168,10 @@ which is intentionally NOT published.
 - `postbuild` generates Pagefind from rendered HTML into ignored
   `public/_pagefind`; serve it under `/docs/_pagefind`. Search must be tested
   against a production build, not inferred from a successful MDX compilation.
+  The marketing site's `/docs` rewrite must permit Pagefind's WebAssembly via
+  the docs-only CSP token `'wasm-unsafe-eval'`; a direct Vercel preview does not
+  prove the public proxy's CSP. Never permit JavaScript `'unsafe-eval'` in
+  production to make search work.
 
 ## Work Guidance
 

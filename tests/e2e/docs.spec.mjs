@@ -43,6 +43,8 @@ test('metadata, branding and ordinary document navigation render without browser
 })
 
 test('the production search index resolves a backend document under the base path', async ({ page }) => {
+  const errors = []
+  page.on('pageerror', error => errors.push(error.message))
   await page.goto('/docs')
   await page.getByRole('combobox').fill('Ollama')
   const result = page.locator('.nextra-search-results a[href^="/docs/backends/ollama"]').first()
@@ -50,6 +52,18 @@ test('the production search index resolves a backend document under the base pat
   await result.click()
   await expect(page).toHaveURL(/\/docs\/backends\/ollama(?:#.*)?$/)
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Connect Ollama')
+  expect(errors).toEqual([])
+})
+
+test('the first-run guide exposes the client reference and canonical funding links', async ({ page }) => {
+  await page.goto('/docs/integrations')
+  await page.getByRole('link', { name: 'API client reference', exact: true }).click()
+  await expect(page).toHaveURL(/\/docs\/api-client-reference$/)
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('API Client Reference')
+  await expect(page.getByRole('link', { name: 'OpenAPI schema', exact: true })).toHaveAttribute('href', 'https://api.aipowergrid.io/openapi.json')
+  await expect(page.getByRole('link', { name: 'Credits & Funding', exact: true })).toHaveAttribute('href', 'https://console.aipowergrid.io/dashboard/funding')
+  await expect(page.locator('main')).toContainText('one billable image')
+  await expect(page.locator('main')).toContainText('total_spendable_usd')
 })
 
 test('validator data-flow diagrams render instead of empty or error placeholders', async ({ page }) => {
