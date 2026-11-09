@@ -74,6 +74,8 @@ which is intentionally NOT published.
   first-run API/funding discovery, mobile navigation and six viewport widths. `DOCS_TEST_URL` selects a reviewed
   preview/live base URL; otherwise the runner owns a loopback production server.
 - **`decisions/`** holds internal architectural decisions, never routed content.
+  `decisions/API_CLIENT_EDGE.md` records the narrowly scoped API urllib BIC
+  exception, read-only verification, authentication boundary and rollback.
 - **`patches/`** holds the reviewed, version-pinned Nextra layout compatibility
   patch, applied by `patch-package --error-on-fail` during installation. Never
   edit vendored files by hand or disable the strict config validator.

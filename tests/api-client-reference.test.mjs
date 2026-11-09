@@ -36,8 +36,17 @@ test('image example requests one explicitly selected billable image', () => {
   assert.ok(!reference.includes('"model": "auto"'));
 });
 
-test('known runtime defects and migration are not presented as solved', () => {
-  assert.ok(reference.includes('outstanding edge compatibility issue'));
+test('Python urllib documents the scoped verified fix without an auth or TLS bypass', () => {
+  assert.ok(reference.includes('default `Python-urllib/` User-Agent is supported'));
+  assert.ok(reference.includes('API-host-only exception'));
+  assert.ok(reference.includes('does not authenticate a request'));
+  assert.ok(reference.includes('Protected account endpoints still return `401`'));
+  assert.ok(reference.includes('Never disable TLS verification'));
+  assert.ok(!reference.includes('outstanding edge compatibility issue'));
+  assert.match(reference, /urllib\.request\.urlopen\(\s*"https:\/\/api\.aipowergrid\.io\/v1\/models", timeout=20/);
+});
+
+test('reasoning limits and retired API migration remain explicit', () => {
   assert.ok(reference.includes('Do not automatically regenerate empty replies'));
   assert.ok(reference.includes('Legacy `/api/v2` returns `410 Gone`'));
   assert.ok(reference.includes('Grid\ngeneration key is not a remote MCP OAuth access token'));
