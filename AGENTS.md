@@ -37,21 +37,26 @@ concrete detail in children. Delete stale notes instead of explaining history.
 ## Purpose
 
 The user-facing documentation for AI Power Grid, served at `aipowergrid.io/docs`. A Nextra
-docs site (Next.js 15, Pages router) that publishes `.mdx` from `pages/`. This repo ALSO
+docs site (Next.js 15 App Router, Nextra 4) that publishes `.mdx` from `content/`. This repo ALSO
 hosts the org-wide **engineering-standards/** — the internal rail every AIPG repo inherits,
 which is intentionally NOT published.
 
 ## Ownership
 
-- **`pages/`** — the published docs: `.mdx` content + `_meta.tsx` navigation.
+- **`content/`** — the published docs: `.mdx` content + `_meta.tsx` navigation.
   Governed directly by this root file because Nextra turns any nested
-  `AGENTS.md` into a public page. Everything routable lives here.
+  `AGENTS.md` into public content. Every document lives here; the thin App Router
+  shell does not import private Markdown.
+- **`app/layout.tsx`**, **`app/[[...mdxPath]]/page.tsx`** and
+  **`mdx-components.tsx`** own the theme, metadata, static content routing and MDX
+  component mapping. Preserve document paths under `/docs`; unknown paths fail
+  closed through `dynamicParams = false`.
 - **`engineering-standards/`** — internal org engineering standards (core + per-language +
-  git). Outside `pages/`, so unpublished. Owned in its own AGENTS.md.
+  git). Outside `content/`, so unpublished. Owned in its own AGENTS.md.
 - **`product-proposals/`** — internal, unpublished product and architecture
   proposals. These documents may describe planned surfaces but must label live
   and future behavior distinctly.
-- **`theme.config.tsx`** — Nextra theme: logo, navbar links, SEO/OG `head`, footer, forced
+- **`app/layout.tsx`** — Nextra theme: logo, navbar links, SEO/OG metadata, footer, forced
   dark mode, edit-on-GitHub link.
   OG and X use the approved Developer B artwork at
   `/docs/social/developers-v1.png`, with actual dimensions and alt text.
@@ -60,12 +65,23 @@ which is intentionally NOT published.
 - **`tests/social-preview.test.mjs`** checks the social asset/metadata contract
   before builds, including basePath, dimensions and matching OG/X images.
 - **`tests/api-client-reference.test.mjs`** checks schema/model/balance discovery,
-  the bounded billable image example and honest runtime/migration caveats.
+  the bounded billable image example, honest runtime/migration caveats and
+  current released-worker troubleshooting.
+- **`tests/docs-runtime.test.mjs`** covers supported dependency pins, the actual
+  scoped ts-morph/glob API, patched math rendering and content isolation.
+- **`tests/e2e/docs.spec.mjs`** and **`playwright.config.mjs`** exercise every
+  document route, private-path 404s, real search navigation, Mermaid, metadata,
+  mobile navigation and six viewport widths. `DOCS_TEST_URL` selects a reviewed
+  preview/live base URL; otherwise the runner owns a loopback production server.
+- **`decisions/`** holds internal architectural decisions, never routed content.
+- **`patches/`** holds the reviewed, version-pinned Nextra layout compatibility
+  patch, applied by `patch-package --error-on-fail` during installation. Never
+  edit vendored files by hand or disable the strict config validator.
 - **`next.config.mjs`** — Nextra wiring; `basePath: '/docs'`. All asset/links are served
   under `/docs` (e.g. logo at `/docs/logo.png`).
 - **`components/`** — small shared React/MDX components (e.g. `counters.tsx`). `styles/` —
   `globals.css`. `public/` — static assets plus the curated agent index at `/docs/llms.txt`.
-  `pages/_app.tsx` loads global CSS.
+  `app/layout.tsx` loads global CSS and the supported Nextra theme stylesheet.
 - **`archive/`** — old, unpublished `DAPI-*` research markdown. Not routed, not maintained;
   do not link from published pages.
 - **`.github/workflows/secret-scan.yml`, `.gitleaks.toml`, and `.gitleaksignore`** —
@@ -79,8 +95,8 @@ which is intentionally NOT published.
 
 - **Inherit org engineering standards:** `engineering-standards/`
   (core + `git.md` + the matching language file). The rules below are docs-repo specializations.
-- **Only `pages/` is published.** Anything that must NOT ship to the public site (standards,
-  research, internal notes) lives outside `pages/`. Adding a routable page = adding to `pages/`.
+- **Only `content/` contains published Markdown.** Anything that must NOT ship to the public
+  site (standards, research, decisions, internal notes) lives outside `content/`.
 - **`basePath` is `/docs`.** Internal links and asset paths must account for it; absolute
   asset refs use `/docs/...`.
 - `/docs/llms.txt` is a concise discovery index, not a duplicate API reference. It points
@@ -142,12 +158,20 @@ which is intentionally NOT published.
 - The source ComfyUI bridge enforces one media job per signed worker identity.
   Its bounded local-time schedule may pause new claims and drains an active job
   before disconnecting; values above one are not supported media concurrency.
-- Deploy target is Vercel (`vercel.json`), which builds with **npm** (`npm install` /
+- Deploy target is Vercel (`vercel.json`), which builds with **npm** (`npm ci` /
   `npm run build`); `package-lock.json` is the committed lockfile.
+- Use Node 22 and `npm ci` for clean verification and deployment. Keep Next/Nextra
+  pinned together with reviewed security overrides. Nextra 4 owns its native
+  Zod 4 dependency; never force Zod 4 under the retired Nextra 3 API.
+- The scoped `@ts-morph/common` minimatch 11 override requires the real glob API
+  regression and Node 22. Re-review it when upstream supports the patched range.
+- `postbuild` generates Pagefind from rendered HTML into ignored
+  `public/_pagefind`; serve it under `/docs/_pagefind`. Search must be tested
+  against a production build, not inferred from a successful MDX compilation.
 
 ## Work Guidance
 
-- New doc page → add the `.mdx` under `pages/` AND register it in the nearest
+- New doc page → add the `.mdx` under `content/` AND register it in the nearest
   `_meta.tsx` (otherwise it is unlisted in the sidebar).
 - Published current-state claims must be checked against owning sources:
   `grid-core` for API/charging/worker/validator/payout behavior;
@@ -173,17 +197,20 @@ which is intentionally NOT published.
   a reviewed immutable commit with an explicit SHA-256 check, separately from
   the frozen preview.13 binary. Never publish a mutable branch download,
   pipe-to-shell command, or credential-bearing command line.
-- Do not place `AGENTS.md` anywhere under `pages/`: Nextra compiles Markdown in
+- Do not place `AGENTS.md` anywhere under `content/`: Nextra compiles Markdown in
   that tree into public routes. Keep the page-content contract here.
 - Changing nav order/labels/separators → edit `_meta.tsx`, not the page frontmatter.
 - Do not edit generated/vendored dirs: `.next/`, `node_modules/`, `.vercel/`, `.fallow/`.
 
 ## Verification
 
-- `npm install` then `npm run dev` → http://localhost:3000/docs to preview.
+- `npm ci` then `npm run dev` → http://localhost:3000/docs to preview.
 - `npm run check:claims` rejects known retired promises from current pages.
 - `npm run build` must succeed (Nextra/Next build is the gate before deploy).
 - `npm audit` must report zero known vulnerabilities before deploy.
+- Verify every content route, private-path 404s, social metadata, Mermaid, search
+  results/navigation and desktop/mobile overflow against the built app and a
+  reviewed preview before promoting production. Keep QA outputs outside source.
 - `gitleaks git . --log-opts=HEAD --config .gitleaks.toml --redact --verbose`
   scans the complete history reachable from the candidate commit.
 

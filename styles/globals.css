@@ -29,6 +29,19 @@ code {
 }
 
 /* Custom navbar links */
+.docs-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.docs-navbar > a[aria-label='Home page'],
+.docs-logo img {
+  flex-shrink: 0;
+}
+
 .nav-extra-links {
   display: flex;
   gap: 1.25rem;
@@ -49,6 +62,20 @@ code {
 }
 
 /* Mobile responsive */
+@media (max-width: 1200px) {
+  .nav-extra-links a:not(:first-child) {
+    display: none;
+  }
+
+  .nav-extra-links {
+    margin-left: 0;
+  }
+
+  .docs-navbar {
+    gap: 0.75rem;
+  }
+}
+
 @media (max-width: 768px) {
   .nav-extra-links {
     gap: 0.75rem;

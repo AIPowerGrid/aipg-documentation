@@ -5,7 +5,7 @@ import { readdir, readFile } from 'node:fs/promises'
 import path from 'node:path'
 import process from 'node:process'
 
-const pagesDirectory = path.resolve('pages')
+const pagesDirectory = path.resolve('content')
 const excludedPages = new Set(['whitepaper.mdx'])
 const retiredClaims = [
   /free ai for everyone/i,
@@ -34,7 +34,7 @@ async function collectMdxFiles(directory) {
 
 const currentProductFiles = [
   ...(await collectMdxFiles(pagesDirectory)),
-  path.resolve('theme.config.tsx'),
+  path.resolve('app/layout.tsx'),
 ]
 
 const violations = []

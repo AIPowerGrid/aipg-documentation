@@ -6,11 +6,11 @@ import { readFileSync } from 'node:fs';
 import { test } from 'node:test';
 
 const read = path => readFileSync(new URL('../' + path, import.meta.url), 'utf8');
-const reference = read('pages/api-client-reference.mdx');
+const reference = read('content/api-client-reference.mdx');
 
 test('API discovery is linked from navigation, first-run docs and agent index', () => {
-  assert.match(read('pages/_meta.tsx'), /"api-client-reference"/);
-  for (const path of ['pages/integrations.mdx', 'pages/streaming-api.mdx', 'public/llms.txt']) {
+  assert.match(read('content/_meta.tsx'), /"api-client-reference"/);
+  for (const path of ['content/integrations.mdx', 'content/streaming-api.mdx', 'public/llms.txt']) {
     assert.ok(read(path).includes('/api-client-reference'), path);
   }
   assert.ok(reference.includes('https://api.aipowergrid.io/openapi.json'));
@@ -18,7 +18,7 @@ test('API discovery is linked from navigation, first-run docs and agent index', 
 });
 
 test('media discovery and existing credit balance have explicit canonical routes', () => {
-  assert.ok(read('pages/generate.mdx').includes('for live media models'));
+  assert.ok(read('content/generate.mdx').includes('for live media models'));
   assert.ok(reference.includes('GET /v1/status/models'));
   assert.ok(reference.includes('/v1/account/credits'));
   assert.ok(reference.includes('total_spendable_usd'));
@@ -41,4 +41,12 @@ test('known runtime defects and migration are not presented as solved', () => {
   assert.ok(reference.includes('Do not automatically regenerate empty replies'));
   assert.ok(reference.includes('Legacy `/api/v2` returns `410 Gone`'));
   assert.ok(reference.includes('Grid\ngeneration key is not a remote MCP OAuth access token'));
+});
+
+test('Ollama troubleshooting reflects the published worker correction', () => {
+  const guide = read('content/backends/ollama.mdx');
+  assert.ok(guide.includes('v0.3.12'));
+  assert.ok(guide.includes('600-second generation read timeout'));
+  assert.ok(guide.includes('https://aipowergrid.io/run'));
+  assert.ok(!guide.includes('Until a corrected release is qualified'));
 });

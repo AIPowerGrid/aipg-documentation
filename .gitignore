@@ -1,3 +1,6 @@
 .next
 node_modules
 .vercel
+public/_pagefind/
+playwright-report/
+test-results/
