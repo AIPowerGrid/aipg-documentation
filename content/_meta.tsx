@@ -54,14 +54,12 @@ export default {
   "contact": {
     "title": "Discord ↗",
     "type": "page",
-    "href": "https://discord.gg/W9D8j6HCtC",
-    "newWindow": true
+    "href": "https://discord.gg/W9D8j6HCtC"
   },
   "github": {
     "title": "GitHub ↗",
     "type": "page",
-    "href": "https://github.com/aipowergrid",
-    "newWindow": true
+    "href": "https://github.com/aipowergrid"
   },
   "ai-workers": {
     "title": "AI Workers (Legacy)",
