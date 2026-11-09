@@ -79,6 +79,18 @@ not proof that Core accepted its registration.
 
 ## Troubleshooting
 
+- **Long prompts truncate or time out:** configure `OLLAMA_CONTEXT_LENGTH` in
+  the Ollama service and inspect `/api/ps` after loading the selected model.
+  `/api/show`'s architecture maximum is not the running context. The published
+  v0.3.10 worker can over-advertise that limit and abort long prefill after
+  120 seconds. Until a corrected release is qualified, use a measured smaller
+  worker context cap; do not assume raising a displayed limit enlarges Ollama.
+- **Docker cannot detect host Ollama:** use `http://host.docker.internal:11434`
+  explicitly rather than container loopback. Verify Docker's host-gateway
+  mapping and restrict the backend listener/firewall to the required clients.
+- **Slow first request after idle:** Ollama may unload its model. Configure
+  `OLLAMA_KEEP_ALIVE` on the Ollama service if keeping weights resident fits
+  your shared GPU workload; the published worker does not set it for each job.
 - **Not detected:** confirm `ollama list` works and Ollama is listening on
   `127.0.0.1:11434`, then select **Re-scan**.
 - **Detected but the test fails:** run the model once in Ollama so it is loaded,

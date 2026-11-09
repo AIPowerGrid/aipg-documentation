@@ -1,5 +1,7 @@
 # AI Power Grid Documentation
 
+- [API client reference](https://aipowergrid.io/docs/api-client-reference): OpenAPI discovery, credits, image requests, reasoning budgets, Python HTTP 403 and legacy migration.
+
 > AI Power Grid provides OpenAI-compatible text inference and decentralized
 > image, video, and audio generation through independent workers.
 

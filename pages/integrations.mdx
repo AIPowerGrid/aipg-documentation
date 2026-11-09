@@ -28,11 +28,17 @@ API key:  your scoped Grid key
    models currently online. Use `auto` when you want the Grid to choose.
 5. Run the smoke test below, then pick a client and paste its configuration.
 
+The authoritative endpoint list is the [live OpenAPI schema](https://api.aipowergrid.io/openapi.json)
+or [interactive reference](https://api.aipowergrid.io/docs). The
+[API client reference](/api-client-reference) covers balance checks, image-model
+discovery, reasoning budgets, Python HTTP 403s and legacy migration.
+
 ## Fastest smoke test
 
-This makes one bounded text request. It proves the key, scopes, balance, model
-route, and streaming-independent response path before another framework adds
-its own configuration layer.
+This makes one bounded, billable text request before another framework adds
+its own configuration layer. Reasoning models can exhaust a small budget
+before emitting visible text. Check the terminal reason and returned answer
+rather than treating HTTP 200 alone as proof of a usable completion.
 
 ```bash
 export AIPG_API_KEY="your-scoped-key"

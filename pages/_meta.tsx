@@ -7,6 +7,7 @@ export default {
   },
   "generate": "Generate Images & Chat",
   "streaming-api": "Generation API",
+  "api-client-reference": "API Client Reference",
   "developers": "For Developers",
   "integrations": "Use AIPG in 60 seconds",
   "pricing": "Pricing & Comparisons",
