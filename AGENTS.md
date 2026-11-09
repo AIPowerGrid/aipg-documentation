@@ -64,11 +64,14 @@ which is intentionally NOT published.
   redirect. Keep versioned artwork URLs; do not modify the redirect for previews.
 - **`tests/social-preview.test.mjs`** checks the social asset/metadata contract
   before builds, including basePath, dimensions and matching OG/X images.
+- **`tests/api-client-reference.test.mjs`** checks schema/model/balance discovery,
+  the bounded billable image example, honest runtime/migration caveats and
+  current released-worker troubleshooting.
 - **`tests/docs-runtime.test.mjs`** covers supported dependency pins, the actual
   scoped ts-morph/glob API, patched math rendering and content isolation.
 - **`tests/e2e/docs.spec.mjs`** and **`playwright.config.mjs`** exercise every
   document route, private-path 404s, real search navigation, Mermaid, metadata,
-  mobile navigation and six viewport widths. `DOCS_TEST_URL` selects a reviewed
+  first-run API/funding discovery, mobile navigation and six viewport widths. `DOCS_TEST_URL` selects a reviewed
   preview/live base URL; otherwise the runner owns a loopback production server.
 - **`decisions/`** holds internal architectural decisions, never routed content.
 - **`patches/`** holds the reviewed, version-pinned Nextra layout compatibility
@@ -103,6 +106,11 @@ which is intentionally NOT published.
   key must carry `inference.submit` plus `account.read`, it must surface the
   canonical funding check before framework setup, and its bounded raw API smoke
   test must remain valid independently of any third-party client.
+- `/docs/api-client-reference` owns schema discovery, text/media listings,
+  balance/funding troubleshooting, image HTTP examples, reasoning budget limits,
+  raw-client edge compatibility and retired Horde migration. Never claim a
+  workaround fixes the runtime, promise free credit, or infer live capacity
+  from a schema or configured price.
 - `/docs/pricing` is the public discovery surface for Core's versioned
   `aipg.pricing.v1` catalog. It may publish only exact configured Grid rates and
   fresh, same-model comparison workloads from `comparison_evidence`; it must
@@ -160,6 +168,10 @@ which is intentionally NOT published.
 - `postbuild` generates Pagefind from rendered HTML into ignored
   `public/_pagefind`; serve it under `/docs/_pagefind`. Search must be tested
   against a production build, not inferred from a successful MDX compilation.
+  The marketing site's `/docs` rewrite must permit Pagefind's WebAssembly via
+  the docs-only CSP token `'wasm-unsafe-eval'`; a direct Vercel preview does not
+  prove the public proxy's CSP. Never permit JavaScript `'unsafe-eval'` in
+  production to make search work.
 
 ## Work Guidance
 

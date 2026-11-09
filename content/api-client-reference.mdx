@@ -1,0 +1,147 @@
+---
+title: API Client Reference
+description: Discover Grid models, check credits, generate images, and troubleshoot raw API clients.
+---
+
+# API Client Reference
+
+**OpenAI client base URL:** `https://api.aipowergrid.io/v1`
+
+The authoritative endpoint and request-schema list is the live
+[OpenAPI schema](https://api.aipowergrid.io/openapi.json), also available in the
+[interactive API reference](https://api.aipowergrid.io/docs). A route in the
+schema does not mean a worker is online or a gated feature is enabled for your
+account. OpenAI compatibility does not imply support for every OpenAI endpoint
+or every backend-specific option.
+
+## Discover Models And Prices
+
+| Endpoint | Use |
+| --- | --- |
+| [`GET /v1/models`](https://api.aipowergrid.io/v1/models) | Online text model IDs; `auto` selects a text route |
+| [`GET /v1/status/models`](https://api.aipowergrid.io/v1/status/models) | Online models across job types and serving-worker counts |
+| [`GET /v1/pricing`](https://api.aipowergrid.io/v1/pricing) | Configured price book; a price is not proof of live capacity |
+| `POST /v1/account/credits/quote` | Authenticated, non-mutating estimate for the exact supported request |
+
+Use the exact model ID for the intended job type. Image models are not listed
+by `/v1/models`; text's `auto` is not an image-model selection rule. Prefer an
+explicit image model rather than relying on an omitted-model default. See
+[pricing](/pricing) for quote semantics and availability caveats.
+
+## Account And Credits
+
+Create a key in the [Console](https://console.aipowergrid.io/dashboard/api-key)
+with `inference.submit` for generation and `account.read` for account/balance
+inspection. Keep it in a server-side secret store or environment variable,
+not browser JavaScript, URLs, issues, or committed files.
+
+```bash
+curl --fail-with-body https://api.aipowergrid.io/v1/account/credits \
+  -H "Authorization: Bearer $AIPG_API_KEY"
+```
+
+Use `total_spendable_usd` to check available usage credit. Paid balance,
+promotions and daily free allowances are separate runtime policies. Account
+creation does not guarantee free credit. Only treat a free allowance as
+spendable when the response reports it active; do not infer a permanent free
+tier or holder entitlement from the presence of a field.
+
+HTTP `402` with `insufficient credits` means currently spendable credit cannot
+fund the request, not that the key is invalid. Check balance and quote, then use
+[Credits & Funding](https://console.aipowergrid.io/dashboard/funding) or an
+applicable approved credit program. Do not automatically retry paid generation
+or send another deposit to resolve an ambiguous response.
+
+`GET /v1/account` provides private account and identity metadata; it is not the
+balance endpoint.
+
+## Generate An Image
+
+First select an online image model from `/v1/status/models` and check its price.
+This example submits **one billable image**, not a free connectivity probe.
+Replace the model if it is unavailable.
+
+```bash
+curl --fail-with-body https://api.aipowergrid.io/v1/images/generations \
+  -H "Authorization: Bearer $AIPG_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "z-image-turbo",
+    "prompt": "A small red sailboat on a calm lake at sunrise",
+    "n": 1,
+    "size": "1024x1024",
+    "response_format": "url"
+  }'
+```
+
+The `data` array contains image `url` values, or `b64_json` when requested,
+plus seed and revised prompt. A `grid` extension may carry job ID, worker
+handle, model, recipe commitment and timing. Worker handles are already public
+operational metadata, not proof of independent control, exact model identity or
+confidential execution. Text and media extensions are not interchangeable.
+
+Use the live schema for batch bounds and the selected recipe's supported
+dimensions and editing parameters. Text-to-image support does not prove source
+image, denoising or arbitrary LoRA support. Do not retry invalid parameters
+unchanged.
+
+## Reasoning Models And Empty Answers
+
+Some models consume their output budget on reasoning before emitting visible
+text. `max_tokens` can run out with `content: null` or an empty answer and
+`finish_reason: "length"`. Separate `reasoning_content` is not the final answer.
+Tool-call-only responses also need separate handling and are not necessarily
+failures.
+
+Inspect terminal reason, answer/tool blocks and usage, not just HTTP status.
+Reasoning can consume billable output tokens; a reasoning-token breakdown is
+not guaranteed across backends. A larger budget can help but cannot guarantee
+an answer and can increase cost. Do not automatically regenerate empty replies.
+Thinking controls are backend-specific; an ignored option does not prove
+thinking was disabled.
+
+## Python Clients And HTTP 403
+
+The default `Python-urllib` User-Agent currently gets `403` from the API edge,
+even for public `/v1/models`. This is an outstanding edge compatibility issue,
+not evidence your key is wrong. OpenAI SDK and curl set their own User-Agent.
+A raw urllib client can identify itself:
+
+```python
+import json
+import urllib.request
+
+request = urllib.request.Request(
+    "https://api.aipowergrid.io/v1/models",
+    headers={"User-Agent": "my-grid-client/1.0"},
+)
+with urllib.request.urlopen(request, timeout=20) as response:
+    print(json.load(response))
+```
+
+Never disable TLS verification to work around an HTTP error.
+
+## MCP Authentication
+
+Remote MCP at `https://api.aipowergrid.io/v1/mcp` uses browser OAuth. A Grid
+generation key is not a remote MCP OAuth access token. For API-key-only
+automation, use the HTTP API or local MCP path in the
+[Grid skill](https://github.com/AIPowerGrid/grid-skill).
+
+## Migrating From The Retired Horde API
+
+Legacy `/api/v2` returns `410 Gone`. Change the request contract as well as the
+URL; a prefix substitution alone does not migrate an integration.
+
+| Old purpose | Current surface |
+| --- | --- |
+| `/api/v2/status/models` | `GET /v1/status/models` for live capacity; `/v1/pricing` for rates |
+| `/api/v2/generate/async` images | `POST /v1/images/generations` with its current JSON and response contract |
+| Text generation | `POST /v1/chat/completions`; native Responses/Messages depend on backend availability |
+| Credentials and balance | Console-issued scoped key plus `GET /v1/account/credits` |
+
+Do not carry legacy anonymous credentials, polling assumptions or response
+parsers into `/v1`. Consult the live schema for job recovery and media surfaces
+instead of guessing names. The Grid audio route is `/v1/audio/generations`;
+do not assume OpenAI transcription/speech parity. Generation requires account
+admission, pricing and online workers.

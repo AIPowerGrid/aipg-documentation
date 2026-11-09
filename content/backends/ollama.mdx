@@ -79,6 +79,20 @@ not proof that Core accepted its registration.
 
 ## Troubleshooting
 
+- **Long prompts truncate or time out:** configure `OLLAMA_CONTEXT_LENGTH` in
+  the Ollama service and inspect `/api/ps` after loading the selected model.
+  `/api/show`'s architecture maximum is not the running context. Upgrade through
+  the [verified worker downloads](https://aipowergrid.io/run) to v0.3.12 or a
+  newer verified release: it advertises loaded context and defaults to a
+  600-second generation read timeout. The timeout setting accepts 10-3600
+  seconds and requires a restart. Use a measured worker context cap; neither
+  raising that cap nor extending a timeout enlarges Ollama's loaded context.
+- **Docker cannot detect host Ollama:** use `http://host.docker.internal:11434`
+  explicitly rather than container loopback. Verify Docker's host-gateway
+  mapping and restrict the backend listener/firewall to the required clients.
+- **Slow first request after idle:** Ollama may unload its model. Configure
+  `OLLAMA_KEEP_ALIVE` on the Ollama service if keeping weights resident fits
+  your shared GPU workload; the published worker does not set it for each job.
 - **Not detected:** confirm `ollama list` works and Ollama is listening on
   `127.0.0.1:11434`, then select **Re-scan**.
 - **Detected but the test fails:** run the model once in Ollama so it is loaded,

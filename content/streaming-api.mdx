@@ -10,14 +10,23 @@ The Grid Generation API provides **real token-by-token streaming** for text — 
 
 **Base URL:** `https://api.aipowergrid.io`
 
+Full route schemas: [OpenAPI JSON](https://api.aipowergrid.io/openapi.json) and
+[interactive API reference](https://api.aipowergrid.io/docs). See the
+[API client reference](/api-client-reference) for model discovery, credits,
+image examples and troubleshooting.
+
 | Endpoint | Format | Method |
 |----------|--------|--------|
 | `/v1/chat/completions` | OpenAI | POST |
 | `/v1/responses` | OpenAI Responses | POST |
 | `/v1/messages` | Anthropic | POST |
 | `/v1/images/generations` | OpenAI | POST |
-| `/v1/videos/generations` | OpenAI (LTX-2.3) | POST |
+| `/v1/videos/generations` | Grid video | POST |
+| `/v1/audio/generations` | Grid audio | POST |
 | `/v1/models` | OpenAI | GET |
+| `/v1/status/models` | Grid live models across job types | GET |
+| `/v1/pricing` | Grid configured rates | GET |
+| `/v1/account/credits` | Grid account balance | GET |
 | `/health` | Grid | GET |
 
 ---
