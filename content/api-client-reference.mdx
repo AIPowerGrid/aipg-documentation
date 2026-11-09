@@ -102,23 +102,29 @@ thinking was disabled.
 
 ## Python Clients And HTTP 403
 
-The default `Python-urllib` User-Agent currently gets `403` from the API edge,
-even for public `/v1/models`. This is an outstanding edge compatibility issue,
-not evidence your key is wrong. OpenAI SDK and curl set their own User-Agent.
-A raw urllib client can identify itself:
+The default `Python-urllib/` User-Agent is supported on
+`api.aipowergrid.io`, verified on 2026-11-09. The previous Cloudflare Browser
+Integrity Check `403` / error `1010` is resolved by an API-host-only exception
+for that User-Agent prefix. This does not authenticate a request or bypass
+Core's key scopes, rate limits, charging or other edge protections.
+
+Public model discovery needs no custom User-Agent or API key:
 
 ```python
 import json
 import urllib.request
 
-request = urllib.request.Request(
-    "https://api.aipowergrid.io/v1/models",
-    headers={"User-Agent": "my-grid-client/1.0"},
-)
-with urllib.request.urlopen(request, timeout=20) as response:
+with urllib.request.urlopen(
+    "https://api.aipowergrid.io/v1/models", timeout=20
+) as response:
     print(json.load(response))
 ```
 
+Applications may still set a descriptive User-Agent for diagnostics; it is
+not a credential. Protected account endpoints still return `401` for missing
+or invalid keys. A `403` alone does not identify its cause: inspect the response
+and report the route, status and Cloudflare Ray ID without exposing credentials.
+The exception does not apply to the marketing/docs host or every Python client.
 Never disable TLS verification to work around an HTTP error.
 
 ## MCP Authentication

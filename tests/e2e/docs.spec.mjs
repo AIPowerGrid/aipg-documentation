@@ -19,7 +19,7 @@ test('every public document remains available and private content stays private'
     expect(body, route).toContain('<h1')
     expect(body, route).not.toContain('Application error: a server-side exception')
   }
-  for (const route of ['/docs/AGENTS', '/docs/engineering-standards/00-core', '/docs/decisions/0001-supported-docs-runtime', '/docs/not-a-real-document']) {
+  for (const route of ['/docs/AGENTS', '/docs/engineering-standards/00-core', '/docs/decisions/0001-supported-docs-runtime', '/docs/decisions/API_CLIENT_EDGE', '/docs/not-a-real-document']) {
     expect((await request.get(route)).status(), route).toBe(404)
   }
 })
@@ -64,6 +64,8 @@ test('the first-run guide exposes the client reference and canonical funding lin
   await expect(page.getByRole('link', { name: 'Credits & Funding', exact: true })).toHaveAttribute('href', 'https://console.aipowergrid.io/dashboard/funding')
   await expect(page.locator('main')).toContainText('one billable image')
   await expect(page.locator('main')).toContainText('total_spendable_usd')
+  await expect(page.locator('main')).toContainText('default Python-urllib/ User-Agent is supported')
+  await expect(page.locator('main')).toContainText('Protected account endpoints still return 401')
 })
 
 test('validator data-flow diagrams render instead of empty or error placeholders', async ({ page }) => {
