@@ -28,7 +28,7 @@ owner), `done`.
 | # | Goal | Owner | Status | Done when |
 | --- | --- | --- | --- | --- |
 | 0 | Make worker payouts work again (last payout 2026-09-10) | Claude (fix), Justin (decisions) | doing | The hourly job runs clean for 48 hours and an outside operator receives a payout. Crash fixed 2026-11-10; payouts are still near zero until customers pay or a subsidy pool exists |
-| 1 | Fix the text worker's result signature so Core accepts it | Claude | doing | Core verifies a real worker signature and stores it. Fix merged (grid-text-worker PR #51); v0.3.13 staged as PR #52; still needs the release built and one live job checked in the ledger |
+| 1 | Fix the text worker's result signature so Core accepts it | Claude | doing | Core verifies a real worker signature and stores it. v0.3.13 published and running on Titan; Core now recovers the worker's signer, but rejects it because advanced-key workers have no signer bound to the account. Needs a Console-enrolled worker to prove, and a way to bind a signer for multi-connection workers |
 | 2 | Stable catalog: two text, two image, one video model, two workers each | Justin (machines), Claude (config) | todo | 7 days with nothing offline |
 | 3 | x402 pay-per-request on mainnet, then extended to images and video | Claude; Justin approves test spend | todo | An image and a clip are each paid for with no account |
 | 4 | ComfyUI node and SillyTavern image support | Claude | todo | Both published |
@@ -41,8 +41,7 @@ owner), `done`.
 
 ## Needed from Justin
 
-- Goal 0: decide whether to pay the held hours (about 178 AIPG in total), and
-  whether to fund a bootstrap uptime pool and at what daily AIPG budget.
+- Goal 0: nothing right now. Uptime pool deferred until there is paying demand.
 - Goal 2: which machines can run second copies of which models.
 - Goal 3: approval and a small budget for a mainnet x402 test.
 - Goal 6 and 8: accounts for upstream PRs and the provider applications.
@@ -120,3 +119,15 @@ identity provider with balances, more validator authority, new side apps.
   public in our fork.
 - 2026-11-10: Worker v0.3.13 staged (grid-text-worker PR #52). Content policy
   drafted in `CONTENT_POLICY_DRAFT.md` (not published).
+- 2026-11-10: Backlog paid with Justin's approval: 57 transfers, 1,335.63 AIPG
+  over 40 held hours (99% to `0xa218db26…`). Public totals now 1,786 payouts /
+  102,181.83 AIPG / 11 workers paid. The earlier 178 AIPG estimate was wrong.
+  Uptime pool: Justin agreed to wait.
+- 2026-11-10: Worker v0.3.13 published at Justin's direction and installed on
+  Titan. Four test chats (25 cents of operator test credit granted to the local
+  key's account) reached both Titan workers. Core logged the same recovered
+  signer for all four, so the hash and message now match. They were still
+  stored unsigned: neither Titan worker has a signer registered (advanced key,
+  no delegation), so Core only accepts the payout wallet. Before the update,
+  0 of 126,842 text rows had a verified signature.
+- 2026-11-10: Titan runs two Qwen Flash Next workers; first model with two.
