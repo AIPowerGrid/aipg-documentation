@@ -36,11 +36,16 @@ owner), `done`.
 | 6 | Provider integrations upstream: SillyTavern, Kilo, Roo-Code, Cline, OpenClaw | Claude (code), Justin (accounts, follow-up) | todo | Two merged or in a plugin catalog |
 | 7 | Demo film made on the Grid, with its cost shown | Justin directs, Claude runs tooling | todo | Posted publicly |
 | 8 | OpenRouter and NanoGPT provider applications (text) | Justin; Claude drafts | todo | Both submitted |
-| 9 | `llms.txt` and media prices in `/v1/models` | Claude | todo | Live |
+| 9 | `llms.txt` and media prices in `/v1/models` | Claude | review | Mostly already live: `llms.txt` exists, text models carry prices, and `/v1/pricing` covers media. Added links to the live endpoints in aipg-website PR #88 |
+| 11 | Make it easy to pay: today the only way is USDC on Base from a linked wallet | Justin decides, Claude builds | todo | A new user can fund an account without already holding USDC on Base. Options: enable AIPG deposits (built, switched off), a card on-ramp, x402 |
 | 10 | Decision checkpoint | Justin | todo | 2026-12-09: 10 outside paying accounts, or wind-down plan |
 
 ## Needed from Justin
 
+- Goal 11: enable AIPG deposits? Take card payments, and through whom (card
+  processors restrict adult content, which conflicts with marketing the
+  uncensored model)?
+- Go-ahead for a Core release deployment (Pillow security update, payout alert).
 - Goal 0: nothing right now. Uptime pool deferred until there is paying demand.
 - Goal 2: which machines can run second copies of which models.
 - Goal 3: approval and a small budget for a mainnet x402 test.
@@ -151,3 +156,7 @@ identity provider with balances, more validator authority, new side apps.
   26.04, where a sandbox launcher test fails. Fix opened as grid-core PR #243
   (lock update for those three packages, runners pinned to 24.04). Production
   still runs the old Pillow until the next Core release deployment.
+- 2026-11-10: Funding finding. `/v1/account/deposits/config` shows USDC on Base
+  as the only enabled way to pay; AIPG and ETH deposits are built but off, and
+  there is no card option. Core's own docs recorded $10.02 of USDC receipts
+  ever, as of September. Added as goal 11.
