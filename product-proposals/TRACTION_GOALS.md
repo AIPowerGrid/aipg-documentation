@@ -27,8 +27,8 @@ owner), `done`.
 
 | # | Goal | Owner | Status | Done when |
 | --- | --- | --- | --- | --- |
-| 0 | Make worker payouts work again (last payout 2026-09-10) | Claude (fix), Justin (budget and valuation) | doing | The hourly job runs clean for 48 hours and an outside operator receives a payout. Cause found 2026-11-09, see log |
-| 1 | Fix the text worker's result signature so Core accepts it | Claude | doing | Core verifies a real worker signature and stores it. Fix merged (grid-text-worker PR #51); still needs a worker release and one live job checked in the ledger |
+| 0 | Make worker payouts work again (last payout 2026-09-10) | Claude (fix), Justin (decisions) | doing | The hourly job runs clean for 48 hours and an outside operator receives a payout. Crash fixed 2026-11-10; payouts are still near zero until customers pay or a subsidy pool exists |
+| 1 | Fix the text worker's result signature so Core accepts it | Claude | doing | Core verifies a real worker signature and stores it. Fix merged (grid-text-worker PR #51); v0.3.13 staged as PR #52; still needs the release built and one live job checked in the ledger |
 | 2 | Stable catalog: two text, two image, one video model, two workers each | Justin (machines), Claude (config) | todo | 7 days with nothing offline |
 | 3 | x402 pay-per-request on mainnet, then extended to images and video | Claude; Justin approves test spend | todo | An image and a clip are each paid for with no account |
 | 4 | ComfyUI node and SillyTavern image support | Claude | todo | Both published |
@@ -41,12 +41,13 @@ owner), `done`.
 
 ## Needed from Justin
 
-- Goal 0: confirm the AIPG valuation to use for reward ceilings (config has
-  $0.002), and a daily AIPG budget for a bootstrap uptime pool.
+- Goal 0: decide whether to pay the held hours (about 178 AIPG in total), and
+  whether to fund a bootstrap uptime pool and at what daily AIPG budget.
 - Goal 2: which machines can run second copies of which models.
 - Goal 3: approval and a small budget for a mainnet x402 test.
 - Goal 6 and 8: accounts for upstream PRs and the provider applications.
-- A written content policy before the uncensored model is marketed.
+- Review `CONTENT_POLICY_DRAFT.md`, answer its open questions, and have a
+  lawyer read it before the uncensored model is marketed.
 
 ## Backlog (not started, not scheduled)
 
@@ -106,3 +107,16 @@ identity provider with balances, more validator authority, new side apps.
   disk free) and Titan (2x RTX PRO 6000). GitHub account `halfaipg` is correct
   for upstream PRs. Funded wallet for goal 3 to follow. Content policy: adults
   only, legal content allowed, with a disclaimer; Claude to draft.
+- 2026-11-10: Payout sender restored. Fourteen reward-policy windows appended
+  on production through 2026-12-15T05:00Z (held period at $0.002 per AIPG, new
+  windows at $0.0012, near the $0.001189 spot). The 04:00Z scheduled run
+  completed cleanly, the first since 09-14. No transfer sent. Record:
+  grid-core PR #241. **Extend the windows before 2026-12-15 or payouts stop
+  again.** Still open: catch-up for held hours, monitoring for the payout
+  unit, and the uptime pool decision.
+- 2026-11-10: Mistake: the record PR was first opened against the upstream
+  Haidra-Org/AI-Horde repository (#588) because `gh` defaults to the fork
+  parent. Closed within a minute. It showed only content that is already
+  public in our fork.
+- 2026-11-10: Worker v0.3.13 staged (grid-text-worker PR #52). Content policy
+  drafted in `CONTENT_POLICY_DRAFT.md` (not published).

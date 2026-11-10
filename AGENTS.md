@@ -62,6 +62,8 @@ which is intentionally NOT published.
   not an adopted architecture or deployment authorization.
   `TRACTION_GOALS.md` is the single tracker for demand work: numbered goals,
   owners, status, backlog and a dated log. Update it when goal status changes.
+  `CONTENT_POLICY_DRAFT.md` is an unreviewed draft policy and disclaimer for
+  open models; it is not in force until a reviewed version is published.
 - **`app/layout.tsx`** — Nextra theme: logo, navbar links, SEO/OG metadata, footer, forced
   dark mode, edit-on-GitHub link.
   OG and X use the approved Developer B artwork at
