@@ -27,17 +27,17 @@ owner), `done`.
 
 | # | Goal | Owner | Status | Done when |
 | --- | --- | --- | --- | --- |
-| 0 | Make worker payouts work again (last payout 2026-09-10) | Claude (fix), Justin (decisions) | doing | The hourly job runs clean for 48 hours and an outside operator receives a payout. Crash fixed 2026-11-10; payouts are still near zero until customers pay or a subsidy pool exists |
+| 0 | Make worker payouts work again (last payout 2026-09-10) | Claude | done | Sender fixed and backlog paid 2026-11-10; failure and expiry alerts deployed. Payouts stay small until customers pay. **Extend the reward-policy windows before 2026-12-15** |
 | 1 | Fix the text worker's result signature so Core accepts it | Claude | done | Proven 2026-11-10: three paid jobs from a Console-approved worker on v0.3.13 are stored in the production ledger with Core-verified signatures. Workers on an account API key (Titan) still store unsigned; that is the backlog item in `WORKER_SIGNER_BINDING.md` |
 | 2 | Stable catalog: two text, two image, one video model, two workers each | Justin (machines), Claude (config) | doing | 7 days with nothing offline. Qwen Flash Next has two workers (Titan). qwen3:8b has two while this Mac is awake. Image and video models still have one each |
 | 3 | x402 pay-per-request on mainnet, then extended to images and video | Claude; Justin approves test spend | todo | An image and a clip are each paid for with no account |
 | 4 | ComfyUI node and SillyTavern image support | Claude | todo | Both published |
-| 5 | Claude Code and Codex working against the Grid, with a one-line setup | Claude | doing | A fresh machine makes a paid call in under 2 minutes. Found 2026-11-10: Claude Code fails on every request because vLLM-served models reject reasoning effort `high`. Fix is grid-core PR #245; needs deployment, then the installer and guide |
+| 5 | Claude Code and Codex working against the Grid, with a one-line setup | Claude | doing | A fresh machine makes a paid call in under 2 minutes. Claude Code confirmed working against production 2026-11-10 after the effort fix. Still to do: the installer, the guide, and a Codex test |
 | 6 | Provider integrations upstream: SillyTavern, Kilo, Roo-Code, Cline, OpenClaw | Claude (code), Justin (accounts, follow-up) | todo | Two merged or in a plugin catalog |
 | 7 | Demo film made on the Grid, with its cost shown | Justin directs, Claude runs tooling | todo | Posted publicly |
 | 8 | OpenRouter and NanoGPT provider applications (text) | Justin; Claude drafts | todo | Both submitted |
 | 9 | `llms.txt` and media prices in `/v1/models` | Claude | review | Mostly already live: `llms.txt` exists, text models carry prices, and `/v1/pricing` covers media. Added links to the live endpoints in aipg-website PR #88 |
-| 11 | Make it easy to pay: today the only way is USDC on Base from a linked wallet | Justin decides, Claude builds | doing | A new user can fund an account without already holding USDC on Base. Justin approved AIPG deposits at $0.0010 per AIPG, caps $25 per deposit / $50 per account per day / $200 network per day. Price-file change is grid-core PR #244; needs deployment and one real test deposit. Cards undecided |
+| 11 | Make it easy to pay: today the only way is USDC on Base from a linked wallet | Justin decides, Claude builds | doing | A new user can fund an account without already holding USDC on Base. AIPG deposits are live since 2026-11-10 at $0.0010 per AIPG with low caps. **Not yet proven with a real deposit.** **Publish a new price before 2026-11-17.** Cards undecided |
 | 10 | Decision checkpoint | Justin | todo | 2026-12-09: 10 outside paying accounts, or wind-down plan |
 
 ## Needed from Justin
@@ -172,3 +172,15 @@ identity provider with balances, more validator authority, new side apps.
   grid-core PR #245. Also noted: `count_tokens` is 404, passthrough bodies are
   capped at 200,000 characters, and the response `model` field leaks the
   backend alias (`qfn`).
+- 2026-11-10: Production deployed to Core `a6cd1166` at 05:38:56Z (was
+  `0d2ee0b7`): Pillow security update, payout failure/expiry alerts, AIPG
+  price file, reasoning-effort compatibility. Backup and restore proof
+  passed, one API restart, all seven workers reconnected within a minute, no
+  errors. Record: grid-core PR #247.
+- 2026-11-10: AIPG deposits enabled in production. Price 1,000 micro-USD per
+  AIPG (about 18% under spot after the 3% haircut), valid to 2026-11-17T05:38Z;
+  caps $25 per deposit, $50 per account per day, $200 network per day. Waiting
+  on Justin's real-token test deposit.
+- 2026-11-10: Verified live after deployment: effort `high`/`max` now returns
+  200 on all three text formats, and Claude Code 2.1.322 completed a
+  file-reading task against `qwen38-flash-next-nvfp4` in about 9 seconds.
