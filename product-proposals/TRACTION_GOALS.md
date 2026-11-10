@@ -184,3 +184,11 @@ identity provider with balances, more validator authority, new side apps.
 - 2026-11-10: Verified live after deployment: effort `high`/`max` now returns
   200 on all three text formats, and Claude Code 2.1.322 completed a
   file-reading task against `qwen38-flash-next-nvfp4` in about 9 seconds.
+- 2026-11-10: Content safety. Justin chose a model-based prompt check over
+  regex. Core `c96b1d17` (grid-core #248) is live with log-only screening:
+  every admitted prompt is scored for sexual content involving minors by
+  OpenAI's moderation service, using a key restricted to that endpoint.
+  Nothing is refused yet and generated outputs are not checked. Next: read a
+  few days of scores, set a threshold, then build refusal and account strikes.
+  Still needed from Justin: an abuse-report address, and a lawyer's read of
+  the policy. Longer term the classifier moves to a GPU in his datacenter.
