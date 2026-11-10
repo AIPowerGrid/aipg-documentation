@@ -28,8 +28,8 @@ owner), `done`.
 | # | Goal | Owner | Status | Done when |
 | --- | --- | --- | --- | --- |
 | 0 | Make worker payouts work again (last payout 2026-09-10) | Claude (fix), Justin (decisions) | doing | The hourly job runs clean for 48 hours and an outside operator receives a payout. Crash fixed 2026-11-10; payouts are still near zero until customers pay or a subsidy pool exists |
-| 1 | Fix the text worker's result signature so Core accepts it | Claude | doing | Core verifies a real worker signature and stores it. v0.3.13 published and running on Titan; Core now recovers the worker's signer, but rejects it because advanced-key workers have no signer bound to the account. Needs a Console-enrolled worker to prove, and a way to bind a signer for multi-connection workers |
-| 2 | Stable catalog: two text, two image, one video model, two workers each | Justin (machines), Claude (config) | todo | 7 days with nothing offline |
+| 1 | Fix the text worker's result signature so Core accepts it | Claude | done | Proven 2026-11-10: three paid jobs from a Console-approved worker on v0.3.13 are stored in the production ledger with Core-verified signatures. Workers on an account API key (Titan) still store unsigned; that is the backlog item in `WORKER_SIGNER_BINDING.md` |
+| 2 | Stable catalog: two text, two image, one video model, two workers each | Justin (machines), Claude (config) | doing | 7 days with nothing offline. Qwen Flash Next has two workers (Titan). qwen3:8b has two while this Mac is awake. Image and video models still have one each |
 | 3 | x402 pay-per-request on mainnet, then extended to images and video | Claude; Justin approves test spend | todo | An image and a clip are each paid for with no account |
 | 4 | ComfyUI node and SillyTavern image support | Claude | todo | Both published |
 | 5 | One-line Claude Code and Codex installer | Claude | todo | A fresh machine makes a paid call in under 2 minutes |
@@ -141,3 +141,13 @@ identity provider with balances, more validator authority, new side apps.
   Justin's do. A Console-approved worker is being set up on this Mac
   (`~/.aipg/mac-worker`, v0.3.13, Ollama qwen3:8b) to prove signatures end to
   end.
+- 2026-11-10: Goal 1 proven end to end. Mac worker `justin-m3max-qwen3`
+  (Console-approved, v0.3.13 from source, Ollama qwen3:8b,
+  `~/.aipg/mac-worker`) served three paid test jobs at 04:37Z; all three ledger
+  rows have Core-verified signatures. It runs only inside the Claude session
+  that started it; it is not installed as a login service.
+- 2026-11-10: Core CI was failing for every pull request: new advisories
+  against Pillow 12.3.0, pyasn1 and certifi, and `ubuntu-latest` moving to
+  26.04, where a sandbox launcher test fails. Fix opened as grid-core PR #243
+  (lock update for those three packages, runners pinned to 24.04). Production
+  still runs the old Pillow until the next Core release deployment.
