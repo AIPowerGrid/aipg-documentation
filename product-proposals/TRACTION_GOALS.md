@@ -27,7 +27,7 @@ owner), `done`.
 
 | # | Goal | Owner | Status | Done when |
 | --- | --- | --- | --- | --- |
-| 0 | Restart worker payouts (last payout 2026-09-10) | Justin | todo | A payout lands |
+| 0 | Make worker payouts work again (last payout 2026-09-10) | Claude (fix), Justin (budget and valuation) | doing | The hourly job runs clean for 48 hours and an outside operator receives a payout. Cause found 2026-11-09, see log |
 | 1 | Fix the text worker's result signature so Core accepts it | Claude | doing | Core verifies a real worker signature and stores it. Fix merged (grid-text-worker PR #51); still needs a worker release and one live job checked in the ledger |
 | 2 | Stable catalog: two text, two image, one video model, two workers each | Justin (machines), Claude (config) | todo | 7 days with nothing offline |
 | 3 | x402 pay-per-request on mainnet, then extended to images and video | Claude; Justin approves test spend | todo | An image and a clip are each paid for with no account |
@@ -41,7 +41,8 @@ owner), `done`.
 
 ## Needed from Justin
 
-- Goal 0: what is blocking payouts, and a go-ahead to resume.
+- Goal 0: confirm the AIPG valuation to use for reward ceilings (config has
+  $0.002), and a daily AIPG budget for a bootstrap uptime pool.
 - Goal 2: which machines can run second copies of which models.
 - Goal 3: approval and a small budget for a mainnet x402 test.
 - Goal 6 and 8: accounts for upstream PRs and the provider applications.
@@ -93,3 +94,15 @@ identity provider with balances, more validator authority, new side apps.
   real verifier in a local cross-check.
 - 2026-11-09: Justin approved Claude to proceed on all goals. PR #51 merged.
   Brief and tracker committed and opened for review.
+- 2026-11-09: Payout cause found by read-only inspection of production
+  (release `grid-core-0d2ee0b7`). Two layers. (1) `aipg-payout.service` has
+  failed every hour since 2026-09-14T02:00Z with "payout window lacks a
+  reviewed demand reward policy": `WORKER_REWARD_DEMAND_POLICIES` holds one
+  window (09-13T02:00Z to 09-14T02:00Z) and nothing was appended. (2) From
+  09-10T18:00Z until then the job ran and sent 0, because only work bought
+  with purchased credits earns since the 09-09 paid-only cutoff. Nothing was
+  changed on production.
+- 2026-11-09: Justin: supply for goal 2 is this Mac (M3 Max, 128 GB RAM, 27 GB
+  disk free) and Titan (2x RTX PRO 6000). GitHub account `halfaipg` is correct
+  for upstream PRs. Funded wallet for goal 3 to follow. Content policy: adults
+  only, legal content allowed, with a disclaimer; Claude to draft.
