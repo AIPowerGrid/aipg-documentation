@@ -56,6 +56,16 @@ which is intentionally NOT published.
 - **`product-proposals/`** — internal, unpublished product and architecture
   proposals. These documents may describe planned surfaces but must label live
   and future behavior distinctly.
+  `CHUTES_RESEARCH_BRIEF.md` is the dated competitor audit: pinned source
+  findings, traction and pricing measured from public endpoints, a map of what
+  AIPG already has, and ranked options. It is research and recommendations,
+  not an adopted architecture or deployment authorization.
+  `TRACTION_GOALS.md` is the single tracker for demand work: numbered goals,
+  owners, status, backlog and a dated log. Update it when goal status changes.
+  `CONTENT_POLICY_DRAFT.md` is an unreviewed draft policy and disclaimer for
+  open models; it is not in force until a reviewed version is published.
+  `WORKER_SIGNER_BINDING.md` proposes how workers with parallel connections
+  could bind a signing key; it is a proposal, not a live capability.
 - **`app/layout.tsx`** — Nextra theme: logo, navbar links, SEO/OG metadata, footer, forced
   dark mode, edit-on-GitHub link.
   OG and X use the approved Developer B artwork at
