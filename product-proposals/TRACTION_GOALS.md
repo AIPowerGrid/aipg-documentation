@@ -32,20 +32,19 @@ owner), `done`.
 | 2 | Stable catalog: two text, two image, one video model, two workers each | Justin (machines), Claude (config) | doing | 7 days with nothing offline. Qwen Flash Next has two workers (Titan). qwen3:8b has two while this Mac is awake. Image and video models still have one each |
 | 3 | x402 pay-per-request on mainnet, then extended to images and video | Claude; Justin approves test spend | todo | An image and a clip are each paid for with no account |
 | 4 | ComfyUI node and SillyTavern image support | Claude | todo | Both published |
-| 5 | One-line Claude Code and Codex installer | Claude | todo | A fresh machine makes a paid call in under 2 minutes |
+| 5 | Claude Code and Codex working against the Grid, with a one-line setup | Claude | doing | A fresh machine makes a paid call in under 2 minutes. Found 2026-11-10: Claude Code fails on every request because vLLM-served models reject reasoning effort `high`. Fix is grid-core PR #245; needs deployment, then the installer and guide |
 | 6 | Provider integrations upstream: SillyTavern, Kilo, Roo-Code, Cline, OpenClaw | Claude (code), Justin (accounts, follow-up) | todo | Two merged or in a plugin catalog |
 | 7 | Demo film made on the Grid, with its cost shown | Justin directs, Claude runs tooling | todo | Posted publicly |
 | 8 | OpenRouter and NanoGPT provider applications (text) | Justin; Claude drafts | todo | Both submitted |
 | 9 | `llms.txt` and media prices in `/v1/models` | Claude | review | Mostly already live: `llms.txt` exists, text models carry prices, and `/v1/pricing` covers media. Added links to the live endpoints in aipg-website PR #88 |
-| 11 | Make it easy to pay: today the only way is USDC on Base from a linked wallet | Justin decides, Claude builds | todo | A new user can fund an account without already holding USDC on Base. Options: enable AIPG deposits (built, switched off), a card on-ramp, x402 |
+| 11 | Make it easy to pay: today the only way is USDC on Base from a linked wallet | Justin decides, Claude builds | doing | A new user can fund an account without already holding USDC on Base. Justin approved AIPG deposits at $0.0010 per AIPG, caps $25 per deposit / $50 per account per day / $200 network per day. Price-file change is grid-core PR #244; needs deployment and one real test deposit. Cards undecided |
 | 10 | Decision checkpoint | Justin | todo | 2026-12-09: 10 outside paying accounts, or wind-down plan |
 
 ## Needed from Justin
 
-- Goal 11: enable AIPG deposits? Take card payments, and through whom (card
-  processors restrict adult content, which conflicts with marketing the
-  uncensored model)?
-- Go-ahead for a Core release deployment (Pillow security update, payout alert).
+- Goal 11: one small AIPG test deposit from your own linked wallet once AIPG
+  funding is live. Card payments: decide whether to pursue them.
+- (Given 2026-11-10) Go-ahead for the Core release deployment.
 - Goal 0: nothing right now. Uptime pool deferred until there is paying demand.
 - Goal 2: which machines can run second copies of which models.
 - Goal 3: approval and a small budget for a mainnet x402 test.
@@ -160,3 +159,16 @@ identity provider with balances, more validator authority, new side apps.
   as the only enabled way to pay; AIPG and ETH deposits are built but off, and
   there is no card option. Core's own docs recorded $10.02 of USDC receipts
   ever, as of September. Added as goal 11.
+- 2026-11-10: Justin approved enabling AIPG deposits with the numbers above and
+  a production deployment. Built: operator price file re-read without restart
+  (grid-core PR #244) and an expiry reminder in the alert PR (#242).
+- 2026-11-10: Merged: grid-core #243 (dependencies, CI runner pin) and #241
+  (payout record); aipg-website #88 (`llms.txt` live-API links);
+  aipg-documentation #51 (brief and tracker now on main); grid-text-worker #53.
+- 2026-11-10: Claude Code 2.1 tested against production through a logging
+  proxy. It fails on its first call: `output_config.effort=high` is rejected by
+  the vLLM-served models (also `high`/`minimal` on chat and Responses). All
+  other fields it sends are accepted, and a tool call works. Fix opened as
+  grid-core PR #245. Also noted: `count_tokens` is 404, passthrough bodies are
+  capped at 200,000 characters, and the response `model` field leaks the
+  backend alias (`qfn`).
