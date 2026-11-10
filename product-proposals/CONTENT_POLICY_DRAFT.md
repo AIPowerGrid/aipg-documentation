@@ -11,8 +11,9 @@ uncensored model is marketed; this draft is not legal advice.
 > filter. You must be 18 or older. You are responsible for what you ask for and
 > what you do with the output. Content that is illegal is not allowed, and
 > sexual content involving minors is banned without exception. Your prompts
-> are processed by independent community operators who can read them; do not
-> send secrets or personal data.
+> are processed by independent community operators who can read them, and are
+> checked by an automated safety service run by a third party; do not send
+> secrets or personal data.
 
 ## Rules
 
@@ -33,7 +34,10 @@ uncensored model is marketed; this draft is not legal advice.
    may be wrong, offensive or unsafe; it is not professional advice.
 5. **Privacy.** Requests run on hardware operated by independent community
    members, who can read prompts and outputs. The Grid does not offer a
-   confidential tier today.
+   confidential tier today. Prompts are also sent to a third-party safety
+   classifier (OpenAI's moderation service today) to detect content banned
+   under rule 3. Generated images, video and audio are not checked
+   automatically.
 6. **Enforcement.** Accounts that break these rules can be suspended and their
    credit forfeited where the law allows. Operators may decline to serve
    uncensored models.
@@ -45,4 +49,8 @@ uncensored model is marketed; this draft is not legal advice.
 - Whether image and video models follow the same rules. This draft assumes yes,
   with rule 3 applying to generated images of real people.
 - Where reports go (an abuse address is needed before publishing).
-- No automated filter enforces rule 3 today. State that honestly or add one.
+- Rule 3 enforcement. As of 2026-11-10 prompts are scored for sexual content
+  involving minors in log-only mode (grid-core #248): nothing is refused yet,
+  and outputs are not checked. Refusal, account strikes and a threshold come
+  after a few days of real scores. The published wording must match what is
+  actually switched on at the time.
