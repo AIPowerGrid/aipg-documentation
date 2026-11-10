@@ -71,7 +71,9 @@ Operators:
 
 - Media worker setup wizard (generalise the audio manager flow).
 - Windows auto-start for the media worker.
-- Console sign-in limited to one connection per worker.
+- Console sign-in limited to one connection per worker, which also leaves
+  parallel workers' results unsigned. Design in `WORKER_SIGNER_BINDING.md`
+  (Option A recommended, after the checkpoint).
 - Payout wallet set for the account behind the 2× RTX 6000 worker.
 
 Housekeeping:
@@ -131,3 +133,11 @@ identity provider with balances, more validator authority, new side apps.
   no delegation), so Core only accepts the payout wallet. Before the update,
   0 of 126,842 text rows had a verified signature.
 - 2026-11-10: Titan runs two Qwen Flash Next workers; first model with two.
+- 2026-11-10: Payout alerting opened as grid-core PR #242 (failure hook and
+  reward-policy expiry reminder to the operator Discord webhook). Not yet
+  installed on production.
+- 2026-11-10: Signer-binding design written (`WORKER_SIGNER_BINDING.md`).
+  Only one recently seen worker on the Grid has a delegation; none of
+  Justin's do. A Console-approved worker is being set up on this Mac
+  (`~/.aipg/mac-worker`, v0.3.13, Ollama qwen3:8b) to prove signatures end to
+  end.

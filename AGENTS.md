@@ -64,6 +64,8 @@ which is intentionally NOT published.
   owners, status, backlog and a dated log. Update it when goal status changes.
   `CONTENT_POLICY_DRAFT.md` is an unreviewed draft policy and disclaimer for
   open models; it is not in force until a reviewed version is published.
+  `WORKER_SIGNER_BINDING.md` proposes how workers with parallel connections
+  could bind a signing key; it is a proposal, not a live capability.
 - **`app/layout.tsx`** — Nextra theme: logo, navbar links, SEO/OG metadata, footer, forced
   dark mode, edit-on-GitHub link.
   OG and X use the approved Developer B artwork at
