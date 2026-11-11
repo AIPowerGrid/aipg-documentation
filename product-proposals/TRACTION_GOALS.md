@@ -286,3 +286,11 @@ identity provider with balances, more validator authority, new side apps.
   `grid-core/deploy/HOLDER_ALLOWANCE_ROLLOUT_2026_11_11.md` and
   `grid-frontend/HOLDER_ALLOWANCE_HINT_DEPLOYMENT_2026_11_11.md`. Not yet
   announced to holders, and the public docs do not describe it.
+- 2026-11-11 (evening): two follow-ups from peteq's Discord message, both
+  live. Core release `b1370d34`: the holder allowance takes the best single
+  wallet an account has linked, because linking a second wallet had made it
+  primary and dropped his tier. Console: "Connect Wallet" now lists installed
+  wallets and asks which to use. His account already holds $4.95 of paid
+  credit, so no builder grant was made. A reply to him is drafted for Justin
+  to post. Not done: a real-extension sign-in test, an announcement of the
+  holder credits, and a public docs section for them.
