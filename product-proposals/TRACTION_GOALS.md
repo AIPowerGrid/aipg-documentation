@@ -41,7 +41,7 @@ owner), `done`.
 | 12 | Support the community desktop app (`speteai/aipg-desktop`, by peteq): chat, images, one-click worker and a local MCP connector in one installer | Claude (Core support), Justin (relationship) | doing | Its users stay signed in without pasting an API key, and a new user gets a usable free trial. Free allowance raised 2026-11-10. OAuth refresh tokens live 2026-11-11 (unproven until one real sign-in). Still to do: a Console page to list and end sessions, builder credit for peteq, a source review before the project links to it |
 | 13 | Content safety: screen prompts for sexual content involving minors, then refuse | Claude; Justin decides policy | doing | Refusals on, with an abuse address published. Log-only scoring live since 2026-11-10 (Core `c96b1d17`). Still to do: threshold from real scores, refusal and account strikes, abuse address, lawyer's read |
 | 14 | Openfield (video studio, `aipg-cinema`) runs on Grid credits: sign in with an AIPG account, see the balance, pay for images and clips from it | Openfield agent (app), Claude (Core support), Justin (decisions) | review (parked 2026-11-11) | On a fresh machine a user signs in through the browser, makes one image and one clip paid from credits, and the charges appear in the Core ledger. Uses the OAuth sign-in with refresh tokens that went live 2026-11-11. Known gap: Core's video limits (960 px, single pass) are below the studio's default two-pass portrait profile. **Working 2026-11-11:** signed-in paid takes and looks ran against production and were rendered by the Blackwell box; charges are in the ledger. First profile is single pass at Core's limits. Code is on local branch `feat/grid-backend` in `aipg-cinema`, not pushed. **Parked by Justin 2026-11-11**; the open items are in the log |
-| 15 | Free daily credits for accounts whose wallet holds AIPG | Claude builds, Justin decides the amounts | review | A holder signs in with their wallet and sees extra free credit each day; the same tokens cannot be claimed twice by moving them between wallets. Built, default off: `grid-core` PR #253. Needs Justin's tier amounts, daily budget and deploy go-ahead |
+| 15 | Free daily credits for accounts whose wallet holds AIPG | Claude builds, Justin decides the amounts | done | A holder signs in with their wallet and sees extra free credit each day; the same tokens cannot be claimed twice by moving them between wallets. **Live 2026-11-11:** 10,000 AIPG $0.10 a day, 100,000 $0.50, 1,000,000 $2.00, with a $25 a day network ceiling (`grid-core` release `6564c295`). The Console dashboard shows it. Still to see: a holder spending it, and the first midnight rollover |
 | 10 | Decision checkpoint | Justin | todo | 2026-12-09: 10 outside paying accounts, or wind-down plan |
 
 ## Needed from Justin
@@ -69,8 +69,8 @@ owner), `done`.
   clicking Approve) to prove refresh tokens end to end.
 - Goal 14: decide whether Openfield stays a standalone app or becomes a
   ComfyUI node pack with a UI on top; and a spending cap for its Grid tests.
-- Goal 15: the holder tiers (AIPG held and dollars a day), the daily budget,
-  and the go-ahead to merge and deploy `grid-core` PR #253.
+- Goal 15: look at the dashboard signed in and confirm the holder line; say
+  if the tier amounts or the $25 a day ceiling should change. Announce it.
 - This Mac's text worker was stopped 2026-11-11: its model had been removed
   from Ollama at 21:25 EST the night before and it failed 40 Grid jobs. Make
   it a login service or leave it off. Discord alert delivery is still untested.
@@ -279,3 +279,10 @@ identity provider with balances, more validator authority, new side apps.
   the balance at the last Base block before UTC midnight, allows one claim
   per wallet and per account per day, and caps the network-wide total. It is
   off until tiers and a budget are set.
+- 2026-11-11 (later): Goal 15 live. Core release `6564c295` and the Console
+  build with the holder line are in production; Justin's own account read
+  back a $2.00 holder allowance. The tier amounts were Claude's suggestion at
+  the $0.0010 deposit price, taken as-is. Records:
+  `grid-core/deploy/HOLDER_ALLOWANCE_ROLLOUT_2026_11_11.md` and
+  `grid-frontend/HOLDER_ALLOWANCE_HINT_DEPLOYMENT_2026_11_11.md`. Not yet
+  announced to holders, and the public docs do not describe it.
