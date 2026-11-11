@@ -38,6 +38,8 @@ owner), `done`.
 | 8 | OpenRouter and NanoGPT provider applications (text) | Justin; Claude drafts | todo | Both submitted |
 | 9 | `llms.txt` and media prices in `/v1/models` | Claude | review | Mostly already live: `llms.txt` exists, text models carry prices, and `/v1/pricing` covers media. Added links to the live endpoints in aipg-website PR #88 |
 | 11 | Make it easy to pay: today the only way is USDC on Base from a linked wallet | Justin decides, Claude builds | doing | A new user can fund an account without already holding USDC on Base. AIPG deposits are live since 2026-11-10 at $0.0010 per AIPG with low caps. **Not yet proven with a real deposit.** **Publish a new price before 2026-11-17.** Cards undecided |
+| 12 | Support the community desktop app (`speteai/aipg-desktop`, by peteq): chat, images, one-click worker and a local MCP connector in one installer | Claude (Core support), Justin (relationship) | doing | Its users stay signed in without pasting an API key, and a new user gets a usable free trial. Free allowance raised 2026-11-10. Still to do: OAuth refresh tokens, builder credit for peteq, a source review before the project links to it |
+| 13 | Content safety: screen prompts for sexual content involving minors, then refuse | Claude; Justin decides policy | doing | Refusals on, with an abuse address published. Log-only scoring live since 2026-11-10 (Core `c96b1d17`). Still to do: threshold from real scores, refusal and account strikes, abuse address, lawyer's read |
 | 10 | Decision checkpoint | Justin | todo | 2026-12-09: 10 outside paying accounts, or wind-down plan |
 
 ## Needed from Justin
@@ -51,6 +53,11 @@ owner), `done`.
 - Goal 6 and 8: accounts for upstream PRs and the provider applications.
 - Review `CONTENT_POLICY_DRAFT.md`, answer its open questions, and have a
   lawyer read it before the uncensored model is marketed.
+- Goal 13: an abuse-report address (suggested `abuse@aipowergrid.io`).
+- Goal 12: the email or wallet peteq signs in with, and an amount of builder
+  credit for him (suggested $5). Reply to his Discord questions.
+- Goal 2: Titan's two Qwen Flash Next workers have been offline since
+  2026-11-10T17:54Z. Claude Code has no fast model until they are back.
 
 ## Backlog (not started, not scheduled)
 
@@ -192,3 +199,19 @@ identity provider with balances, more validator authority, new side apps.
   few days of scores, set a threshold, then build refusal and account strikes.
   Still needed from Justin: an abuse-report address, and a lawyer's read of
   the policy. Longer term the classifier moves to a GPU in his datacenter.
+- 2026-11-10: Free allowance. A community developer (peteq) reported "$0 free
+  today" never resetting. Cause: the daily allowance goes only to accounts
+  with a verified Google sign-in (97 of 264 accounts) and was $0.01 a day.
+  The reset itself works. Justin approved raising it; production now has
+  `GRID_FREE_DAILY_MICRO=100000` ($0.10 a day), confirmed on a Google-linked
+  account. Accounts without Google still get nothing. Free usage does not
+  earn worker payouts, which are capped against purchased consumption.
+- 2026-11-10: peteq's desktop app (`speteai/aipg-desktop`, Tauri, unofficial)
+  already ships chat, image generation with a gallery, a one-click worker
+  that pins the official worker binary by SHA-256, and a local MCP connector
+  for Claude Desktop, Claude Code and Cursor. It covers much of goals 4 to 6
+  from the outside. It signs in with a pasted API key; he asked about OAuth.
+  Answers from Core: access tokens last 15 minutes, there are no refresh
+  tokens, and native clients may use loopback redirects on any port. Refresh
+  tokens are now the next Core change. The app's builds are unsigned and have
+  not been run or reviewed by us.
