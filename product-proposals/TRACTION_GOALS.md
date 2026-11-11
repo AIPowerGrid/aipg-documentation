@@ -294,3 +294,7 @@ identity provider with balances, more validator authority, new side apps.
   credit, so no builder grant was made. A reply to him is drafted for Justin
   to post. Not done: a real-extension sign-in test, an announcement of the
   holder credits, and a public docs section for them.
+- 2026-11-11 (night): peteq reported a "chain ID does not match" error when
+  signing in with his second wallet. Console now switches the wallet to Base
+  before asking for the sign-in signature (grid-frontend PR #45, live). Not
+  yet confirmed by him.
