@@ -2,8 +2,11 @@
 
 Status: draft for the owner's review, 2026-11-09. Not published and not in
 force. It becomes live only when a reviewed version is added under `content/`
-and linked from the sign-up and model pages. Have a lawyer read it before the
-uncensored model is marketed; this draft is not legal advice.
+and linked from the sign-up and model pages. This draft is not legal advice.
+The owner decided on 2026-11-11 to proceed without a lawyer's review for cost
+reasons. That is a known, accepted gap: the points most worth an hour of legal
+advice later are the duty to report child sexual abuse material and operator
+liability for hosting uncensored models.
 
 ## The short version shown to users
 
@@ -39,18 +42,26 @@ uncensored model is marketed; this draft is not legal advice.
    under rule 3. Generated images, video and audio are not checked
    automatically.
 6. **Enforcement.** Accounts that break these rules can be suspended and their
-   credit forfeited where the law allows. Operators may decline to serve
-   uncensored models.
+   credit forfeited where the law allows. Each operator chooses which models
+   their workers serve, so nobody is required to host an uncensored model.
+7. **Reporting.** Report content or use that breaks these rules to
+   `abuse@aipowergrid.io`, with the job ID or image link if you have one.
 
-## Open questions for the owner
+## Decisions (owner, 2026-11-11)
 
-- Whether operators can opt out of serving uncensored models per worker. The
-  rule above assumes they can; that is not built today.
-- Whether image and video models follow the same rules. This draft assumes yes,
-  with rule 3 applying to generated images of real people.
-- Where reports go (an abuse address is needed before publishing).
+- Operators can decline uncensored models: already true, because each worker
+  serves only the models its operator configures. Nothing to build.
+- Image and video models follow the same rules as text.
+- Reports go to `abuse@aipowergrid.io`. The mailbox must exist and forward to
+  the owner before this is published.
+- No lawyer's review for now (see Status).
+
+## Still open
+
 - Rule 3 enforcement. As of 2026-11-10 prompts are scored for sexual content
   involving minors in log-only mode (grid-core #248): nothing is refused yet,
   and outputs are not checked. Refusal, account strikes and a threshold come
   after a few days of real scores. The published wording must match what is
   actually switched on at the time.
+- Publishing: add the reviewed text under `content/`, link it from sign-up and
+  the model pages, and add a report link in the art gallery.

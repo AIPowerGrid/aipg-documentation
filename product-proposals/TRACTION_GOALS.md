@@ -53,7 +53,9 @@ owner), `done`.
 - Goal 6 and 8: accounts for upstream PRs and the provider applications.
 - Review `CONTENT_POLICY_DRAFT.md`, answer its open questions, and have a
   lawyer read it before the uncensored model is marketed.
-- Goal 13: an abuse-report address (suggested `abuse@aipowergrid.io`).
+- Goal 13: create the `abuse@aipowergrid.io` mailbox (or alias) and forward
+  it to yourself. The address is decided; it has to exist before the policy
+  is published.
 - Goal 12: the email or wallet peteq signs in with, and an amount of builder
   credit for him (suggested $5). Reply to his Discord questions.
 - Goal 2: Titan's two Qwen Flash Next workers have been offline since
@@ -215,3 +217,8 @@ identity provider with balances, more validator authority, new side apps.
   tokens, and native clients may use loopback redirects on any port. Refresh
   tokens are now the next Core change. The app's builds are unsigned and have
   not been run or reviewed by us.
+- 2026-11-11: Owner decisions. Abuse reports go to `abuse@aipowergrid.io`.
+  Operators already choose their models, so no opt-out needs building. No
+  lawyer's review of the content policy for now, for cost. Card payments,
+  x402 on mainnet and the AIPG test deposit are deferred. Refresh tokens
+  (grid-core #250) get an independent review before merge.
