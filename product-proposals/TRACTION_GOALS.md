@@ -40,6 +40,7 @@ owner), `done`.
 | 11 | Make it easy to pay: today the only way is USDC on Base from a linked wallet | Justin decides, Claude builds | doing | A new user can fund an account without already holding USDC on Base. AIPG deposits are live since 2026-11-10 at $0.0010 per AIPG with low caps. **Not yet proven with a real deposit.** **Publish a new price before 2026-11-17.** Cards undecided |
 | 12 | Support the community desktop app (`speteai/aipg-desktop`, by peteq): chat, images, one-click worker and a local MCP connector in one installer | Claude (Core support), Justin (relationship) | doing | Its users stay signed in without pasting an API key, and a new user gets a usable free trial. Free allowance raised 2026-11-10. OAuth refresh tokens live 2026-11-11 (unproven until one real sign-in). Still to do: a Console page to list and end sessions, builder credit for peteq, a source review before the project links to it |
 | 13 | Content safety: screen prompts for sexual content involving minors, then refuse | Claude; Justin decides policy | doing | Refusals on, with an abuse address published. Log-only scoring live since 2026-11-10 (Core `c96b1d17`). Still to do: threshold from real scores, refusal and account strikes, abuse address, lawyer's read |
+| 14 | Openfield (video studio, `aipg-cinema`) runs on Grid credits: sign in with an AIPG account, see the balance, pay for images and clips from it | Openfield agent (app), Claude (Core support), Justin (decisions) | todo | On a fresh machine a user signs in through the browser, makes one image and one clip paid from credits, and the charges appear in the Core ledger. Uses the OAuth sign-in with refresh tokens that went live 2026-11-11. Known gap: Core's video limits (960 px, single pass) are below the studio's default two-pass portrait profile |
 | 10 | Decision checkpoint | Justin | todo | 2026-12-09: 10 outside paying accounts, or wind-down plan |
 
 ## Needed from Justin
@@ -60,6 +61,15 @@ owner), `done`.
   credit for him (suggested $5). Reply to his Discord questions.
 - Goal 2: Titan's two Qwen Flash Next workers have been offline since
   2026-11-10T17:54Z. Claude Code has no fast model until they are back.
+
+- Sign in to the Console (redeployed 2026-11-11) and check the dashboard,
+  funding page and API keys. Claude could only test it signed out.
+- Goal 12: one real app sign-in (peteq's app, or with Claude driving and you
+  clicking Approve) to prove refresh tokens end to end.
+- Goal 14: decide whether Openfield stays a standalone app or becomes a
+  ComfyUI node pack with a UI on top; and a spending cap for its Grid tests.
+- This Mac's text worker runs only inside a Claude session: make it a login
+  service or stop it. Discord alert delivery is still untested.
 
 ## Backlog (not started, not scheduled)
 
@@ -239,3 +249,8 @@ identity provider with balances, more validator authority, new side apps.
   critical and 19 high dependency advisories, including Next.js remote code
   execution fixes, and added the "Stay signed in" consent line. Signed-in
   pages have not been checked by a person yet.
+- 2026-11-11: Session wrapped up. Nothing changed in production after the
+  refresh-token go-live. Added goal 14 (Openfield on Grid credits); the
+  Openfield agent works in `aipg-cinema` from a goal list Justin enters.
+  Next for Claude on return: the Claude Code guide and installer (goal 5),
+  the Console sessions page (goal 12), threshold and refusals (goal 13).
