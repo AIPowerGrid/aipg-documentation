@@ -38,7 +38,7 @@ owner), `done`.
 | 8 | OpenRouter and NanoGPT provider applications (text) | Justin; Claude drafts | todo | Both submitted |
 | 9 | `llms.txt` and media prices in `/v1/models` | Claude | review | Mostly already live: `llms.txt` exists, text models carry prices, and `/v1/pricing` covers media. Added links to the live endpoints in aipg-website PR #88 |
 | 11 | Make it easy to pay: today the only way is USDC on Base from a linked wallet | Justin decides, Claude builds | doing | A new user can fund an account without already holding USDC on Base. AIPG deposits are live since 2026-11-10 at $0.0010 per AIPG with low caps. **Not yet proven with a real deposit.** **Publish a new price before 2026-11-17.** Cards undecided |
-| 12 | Support the community desktop app (`speteai/aipg-desktop`, by peteq): chat, images, one-click worker and a local MCP connector in one installer | Claude (Core support), Justin (relationship) | doing | Its users stay signed in without pasting an API key, and a new user gets a usable free trial. Free allowance raised 2026-11-10. Still to do: OAuth refresh tokens, builder credit for peteq, a source review before the project links to it |
+| 12 | Support the community desktop app (`speteai/aipg-desktop`, by peteq): chat, images, one-click worker and a local MCP connector in one installer | Claude (Core support), Justin (relationship) | doing | Its users stay signed in without pasting an API key, and a new user gets a usable free trial. Free allowance raised 2026-11-10. OAuth refresh tokens live 2026-11-11 (unproven until one real sign-in). Still to do: a Console page to list and end sessions, builder credit for peteq, a source review before the project links to it |
 | 13 | Content safety: screen prompts for sexual content involving minors, then refuse | Claude; Justin decides policy | doing | Refusals on, with an abuse address published. Log-only scoring live since 2026-11-10 (Core `c96b1d17`). Still to do: threshold from real scores, refusal and account strikes, abuse address, lawyer's read |
 | 10 | Decision checkpoint | Justin | todo | 2026-12-09: 10 outside paying accounts, or wind-down plan |
 
@@ -222,3 +222,20 @@ identity provider with balances, more validator authority, new side apps.
   lawyer's review of the content policy for now, for cost. Card payments,
   x402 on mainnet and the AIPG test deposit are deferred. Refresh tokens
   (grid-core #250) get an independent review before merge.
+- 2026-11-11: Security. An independent review of the refresh-token change
+  found that a token issued to an OAuth application could pass the account
+  step-up check and link a wallet to the approving user's account. Fixed in
+  grid-core #251 and deployed at 01:17Z (release `27080900`). No sign of use
+  was found; the evidence is limited because consent records are pruned daily.
+- 2026-11-11: OAuth refresh tokens are live (grid-core #250, release
+  `0f0bad60`, migration `0047`, flag on at 01:40Z). The review also found
+  three defects in the change itself (revocation racing a rotation, replay
+  evidence pruned too early, sessions surviving an account merge); all fixed
+  and covered by real-PostgreSQL tests before merge. No real consent has been
+  approved yet, so issuance, rotation and revocation are unproven in
+  production.
+- 2026-11-11: Console redeployed for the first time since 2026-09-09
+  (grid-frontend #39, Vercel `dpl_3uLDcoCKjdnST5FPRb2x1jd6P1L7`). It cleared 3
+  critical and 19 high dependency advisories, including Next.js remote code
+  execution fixes, and added the "Stay signed in" consent line. Signed-in
+  pages have not been checked by a person yet.
