@@ -40,7 +40,8 @@ owner), `done`.
 | 11 | Make it easy to pay: today the only way is USDC on Base from a linked wallet | Justin decides, Claude builds | doing | A new user can fund an account without already holding USDC on Base. AIPG deposits are live since 2026-11-10 at $0.0010 per AIPG with low caps. **Not yet proven with a real deposit.** **Publish a new price before 2026-11-17.** Cards undecided |
 | 12 | Support the community desktop app (`speteai/aipg-desktop`, by peteq): chat, images, one-click worker and a local MCP connector in one installer | Claude (Core support), Justin (relationship) | doing | Its users stay signed in without pasting an API key, and a new user gets a usable free trial. Free allowance raised 2026-11-10. OAuth refresh tokens live 2026-11-11 (unproven until one real sign-in). Still to do: a Console page to list and end sessions, builder credit for peteq, a source review before the project links to it |
 | 13 | Content safety: screen prompts for sexual content involving minors, then refuse | Claude; Justin decides policy | doing | Refusals on, with an abuse address published. Log-only scoring live since 2026-11-10 (Core `c96b1d17`). Still to do: threshold from real scores, refusal and account strikes, abuse address, lawyer's read |
-| 14 | Openfield (video studio, `aipg-cinema`) runs on Grid credits: sign in with an AIPG account, see the balance, pay for images and clips from it | Openfield agent (app), Claude (Core support), Justin (decisions) | review | On a fresh machine a user signs in through the browser, makes one image and one clip paid from credits, and the charges appear in the Core ledger. Uses the OAuth sign-in with refresh tokens that went live 2026-11-11. Known gap: Core's video limits (960 px, single pass) are below the studio's default two-pass portrait profile. **Working 2026-11-11:** signed-in paid takes and looks ran against production and were rendered by the Blackwell box; charges are in the ledger. First profile is single pass at Core's limits. Code is on local branch `feat/grid-backend` in `aipg-cinema`, not pushed |
+| 14 | Openfield (video studio, `aipg-cinema`) runs on Grid credits: sign in with an AIPG account, see the balance, pay for images and clips from it | Openfield agent (app), Claude (Core support), Justin (decisions) | review (parked 2026-11-11) | On a fresh machine a user signs in through the browser, makes one image and one clip paid from credits, and the charges appear in the Core ledger. Uses the OAuth sign-in with refresh tokens that went live 2026-11-11. Known gap: Core's video limits (960 px, single pass) are below the studio's default two-pass portrait profile. **Working 2026-11-11:** signed-in paid takes and looks ran against production and were rendered by the Blackwell box; charges are in the ledger. First profile is single pass at Core's limits. Code is on local branch `feat/grid-backend` in `aipg-cinema`, not pushed. **Parked by Justin 2026-11-11**; the open items are in the log |
+| 15 | Free daily credits for accounts whose wallet holds AIPG | Claude builds, Justin decides the amounts | review | A holder signs in with their wallet and sees extra free credit each day; the same tokens cannot be claimed twice by moving them between wallets. Built, default off: `grid-core` PR #253. Needs Justin's tier amounts, daily budget and deploy go-ahead |
 | 10 | Decision checkpoint | Justin | todo | 2026-12-09: 10 outside paying accounts, or wind-down plan |
 
 ## Needed from Justin
@@ -68,8 +69,11 @@ owner), `done`.
   clicking Approve) to prove refresh tokens end to end.
 - Goal 14: decide whether Openfield stays a standalone app or becomes a
   ComfyUI node pack with a UI on top; and a spending cap for its Grid tests.
-- This Mac's text worker runs only inside a Claude session: make it a login
-  service or stop it. Discord alert delivery is still untested.
+- Goal 15: the holder tiers (AIPG held and dollars a day), the daily budget,
+  and the go-ahead to merge and deploy `grid-core` PR #253.
+- This Mac's text worker was stopped 2026-11-11: its model had been removed
+  from Ollama at 21:25 EST the night before and it failed 40 Grid jobs. Make
+  it a login service or leave it off. Discord alert delivery is still untested.
 
 ## Backlog (not started, not scheduled)
 
@@ -264,3 +268,14 @@ identity provider with balances, more validator authority, new side apps.
   Runs". Open: push or merge the branch, the two-pass profile in Core, source
   video and sound on the Grid, a reboot test, the box's host DNS, and whether
   to stop the contest's hosted instance on the box.
+- 2026-11-11: Justin parked goal 14 (Openfield). Nothing is running locally;
+  the box's three Grid workers stay enabled. Open when it resumes: merge and
+  export the `feat/grid-backend` branch, the two-pass profile in Core, source
+  video, sound, ending frames and tools on the Grid, a reboot test, the box's
+  host DNS, the contest's hosted instance on the box, and a MiniMax note in
+  Openfield's docs. Added goal 15: free daily credits for AIPG holders. Core
+  already had a holder bonus pinned to zero because tokens could be moved
+  between wallets to collect it repeatedly; `grid-core` PR #253 qualifies on
+  the balance at the last Base block before UTC midnight, allows one claim
+  per wallet and per account per day, and caps the network-wide total. It is
+  off until tiers and a budget are set.
