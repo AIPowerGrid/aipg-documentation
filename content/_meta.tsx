@@ -12,6 +12,7 @@ export default {
   "integrations": "Use AIPG in 60 seconds",
   "pricing": "Pricing & Comparisons",
   "web3-starters": "Web3 Starter Projects",
+  "agent-wallet-accounts": "Agents With Their Own Wallet",
   "builder-credits": "Builder Credits",
   "-- run --": {
     "type": "separator",

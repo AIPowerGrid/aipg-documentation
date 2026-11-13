@@ -35,6 +35,9 @@ with `inference.submit` for generation and `account.read` for account/balance
 inspection. Keep it in a server-side secret store or environment variable,
 not browser JavaScript, URLs, issues, or committed files.
 
+An agent with its own Base wallet can open an account and issue this key from
+a script instead: see [Agents with their own wallet](/agent-wallet-accounts).
+
 ```bash
 curl --fail-with-body https://api.aipowergrid.io/v1/account/credits \
   -H "Authorization: Bearer $AIPG_API_KEY"
