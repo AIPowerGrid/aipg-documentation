@@ -23,6 +23,7 @@ authentication handoff, endpoint shapes, tested examples, and known limits.
 - [Use AIPG in 60 seconds](https://aipowergrid.io/docs/integrations): Copy-paste client configurations and native-provider publication status.
 - [Pricing and comparisons](https://aipowergrid.io/docs/pricing): Exact Grid rates plus expiring, same-model reference workloads.
 - [Web3 starter projects](https://aipowergrid.io/docs/web3-starters): Runnable game, DAO, Telegram, NFT, and wallet-funded agent examples with quote and key boundaries.
+- [Agents with their own wallet](https://aipowergrid.io/docs/agent-wallet-accounts): Open an account, issue a key and fund it with USDC on Base from a script, with no browser.
 - [Builder credits](https://aipowergrid.io/docs/builder-credits): Manually reviewed $5-$20 service-credit pilot for public integrations and demos.
 - [Streaming API](https://aipowergrid.io/docs/streaming-api): Streaming text responses.
 

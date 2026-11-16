@@ -77,6 +77,8 @@ which is intentionally NOT published.
 - **`tests/api-client-reference.test.mjs`** checks schema/model/balance discovery,
   the bounded billable image example, honest runtime/migration caveats and
   current released-worker troubleshooting.
+- **`tests/agent-wallet-accounts.test.mjs`** checks the headless wallet page's
+  endpoints, sign-in domain, key-custody and funding safety statements.
 - **`tests/docs-runtime.test.mjs`** covers supported dependency pins, the actual
   scoped ts-morph/glob API, patched math rendering and content isolation.
 - **`tests/e2e/docs.spec.mjs`** and **`playwright.config.mjs`** exercise every
@@ -143,6 +145,14 @@ which is intentionally NOT published.
   client preflight guard rather than a server allowance, reject
   wallet-private-key custody, and distinguish application receipt IDs from
   verified on-chain JobAnchors.
+- `/docs/agent-wallet-accounts` documents the headless wallet path: Core's
+  wallet challenge and verify, key issuance within the ten-minute proof window,
+  and a USDC deposit claimed by transaction hash. It must keep `localhost` as
+  the script sign-in domain, read the treasury from
+  `GET /v1/account/deposits/config` rather than printing an address, never send
+  a private key anywhere, promise no free credit, state that credits are not
+  withdrawable, and tell readers to re-claim the same hash rather than send
+  again. `tests/agent-wallet-accounts.test.mjs` pins these.
 - `/docs/connect-existing-stack` is the canonical sidecar-first worker
   explanation. It distinguishes the open text-worker path from advanced and
   qualification-gated media paths, documents actual operator controls, and

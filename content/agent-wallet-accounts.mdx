@@ -1,0 +1,177 @@
+---
+title: Agents With Their Own Wallet
+description: Create a Grid account, issue an API key and fund it with USDC on Base from a script, with no browser and no Console.
+---
+
+# Agents with their own wallet
+
+An agent that holds a Base wallet can open its own Grid account, issue its own
+API key and pay for its own requests. No browser, no Console and no human
+account are involved. The flow is four HTTP calls and one USDC transfer.
+
+If a person will own the account, use the
+[Console](https://console.aipowergrid.io) instead: it does the same thing with
+Google or a browser wallet. See [Use AIPG in 60 seconds](/integrations).
+
+## Before you start
+
+- **The Grid never receives the private key.** The agent signs a message
+  locally and sends only its address and the signature. Never put a key or seed
+  phrase in a request, a prompt, a log or a repository.
+- **Use a dedicated wallet.** Give the agent its own wallet holding only what
+  it needs: a little USDC to deposit and a little ETH on Base for gas.
+- **A wallet-only account is pay-as-you-go.** Do not plan on free credit. Check
+  `GET /v1/account/credits` and spend only what it reports as spendable.
+- **Credits are for usage.** They cannot be withdrawn or transferred. Deposit
+  what the agent will use.
+- **Prompts are not private.** Community workers can see request and response
+  text. Do not send secrets or personal data.
+
+## 1. Sign in and issue a key
+
+Core gives the agent a message to sign, checks the signature, and returns a
+short session. The session is then used once to issue a durable API key.
+
+```python
+"""Create or sign in to a Grid account with a Base wallet, and issue an API key.
+
+The private key is read from AGENT_WALLET_KEY and never leaves this process:
+the Grid only ever receives the address and a signature.
+"""
+import os
+
+import requests
+from eth_account import Account
+from eth_account.messages import encode_defunct
+
+API = "https://api.aipowergrid.io"
+wallet = Account.from_key(os.environ["AGENT_WALLET_KEY"])
+
+# 1. Ask Core for the exact message to sign.
+challenge = requests.post(
+    f"{API}/v1/accounts/wallet/challenge",
+    json={
+        "address": wallet.address,
+        "domain": "localhost",
+        "uri": "http://localhost",
+        "chain_id": 8453,
+    },
+    timeout=30,
+)
+challenge.raise_for_status()
+message = challenge.json()["message"]
+
+# 2. Sign it unchanged (EIP-191 personal_sign) and exchange it for a session.
+signature = "0x" + bytes(
+    wallet.sign_message(encode_defunct(text=message)).signature
+).hex()
+session = requests.post(
+    f"{API}/v1/accounts/wallet/verify",
+    json={"message": message, "signature": signature, "address": wallet.address},
+    timeout=30,
+)
+session.raise_for_status()
+token = session.json()["access_token"]  # lasts 15 minutes
+
+# 3. Issue a durable inference key. Allowed for 10 minutes after sign-in.
+key = requests.post(
+    f"{API}/v1/account/keys",
+    headers={"Authorization": f"Bearer {token}"},
+    json={"label": "my-agent"},
+    timeout=30,
+)
+key.raise_for_status()
+
+# Shown once. Store it in your secret store; do not log it.
+print(key.json()["api_key"])
+```
+
+Install the two libraries with `pip install requests eth-account`.
+
+What to know about these calls:
+
+| Detail | Value |
+| --- | --- |
+| Sign-in domain for a script | `localhost`, with URI `http://localhost`. Core refuses domains it does not list, and a script should not claim to be the Console. |
+| Chain | Base, chain ID `8453`. Signing sends no transaction and costs no gas. |
+| Challenge lifetime | 5 minutes, single use. Sign the returned `message` exactly as given. |
+| First sign-in | Creates the account. The response has `"created": true` and the `account_id`. Later sign-ins with the same wallet return the same account. |
+| Session token | 15 minutes. Use it for account management, not for inference. |
+| Issuing or revoking keys | Needs a session from a sign-in in the last 10 minutes. An API key cannot issue another key; sign in again. |
+| The issued key | Carries `account.read` and `inference.submit`. It is returned once. |
+
+## 2. Fund the account with USDC on Base
+
+Read the funding details from the API every time. Do not hard-code the
+treasury address from this page, a chat message or another agent.
+
+```bash
+curl --fail-with-body https://api.aipowergrid.io/v1/account/deposits/config \
+  -H "Authorization: Bearer $AIPG_API_KEY"
+```
+
+In the response, find the entry in `assets` where `asset` is `USDC` and check
+that `status` is `available`. It gives the `treasury` address, the USDC
+`token_address`, the minimum and maximum deposit, and how much of today's
+funding limit remains.
+
+Then:
+
+1. **Send USDC on Base** from the same wallet that signed in, directly to
+   `treasury`, with your wallet library. It must be a plain token transfer from
+   that wallet. A transfer from another wallet, through a contract or on
+   another chain is not credited.
+2. **Wait for three confirmations**, a few seconds on Base.
+3. **Claim the deposit** with the transaction hash:
+
+```bash
+curl --fail-with-body -X POST https://api.aipowergrid.io/v1/account/deposits/claim \
+  -H "Authorization: Bearer $AIPG_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"tx_hash": "0x..."}'
+```
+
+USDC is credited one to one in US dollars. The response reports `credited`,
+`amount_usd` and the new `balance_usd`. Claiming the same transaction again is
+safe: it returns `already_claimed` and credits nothing.
+
+| Response | Meaning | What to do |
+| --- | --- | --- |
+| `425` | The transaction is not visible yet or has too few confirmations | Wait a few seconds and claim the same hash again |
+| `403` | The transfer came from a wallet that is not verified on this account | Send from the wallet that signed in |
+| `422` | The amount is below the minimum | Send at least the minimum from the config |
+| `429` or `503` with "funding limit" | Today's account or network funding limit is reached | Claim again after UTC midnight |
+| `409` | Already claimed | Nothing; the credit was applied the first time |
+
+Never send a second transfer because a claim answer was lost or unclear. Claim
+the same hash again, or read `GET /v1/account/deposits`.
+
+## 3. Use the key
+
+The key works like any other Grid key, with any OpenAI-compatible client.
+
+```bash
+curl --fail-with-body https://api.aipowergrid.io/v1/chat/completions \
+  -H "Authorization: Bearer $AIPG_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"model": "auto", "max_tokens": 64, "messages": [{"role": "user", "content": "Say hello in five words."}]}'
+```
+
+Check the balance with `GET /v1/account/credits` and read
+`total_spendable_usd`. For the price of a request before sending it, use
+`POST /v1/account/credits/quote`; see [pricing](/pricing). HTTP `402` means the
+account cannot fund the request: top up, do not retry in a loop.
+
+For models, media requests and troubleshooting, continue with the
+[API client reference](/api-client-reference).
+
+## Limits of this flow
+
+- It is for externally owned wallets that can sign a message. Smart-contract
+  wallets are not covered by this page.
+- One wallet is one account. Signing in with a different wallet creates a
+  different account with its own balance.
+- The sign-in, key and deposit calls are rate limited. A script that signs in
+  on every request will be throttled: sign in once, keep the key.
+- Losing the API key is recoverable: sign in with the wallet again and issue a
+  new one. Losing the wallet key means losing control of the account.
